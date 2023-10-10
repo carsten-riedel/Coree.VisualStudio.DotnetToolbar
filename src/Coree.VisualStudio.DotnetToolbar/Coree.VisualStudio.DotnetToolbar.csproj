@@ -75,6 +75,10 @@
     </VSCTCompile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="License.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Content Include="Resources\CommandBar.png" />
     <Content Include="Resources\Command2.png" />
     <Content Include="Resources\Command3.png" />

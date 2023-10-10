@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="Coree.VisualStudio.DotnetToolbar.b019bc9d-b622-4e8b-b0a0-d6be9a59fba5" Version="0.1.2" Language="en-US" Publisher="Carsten Riedel" />
-        <DisplayName>Coree.VisualStudio.DotnetToolbar</DisplayName>
-        <Description xml:space="preserve">DotnetToolbar. Invoking dotnet build, dotnet pack, Debug.Start</Description>
-        <Tags>dotnet;Toolbar</Tags>
-        <Preview>true</Preview>
+        <Identity Id="DotnetToolbar.B1B286CE-6848-4FA2-BE1C-2FFAE4F03685" Version="0.1.43" Language="en-US" Publisher="Carsten Riedel" />
+        <DisplayName>DotnetToolbar</DisplayName>
+        <Description xml:space="preserve">DotnetToolbar. dotnet build, dotnet pack, dotnet publish</Description>
+        <MoreInfo>https://github.com/carsten-riedel/Coree.VisualStudio.DotnetToolbar</MoreInfo>
+        <License>License.txt</License>
+        <Tags>dotnet;build;pack;publish;Toolbar</Tags>
     </Metadata>
     <Installation>
         <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[17.0, 18.0)">
