@@ -62,23 +62,26 @@
           If you do not want an image next to your command, remove the Icon node /> -->
       <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="Command1Id" priority="0x0100" type="Button">
         <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuGroup" />
-        <Icon guid="guidImages" id="bmpPicX" />
+        <Icon guid="guidImages" id="pngBuild" />
+		<CommandFlag>IconAndText</CommandFlag>
         <Strings>
           <ButtonText>dotnet build</ButtonText>
         </Strings>
       </Button>
       <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="Command2Id" priority="0x0100" type="Button">
         <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuGroup" />
-        <Icon guid="guidImages" id="bmpPicArrows" />
+        <Icon guid="guidImages" id="pngPack" />
+		<CommandFlag>IconAndText</CommandFlag>
         <Strings>
           <ButtonText>dotnet pack</ButtonText>
         </Strings>
       </Button>
       <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="Command3Id" priority="0x0100" type="Button">
         <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuGroup" />
-        <Icon guid="guidImages" id="bmpPicStrikethrough" />
+        <Icon guid="guidImages" id="pngPublish" />
+		<CommandFlag>IconAndText</CommandFlag>
         <Strings>
-          <ButtonText>debug start</ButtonText>
+          <ButtonText>dotnet publish</ButtonText>
         </Strings>
       </Button>
     </Buttons>
@@ -90,7 +93,7 @@
             bitmap strip containing the bitmaps and then there are the numeric ids of the elements used
             inside a button definition. An important aspect of this declaration is that the element id
             must be the actual index (1-based) of the bitmap inside the bitmap strip. -->
-      <Bitmap guid="guidImages" href="Resources\Command1.png" usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows, bmpPicStrikethrough" />
+      <Bitmap guid="guidImages" href="Resources\CommandBar.png" usedList="pngBuild, pngPack, pngPublish, pngDebug, bmpPicArrows, bmpPicStrikethrough" />
     </Bitmaps>
   </Commands>
 
@@ -108,10 +111,10 @@
     </GuidSymbol>
 
     <GuidSymbol name="guidImages" value="{32797b29-ae82-4c7c-ae0e-12eb5435f414}">
-      <IDSymbol name="bmpPic1" value="1" />
-      <IDSymbol name="bmpPic2" value="2" />
-      <IDSymbol name="bmpPicSearch" value="3" />
-      <IDSymbol name="bmpPicX" value="4" />
+      <IDSymbol name="pngBuild" value="1" />
+      <IDSymbol name="pngPack" value="2" />
+      <IDSymbol name="pngPublish" value="3" />
+      <IDSymbol name="pngDebug" value="4" />
       <IDSymbol name="bmpPicArrows" value="5" />
       <IDSymbol name="bmpPicStrikethrough" value="6" />
     </GuidSymbol>

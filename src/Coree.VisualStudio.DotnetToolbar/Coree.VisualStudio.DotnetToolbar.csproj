@@ -75,7 +75,7 @@
     </VSCTCompile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\Command1.png" />
+    <Content Include="Resources\CommandBar.png" />
     <Content Include="Resources\Command2.png" />
     <Content Include="Resources\Command3.png" />
   </ItemGroup>
