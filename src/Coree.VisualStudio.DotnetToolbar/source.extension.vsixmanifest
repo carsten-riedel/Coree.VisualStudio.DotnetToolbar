@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="Coree.VisualStudio.DotnetToolbar.b019bc9d-b622-4e8b-b0a0-d6be9a59fba5" Version="0.1" Language="en-US" Publisher="Carsten Riedel" />
+        <Identity Id="Coree.VisualStudio.DotnetToolbar.b019bc9d-b622-4e8b-b0a0-d6be9a59fba5" Version="0.1.1" Language="en-US" Publisher="Carsten Riedel" />
         <DisplayName>Coree.VisualStudio.DotnetToolbar</DisplayName>
         <Description xml:space="preserve">DotnetToolbar. Invoking dotnet build, dotnet pack, Debug.Start</Description>
         <Tags>dotnet;Toolbar</Tags>

@@ -34,8 +34,8 @@
 		  <Menu guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuToolBar" type="Toolbar">
 			  <CommandFlag>DefaultDocked</CommandFlag>
 			  <Strings>
-				  <ButtonText>Test Toolbar</ButtonText>
-				  <CommandName>Test Toolbar</CommandName>
+				  <ButtonText>Coree.VisualStudio.DotnetToolbar</ButtonText>
+				  <CommandName>Coree.VisualStudio.DotnetToolbar</CommandName>
 			  </Strings>
 		  </Menu>
 	  </Menus>
