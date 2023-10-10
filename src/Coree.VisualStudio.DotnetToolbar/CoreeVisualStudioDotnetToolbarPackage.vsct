@@ -64,21 +64,21 @@
         <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuGroup" />
         <Icon guid="guidImages" id="bmpPicX" />
         <Strings>
-          <ButtonText>Invoke Command1</ButtonText>
+          <ButtonText>dotnet build</ButtonText>
         </Strings>
       </Button>
       <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="Command2Id" priority="0x0100" type="Button">
         <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuGroup" />
         <Icon guid="guidImages" id="bmpPicArrows" />
         <Strings>
-          <ButtonText>Invoke Command2</ButtonText>
+          <ButtonText>dotnet pack</ButtonText>
         </Strings>
       </Button>
       <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="Command3Id" priority="0x0100" type="Button">
         <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuGroup" />
         <Icon guid="guidImages" id="bmpPicStrikethrough" />
         <Strings>
-          <ButtonText>Invoke Command3</ButtonText>
+          <ButtonText>debug start</ButtonText>
         </Strings>
       </Button>
     </Buttons>
