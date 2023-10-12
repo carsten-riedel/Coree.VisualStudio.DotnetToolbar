@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="DotnetToolbar.B1B286CE-6848-4FA2-BE1C-2FFAE4F03685" Version="0.1.45" Language="en-US" Publisher="Carsten Riedel" />
+        <Identity Id="DotnetToolbar.B1B286CE-6848-4FA2-BE1C-2FFAE4F03685" Version="0.1.47" Language="en-US" Publisher="Carsten Riedel" />
         <DisplayName>DotnetToolbar</DisplayName>
         <Description xml:space="preserve">DotnetToolbar. dotnet build, dotnet pack, dotnet publish</Description>
         <MoreInfo>https://github.com/carsten-riedel/Coree.VisualStudio.DotnetToolbar</MoreInfo>
@@ -10,6 +10,12 @@
     </Metadata>
     <Installation>
         <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[17.0, 18.0)">
+            <ProductArchitecture>amd64</ProductArchitecture>
+        </InstallationTarget>
+        <InstallationTarget Version="[17.0,18.0)" Id="Microsoft.VisualStudio.Pro">
+            <ProductArchitecture>amd64</ProductArchitecture>
+        </InstallationTarget>
+        <InstallationTarget Version="[17.0,18.0)" Id="Microsoft.VisualStudio.Enterprise">
             <ProductArchitecture>amd64</ProductArchitecture>
         </InstallationTarget>
     </Installation>
