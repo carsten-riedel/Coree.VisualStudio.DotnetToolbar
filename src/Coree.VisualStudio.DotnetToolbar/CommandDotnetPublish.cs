@@ -6,10 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Diagnostics;
-using System.Globalization;
-using System.Threading;
 using System.Threading.Tasks;
-using Task = System.Threading.Tasks.Task;
+
 
 namespace Coree.VisualStudio.DotnetToolbar
 {
