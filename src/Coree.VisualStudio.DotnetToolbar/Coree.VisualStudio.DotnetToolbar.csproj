@@ -45,6 +45,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Extensions.cs" />
     <Compile Include="CommandDotnetBuild.cs" />
     <Compile Include="CommandDotnetPack.cs" />
     <Compile Include="CommandDotnetPublish.cs" />

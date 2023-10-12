@@ -1,17 +1,11 @@
 ﻿using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.Threading;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
-using System.Diagnostics;
-using System.Globalization;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using VSLangProj;
-using static System.Net.Mime.MediaTypeNames;
+using System.Linq;
 using Task = System.Threading.Tasks.Task;
 
 namespace Coree.VisualStudio.DotnetToolbar
@@ -36,6 +30,7 @@ namespace Coree.VisualStudio.DotnetToolbar
         /// </summary>
         private readonly AsyncPackage package;
 
+        internal readonly MenuCommand menuItem;
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandDotnetBuild"/> class.
         /// Adds our command handlers for menu (commands must exist in the command table file)
@@ -48,7 +43,8 @@ namespace Coree.VisualStudio.DotnetToolbar
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
 
             var menuCommandID = new CommandID(CommandSet, CommandId);
-            var menuItem = new MenuCommand(this.Execute, menuCommandID);
+            menuItem = new MenuCommand((s, e) => ExecuteAsync(s, e), menuCommandID);
+
             commandService.AddCommand(menuItem);
         }
 
@@ -86,16 +82,6 @@ namespace Coree.VisualStudio.DotnetToolbar
             Instance = new CommandDotnetBuild(package, commandService);
         }
 
-        private class ProjectInfo
-        {
-            public string FullProjectFileName { get; set; } = String.Empty;
-            public string FullPath { get; set; } = String.Empty;
-
-            public string TargetFrameworks { get; set; } = String.Empty;
-            public List<string> TargetFrameworksList { get; set; } = new List<string>();
-            public string FriendlyTargetFramework { get; set; } = String.Empty;
-        }
-
         /// <summary>
         /// This function is the callback used to execute the command when the menu item is clicked.
         /// See the constructor to see how the menu item is associated with this function using
@@ -103,12 +89,80 @@ namespace Coree.VisualStudio.DotnetToolbar
         /// </summary>
         /// <param name="sender">Event sender.</param>
         /// <param name="e">Event args.</param>
-        private async void Execute(object sender, EventArgs e)
+        private async Task ExecuteAsync(object sender, EventArgs e)
         {
+            CommandDotnetBuild.Instance.menuItem.Enabled = false;
+            CommandDotnetPack.Instance.menuItem.Enabled = false;
+            CommandDotnetPublish.Instance.menuItem.Enabled = false;
+
+            Task myTask = Task.Run(() => StartDotNetProcessAsync());
+            await myTask;
+
+            CommandDotnetBuild.Instance.menuItem.Enabled = true;
+            CommandDotnetPack.Instance.menuItem.Enabled = true;
+            CommandDotnetPublish.Instance.menuItem.Enabled = true;
+        }
+
+        private async Task StartDotNetProcessAsync()
+        {
+            //await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
+            DTE2 dte2 = (DTE2)await ServiceProvider.GetServiceAsync(typeof(DTE)).ConfigureAwait(false);
+            Window window = dte2.Windows.Item(EnvDTE.Constants.vsWindowKindOutput);
+            window.Activate();
+
+            SolutionConfiguration2 configuration = (SolutionConfiguration2)dte2.Solution.SolutionBuild.ActiveConfiguration;
+
+            
+
+            var projectInfos = await Helper.GetProjectInfosAsync(this.package);
+
+            await OutputClearAsync();
+
+            List<JoinableTask> _joinableTasks = new List<JoinableTask>();
+
+            foreach (var projectInfo in projectInfos)
+            {
+                var process = new System.Diagnostics.Process();
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.CreateNoWindow = true;
+                process.StartInfo.FileName = "dotnet.exe";
+                process.StartInfo.Arguments = $@"build ""{projectInfo.FullProjectFileName}"" --configuration {configuration.Name}";
+                process.StartInfo.WorkingDirectory = $@"{projectInfo.FullPath}";
+                process.StartInfo.RedirectStandardError = true;
+                process.StartInfo.RedirectStandardOutput = true;
+                await OutputTaskItemStringExExampleAsync("-------------------------------------------------------------------------------");
+                await OutputTaskItemStringExExampleAsync(process.StartInfo.GetProcessStartInfoCommandline());
+                await OutputTaskItemStringExExampleAsync("-------------------------------------------------------------------------------");
+                process.Start();
+
+                process.OutputDataReceived += (sender, e) => {var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await OutputTaskItemStringExExampleAsync(e.Data); } catch (Exception ex) { /* Handle the exception */ } }); _joinableTasks.Add(joinableTask); };
+                process.ErrorDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await OutputTaskItemStringExExampleAsync(e.Data); } catch (Exception ex) { /* Handle the exception */ } }); _joinableTasks.Add(joinableTask); };
+
+                process.Start();
+                process.BeginErrorReadLine();
+                process.BeginOutputReadLine();
+                process.WaitForExit();
+            }
+            
+            await Task.WhenAll(_joinableTasks.Select(jt => jt.Task));
+            
+            await OutputTaskItemStringExExampleAsync("Done");
+        }
+
+        /*
+        // Create a Task but don't await it immediately
+        Task myTask = Task.Run(() => MyNonAsyncFunction());
+
+        // Do other work...
+
+        // Later in the code, you can await the Task when you actually need it to be complete
+        await myTask;
+        */
+        /*
+         *            var sen =(System.ComponentModel.Design.MenuCommand)sender;
+            sen.Enabled = false;
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
             var dte2 = await ServiceProvider.GetServiceAsync(typeof(DTE)).ConfigureAwait(false) as DTE2;
-
-
 
             List<ProjectInfo> projectInfos = new List<ProjectInfo>();
 
@@ -117,7 +171,6 @@ namespace Coree.VisualStudio.DotnetToolbar
 
             foreach (Project item in solProjects)
             {
-
                 var ProjectInfoItem = new ProjectInfo()
                 {
                     FullProjectFileName = (string)item.Properties.Item("FullProjectFileName").Value,
@@ -144,31 +197,23 @@ namespace Coree.VisualStudio.DotnetToolbar
                 }
             }
 
-            /*
-            // Create a Task but don't await it immediately
-            Task myTask = Task.Run(() => MyNonAsyncFunction());
-
-            // Do other work...
-
-            // Later in the code, you can await the Task when you actually need it to be complete
-            await myTask;
-            */
-
-
-            SolutionConfiguration2 configuration = (SolutionConfiguration2)dte2.Solution.SolutionBuild.ActiveConfiguration;
-            Debug.WriteLine($@"ActiveConfiguration: {configuration.Name}{configuration.PlatformName}");
+        SolutionConfiguration2 configuration = (SolutionConfiguration2)dte2.Solution.SolutionBuild.ActiveConfiguration;
+        Debug.WriteLine($@"ActiveConfiguration: {configuration.Name}{configuration.PlatformName}");
 
             foreach (var item in projectInfos)
             {
                 dte2.ExecuteCommand("Tools.Shell", $@"/o /c /dir:{item.FullPath} dotnet.exe build {item.FullProjectFileName} --configuration {configuration.Name}");
                 await OutputTaskItemStringExExampleAsync($@"Tools.Shell ""/o /c /dir:{item.FullPath} dotnet.exe build {item.FullProjectFileName} --configuration {configuration.Name}""");
-                await OutputTaskItemStringExExampleAsync($@"See Command window.");
-            }
+        await OutputTaskItemStringExExampleAsync($@"See Command window.");
+    }
 
-            Window window = dte2.Windows.Item(EnvDTE.Constants.vsWindowKindOutput);
-            window.Activate();
+    Window window = dte2.Windows.Item(EnvDTE.Constants.vsWindowKindOutput);
+    window.Activate();
 
+            sen.Enabled = true;
         }
+*/
+
         private async Task OutputTaskItemStringExExampleAsync(string buildMessage)
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
@@ -181,14 +226,25 @@ namespace Coree.VisualStudio.DotnetToolbar
                 {
                     pane.OutputString(buildMessage + "\n");
                     pane.Activate();
-                   
                     return;
                 }
             }
-
         }
 
+        private async Task OutputClearAsync()
+        {
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
+            var dte2 = await package.GetServiceAsync(typeof(DTE)).ConfigureAwait(false) as DTE2;
 
-
+            EnvDTE.OutputWindowPanes panes = dte2.ToolWindows.OutputWindow.OutputWindowPanes;
+            foreach (EnvDTE.OutputWindowPane pane in panes)
+            {
+                if (pane.Name.Contains("Build"))
+                {
+                    pane.Clear();
+                    return;
+                }
+            }
+        }
     }
 }

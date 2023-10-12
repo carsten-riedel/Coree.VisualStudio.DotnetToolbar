@@ -1,14 +1,11 @@
 ﻿using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.Threading;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
-using System.Diagnostics;
-using System.Globalization;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Linq;
 using Task = System.Threading.Tasks.Task;
 
 namespace Coree.VisualStudio.DotnetToolbar
@@ -33,6 +30,7 @@ namespace Coree.VisualStudio.DotnetToolbar
         /// </summary>
         private readonly AsyncPackage package;
 
+        internal readonly MenuCommand menuItem;
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandDotnetPack"/> class.
         /// Adds our command handlers for menu (commands must exist in the command table file)
@@ -45,7 +43,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
 
             var menuCommandID = new CommandID(CommandSet, CommandId);
-            var menuItem = new MenuCommand(this.Execute, menuCommandID);
+            menuItem = new MenuCommand((s, e) => ExecuteAsync(s, e), menuCommandID);
             commandService.AddCommand(menuItem);
         }
 
@@ -92,7 +90,6 @@ namespace Coree.VisualStudio.DotnetToolbar
             public string FriendlyTargetFramework { get; set; } = String.Empty;
         }
 
-
         /// <summary>
         /// This function is the callback used to execute the command when the menu item is clicked.
         /// See the constructor to see how the menu item is associated with this function using
@@ -100,54 +97,93 @@ namespace Coree.VisualStudio.DotnetToolbar
         /// </summary>
         /// <param name="sender">Event sender.</param>
         /// <param name="e">Event args.</param>
-        private async void Execute(object sender, EventArgs e)
+        private async Task ExecuteAsync(object sender, EventArgs e)
         {
-            var dte2 = await ServiceProvider.GetServiceAsync(typeof(DTE)).ConfigureAwait(false) as DTE2;
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
-            List<ProjectInfo> projectInfos = new List<ProjectInfo>();
+            CommandDotnetBuild.Instance.menuItem.Enabled = false;
+            CommandDotnetPack.Instance.menuItem.Enabled = false;
+            CommandDotnetPublish.Instance.menuItem.Enabled = false;
 
-            Projects solProjects = dte2.Solution.Projects;
-            //string solutionDir = System.IO.Path.GetDirectoryName(dte2.Solution.FullName);
+            Task myTask = Task.Run(() => StartDotNetProcessAsync());
+            await myTask;
 
-            foreach (Project item in solProjects)
-            {
+            CommandDotnetBuild.Instance.menuItem.Enabled = true;
+            CommandDotnetPack.Instance.menuItem.Enabled = true;
+            CommandDotnetPublish.Instance.menuItem.Enabled = true;
+        }
 
-                var ProjectInfoItem = new ProjectInfo()
-                {
-                    FullProjectFileName = (string)item.Properties.Item("FullProjectFileName").Value,
-                    TargetFrameworks = (string)item.Properties.Item("TargetFrameworks").Value,
-                    FriendlyTargetFramework = (string)item.Properties.Item("FriendlyTargetFramework").Value,
-                    FullPath = (string)item.Properties.Item("FullPath").Value
-                };
-
-                if (ProjectInfoItem.TargetFrameworks.Split(';').Length > 0)
-                {
-                    ProjectInfoItem.TargetFrameworksList.AddRange(ProjectInfoItem.TargetFrameworks.Split(';'));
-                }
-
-                if (ProjectInfoItem.TargetFrameworksList.Count == 0)
-                {
-                    ProjectInfoItem.TargetFrameworksList.Add(ProjectInfoItem.FriendlyTargetFramework);
-                }
-
-                projectInfos.Add(ProjectInfoItem);
-
-                foreach (Property items in item.Properties)
-                {  //FriendlyTargetFramework
-                    Debug.WriteLine($@"{items.Name},{items.Value}");
-                }
-            }
-
+        private async Task StartDotNetProcessAsync()
+        {
+            //await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
+            DTE2 dte2 = (DTE2)await ServiceProvider.GetServiceAsync(typeof(DTE)).ConfigureAwait(false);
+            Window window = dte2.Windows.Item(EnvDTE.Constants.vsWindowKindOutput);
+            window.Activate();
 
             SolutionConfiguration2 configuration = (SolutionConfiguration2)dte2.Solution.SolutionBuild.ActiveConfiguration;
-            Debug.WriteLine($@"ActiveConfiguration: {configuration.Name}{configuration.PlatformName}");
 
-            foreach (var item in projectInfos)
+            var projectInfos = await Helper.GetProjectInfosAsync(this.package);
+
+            await OutputClearAsync();
+
+            List<JoinableTask> _joinableTasks = new List<JoinableTask>();
+
+            foreach (var projectInfo in projectInfos)
             {
-                dte2.ExecuteCommand("Tools.Shell", $@"/o /c /dir:{item.FullPath} dotnet.exe pack {item.FullProjectFileName} --configuration {configuration.Name}");
+                var process = new System.Diagnostics.Process();
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.CreateNoWindow = true;
+                process.StartInfo.FileName = "dotnet.exe";
+                process.StartInfo.Arguments = $@"pack ""{projectInfo.FullProjectFileName}"" --configuration {configuration.Name}";
+                process.StartInfo.WorkingDirectory = $@"{projectInfo.FullPath}";
+                process.StartInfo.RedirectStandardError = true;
+                process.StartInfo.RedirectStandardOutput = true;
+                await OutputTaskItemStringExExampleAsync("-------------------------------------------------------------------------------");
+                await OutputTaskItemStringExExampleAsync(process.StartInfo.GetProcessStartInfoCommandline());
+                await OutputTaskItemStringExExampleAsync("-------------------------------------------------------------------------------");
+                process.Start();
+                process.OutputDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await OutputTaskItemStringExExampleAsync(e.Data); } catch (Exception ex) { /* Handle the exception */ } }); _joinableTasks.Add(joinableTask); };
+                process.ErrorDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await OutputTaskItemStringExExampleAsync(e.Data); } catch (Exception ex) { /* Handle the exception */ } }); _joinableTasks.Add(joinableTask); };
+                process.Start();
+                process.BeginErrorReadLine();
+                process.BeginOutputReadLine();
+                process.WaitForExit();
             }
+            
+            await Task.WhenAll(_joinableTasks.Select(jt => jt.Task));
 
+            await OutputTaskItemStringExExampleAsync("Done");
+        }
 
+        private async Task OutputTaskItemStringExExampleAsync(string buildMessage)
+        {
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
+            var dte2 = await package.GetServiceAsync(typeof(DTE)).ConfigureAwait(false) as DTE2;
+
+            EnvDTE.OutputWindowPanes panes = dte2.ToolWindows.OutputWindow.OutputWindowPanes;
+            foreach (EnvDTE.OutputWindowPane pane in panes)
+            {
+                if (pane.Name.Contains("Build"))
+                {
+                    pane.OutputString(buildMessage + "\n");
+                    pane.Activate();
+                    return;
+                }
+            }
+        }
+
+        private async Task OutputClearAsync()
+        {
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
+            var dte2 = await package.GetServiceAsync(typeof(DTE)).ConfigureAwait(false) as DTE2;
+
+            EnvDTE.OutputWindowPanes panes = dte2.ToolWindows.OutputWindow.OutputWindowPanes;
+            foreach (EnvDTE.OutputWindowPane pane in panes)
+            {
+                if (pane.Name.Contains("Build"))
+                {
+                    pane.Clear();
+                    return;
+                }
+            }
         }
     }
 }
