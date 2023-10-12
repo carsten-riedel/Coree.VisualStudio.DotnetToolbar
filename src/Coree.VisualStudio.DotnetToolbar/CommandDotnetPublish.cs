@@ -102,12 +102,12 @@ namespace Coree.VisualStudio.DotnetToolbar
         /// <param name="e">Event args.</param>
         private async void Execute(object sender, EventArgs e)
         {
-            var dte2 = await package.GetServiceAsync(typeof(DTE)).ConfigureAwait(false) as DTE2;
+            var dte2 = await ServiceProvider.GetServiceAsync(typeof(DTE)).ConfigureAwait(false) as DTE2;
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
             List<ProjectInfo> projectInfos = new List<ProjectInfo>();
 
             Projects solProjects = dte2.Solution.Projects;
-            string solutionDir = System.IO.Path.GetDirectoryName(dte2.Solution.FullName);
+            //string solutionDir = System.IO.Path.GetDirectoryName(dte2.Solution.FullName);
 
             foreach (Project item in solProjects)
             {
