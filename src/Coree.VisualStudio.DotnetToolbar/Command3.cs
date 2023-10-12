@@ -120,7 +120,8 @@ namespace Coree.VisualStudio.DotnetToolbar
                     FullPath = (string)item.Properties.Item("FullPath").Value
                 };
 
-                if (ProjectInfoItem.TargetFrameworks.Split(';').Length > 0)
+
+                if (ProjectInfoItem.TargetFrameworks != String.Empty)
                 {
                     ProjectInfoItem.TargetFrameworksList.AddRange(ProjectInfoItem.TargetFrameworks.Split(';'));
                 }
