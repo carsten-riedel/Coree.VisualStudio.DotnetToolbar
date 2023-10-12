@@ -19,7 +19,7 @@ namespace Coree.VisualStudio.DotnetToolbar
     /// <summary>
     /// Command handler
     /// </summary>
-    internal sealed class Command1
+    internal sealed class CommandDotnetBuild
     {
         /// <summary>
         /// Command ID.
@@ -37,12 +37,12 @@ namespace Coree.VisualStudio.DotnetToolbar
         private readonly AsyncPackage package;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Command1"/> class.
+        /// Initializes a new instance of the <see cref="CommandDotnetBuild"/> class.
         /// Adds our command handlers for menu (commands must exist in the command table file)
         /// </summary>
         /// <param name="package">Owner package, not null.</param>
         /// <param name="commandService">Command service to add command to, not null.</param>
-        private Command1(AsyncPackage package, OleMenuCommandService commandService)
+        private CommandDotnetBuild(AsyncPackage package, OleMenuCommandService commandService)
         {
             this.package = package ?? throw new ArgumentNullException(nameof(package));
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
@@ -55,7 +55,7 @@ namespace Coree.VisualStudio.DotnetToolbar
         /// <summary>
         /// Gets the instance of the command.
         /// </summary>
-        public static Command1 Instance
+        public static CommandDotnetBuild Instance
         {
             get;
             private set;
@@ -78,12 +78,12 @@ namespace Coree.VisualStudio.DotnetToolbar
         /// <param name="package">Owner package, not null.</param>
         public static async Task InitializeAsync(AsyncPackage package)
         {
-            // Switch to the main thread - the call to AddCommand in Command1's constructor requires
+            // Switch to the main thread - the call to AddCommand in 's constructor requires
             // the UI thread.
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
 
             OleMenuCommandService commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
-            Instance = new Command1(package, commandService);
+            Instance = new CommandDotnetBuild(package, commandService);
         }
 
         private class ProjectInfo

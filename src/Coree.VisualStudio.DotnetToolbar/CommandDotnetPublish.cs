@@ -16,7 +16,7 @@ namespace Coree.VisualStudio.DotnetToolbar
     /// <summary>
     /// Command handler
     /// </summary>
-    internal sealed class Command3
+    internal sealed class CommandDotnetPublish
     {
         /// <summary>
         /// Command ID.
@@ -34,12 +34,12 @@ namespace Coree.VisualStudio.DotnetToolbar
         private readonly AsyncPackage package;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Command3"/> class.
+        /// Initializes a new instance of the <see cref="CommandDotnetPublish"/> class.
         /// Adds our command handlers for menu (commands must exist in the command table file)
         /// </summary>
         /// <param name="package">Owner package, not null.</param>
         /// <param name="commandService">Command service to add command to, not null.</param>
-        private Command3(AsyncPackage package, OleMenuCommandService commandService)
+        private CommandDotnetPublish(AsyncPackage package, OleMenuCommandService commandService)
         {
             this.package = package ?? throw new ArgumentNullException(nameof(package));
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
@@ -52,7 +52,7 @@ namespace Coree.VisualStudio.DotnetToolbar
         /// <summary>
         /// Gets the instance of the command.
         /// </summary>
-        public static Command3 Instance
+        public static CommandDotnetPublish Instance
         {
             get;
             private set;
@@ -80,7 +80,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
 
             OleMenuCommandService commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
-            Instance = new Command3(package, commandService);
+            Instance = new CommandDotnetPublish(package, commandService);
         }
 
         private class ProjectInfo

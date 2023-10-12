@@ -47,9 +47,9 @@ namespace Coree.VisualStudio.DotnetToolbar
         // When initialized asynchronously, the current thread may be a background thread at this point.
         // Do any initialization that requires the UI thread after switching to the UI thread.
         await this.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
-        await Coree.VisualStudio.DotnetToolbar.Command1.InitializeAsync(this);
-        await Coree.VisualStudio.DotnetToolbar.Command2.InitializeAsync(this);
-        await Coree.VisualStudio.DotnetToolbar.Command3.InitializeAsync(this);
+        await Coree.VisualStudio.DotnetToolbar.CommandDotnetBuild.InitializeAsync(this);
+        await Coree.VisualStudio.DotnetToolbar.CommandDotnetPack.InitializeAsync(this);
+        await Coree.VisualStudio.DotnetToolbar.CommandDotnetPublish.InitializeAsync(this);
     }
 
     #endregion

@@ -60,7 +60,7 @@
               <CommandFlag>DefaultInvisible</CommandFlag>
               <CommandFlag>DynamicVisibility</CommandFlag>
           If you do not want an image next to your command, remove the Icon node /> -->
-      <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="Command1Id" priority="0x0100" type="Button">
+      <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="Id" priority="0x0100" type="Button">
         <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuGroup" />
         <Icon guid="guidImages" id="pngBuild" />
 		<CommandFlag>IconAndText</CommandFlag>
@@ -105,7 +105,7 @@
     <GuidSymbol name="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" value="{7303216a-a2cb-4519-b645-a34ae1380a78}">
 	  <IDSymbol name="MyMenuToolBar" value="0x1000" />
 	  <IDSymbol name="MyMenuGroup" value="0x1020" />
-      <IDSymbol name="Command1Id" value="4129" />
+      <IDSymbol name="Id" value="4129" />
       <IDSymbol name="Command2Id" value="4130" />
       <IDSymbol name="Command3Id" value="4131" />
     </GuidSymbol>
