@@ -45,7 +45,8 @@ namespace Coree.VisualStudio.DotnetToolbar
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
 
             var menuCommandID = new CommandID(CommandSet, CommandId);
-            var menuItem = new MenuCommand(this.Execute, menuCommandID);
+            var menuItem = new MenuCommand(Execute, menuCommandID);
+            
             commandService.AddCommand(menuItem);
         }
 
