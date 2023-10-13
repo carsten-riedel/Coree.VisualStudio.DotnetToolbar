@@ -17,7 +17,7 @@ namespace Coree.VisualStudio.DotnetToolbar
     /// <summary>
     /// Command handler
     /// </summary>
-    internal sealed class CommandDropDown
+    internal sealed class CommandDropDown : CommandBase
     {
         /// <summary>
         /// Command ID.
@@ -30,11 +30,6 @@ namespace Coree.VisualStudio.DotnetToolbar
         /// </summary>
         public static readonly Guid CommandSet = new Guid("7303216a-a2cb-4519-b645-a34ae1380a78");
 
-        /// <summary>
-        /// VS Package that provides this command, not null.
-        /// </summary>
-        private readonly AsyncPackage package;
-
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandDotnetBuild"/> class.
@@ -42,11 +37,8 @@ namespace Coree.VisualStudio.DotnetToolbar
         /// </summary>
         /// <param name="package">Owner package, not null.</param>
         /// <param name="commandService">Command service to add command to, not null.</param>
-        private CommandDropDown(AsyncPackage package, OleMenuCommandService commandService)
+        private CommandDropDown(AsyncPackage package, OleMenuCommandService commandService) :base(package, commandService)
         {
-            this.package = package ?? throw new ArgumentNullException(nameof(package));
-            commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
-
             CommandID menuMyDropDownComboGetListCommandID = new CommandID(CommandSet, cmdidMyDropDownComboGetList);
             OleMenuCommand menuMyDropDownComboGetListCommand = new OleMenuCommand(new EventHandler(OnMenuMyDropDownComboGetList), menuMyDropDownComboGetListCommandID);
             commandService.AddCommand(menuMyDropDownComboGetListCommand);
@@ -112,7 +104,8 @@ namespace Coree.VisualStudio.DotnetToolbar
                     if (validInput)
                     {
                         currentDropDownComboChoice = dropDownComboChoices[indexInput];
-                        OutputAsync($@"Choice: {currentDropDownComboChoice}");
+                        WindowActivateAsync(Constants.vsWindowKindOutput);
+                        OutputWriteLineAsync($@"Choice: {currentDropDownComboChoice}");
 
                     }
                     else
@@ -138,17 +131,6 @@ namespace Coree.VisualStudio.DotnetToolbar
         }
 
         /// <summary>
-        /// Gets the service provider from the owner package.
-        /// </summary>
-        private Microsoft.VisualStudio.Shell.IAsyncServiceProvider ServiceProvider
-        {
-            get
-            {
-                return this.package;
-            }
-        }
-
-        /// <summary>
         /// Initializes the singleton instance of the command.
         /// </summary>
         /// <param name="package">Owner package, not null.</param>
@@ -162,25 +144,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             Instance = new CommandDropDown(package, commandService);
         }
 
-        private async Task OutputAsync(string buildMessage)
-        {
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
-            var dte2 = await package.GetServiceAsync(typeof(DTE2)).ConfigureAwait(false) as DTE2;
-            
-            Window window = dte2.Windows.Item(EnvDTE.Constants.vsWindowKindOutput);
-            window.Activate();
 
-            EnvDTE.OutputWindowPanes panes = dte2.ToolWindows.OutputWindow.OutputWindowPanes;
-            foreach (EnvDTE.OutputWindowPane pane in panes)
-            {
-                if (pane.Name.Contains("Build"))
-                {
-                    pane.OutputString(buildMessage + "\n");
-                    pane.Activate();
-                    return;
-                }
-            }
-        }
 
     }
 }

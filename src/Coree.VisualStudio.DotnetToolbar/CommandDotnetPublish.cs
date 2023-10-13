@@ -1,6 +1,5 @@
 ﻿using EnvDTE;
 using EnvDTE80;
-using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Threading;
 using System;
@@ -9,12 +8,13 @@ using System.ComponentModel.Design;
 using System.Linq;
 using System.Threading.Tasks;
 
+
 namespace Coree.VisualStudio.DotnetToolbar
 {
     /// <summary>
     /// Command handler
     /// </summary>
-    internal sealed class CommandDotnetPublish
+    internal sealed class CommandDotnetPublish : CommandBase
     {
         /// <summary>
         /// Command ID.
@@ -26,11 +26,6 @@ namespace Coree.VisualStudio.DotnetToolbar
         /// </summary>
         public static readonly Guid CommandSet = new Guid("7303216a-a2cb-4519-b645-a34ae1380a78");
 
-        /// <summary>
-        /// VS Package that provides this command, not null.
-        /// </summary>
-        private readonly AsyncPackage package;
-
         internal readonly MenuCommand MenuItem;
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandDotnetPublish"/> class.
@@ -38,10 +33,8 @@ namespace Coree.VisualStudio.DotnetToolbar
         /// </summary>
         /// <param name="package">Owner package, not null.</param>
         /// <param name="commandService">Command service to add command to, not null.</param>
-        private CommandDotnetPublish(AsyncPackage package, OleMenuCommandService commandService)
+        private CommandDotnetPublish(AsyncPackage package, OleMenuCommandService commandService) : base(package,commandService)
         {
-            this.package = package ?? throw new ArgumentNullException(nameof(package));
-            commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
 
             CommandID menuCommandID = new CommandID(CommandSet, CommandId);
             MenuItem = new MenuCommand((s, e) => ExecuteAsync(s, e), menuCommandID);
@@ -58,16 +51,6 @@ namespace Coree.VisualStudio.DotnetToolbar
             private set;
         }
 
-        /// <summary>
-        /// Gets the service provider from the owner package.
-        /// </summary>
-        private Microsoft.VisualStudio.Shell.IAsyncServiceProvider ServiceProvider
-        {
-            get
-            {
-                return this.package;
-            }
-        }
 
         /// <summary>
         /// Initializes the singleton instance of the command.
@@ -115,17 +98,16 @@ namespace Coree.VisualStudio.DotnetToolbar
 
         private async System.Threading.Tasks.Task StartDotNetProcessAsync()
         {
-            //await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
-            DTE2 dte2 = (DTE2)await ServiceProvider.GetServiceAsync(typeof(DTE2)).ConfigureAwait(false);
-            Window window = dte2.Windows.Item(EnvDTE.Constants.vsWindowKindOutput);
-            window.Activate();
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
+            DTE2 dte2 = (DTE2)await ServiceProvider.GetServiceAsync(typeof(DTE)).ConfigureAwait(false);
 
+            await WindowActivateAsync(Constants.vsWindowKindOutput);
 
-            SolutionConfiguration2 configuration = (SolutionConfiguration2)dte2.Solution.SolutionBuild.ActiveConfiguration;
+            var configuration = await GetSolutionActiveConfigurationAsync();
 
             var projectInfos = await Helper.GetProjectInfosAsync(this.package);
 
-            await OutputClearAsync();
+            await OutputWriteLineAsync(null, true);
 
             List<JoinableTask> _joinableTasks = new List<JoinableTask>();
 
@@ -141,12 +123,12 @@ namespace Coree.VisualStudio.DotnetToolbar
                     process.StartInfo.WorkingDirectory = $@"{projectInfo.FullPath}";
                     process.StartInfo.RedirectStandardError = true;
                     process.StartInfo.RedirectStandardOutput = true;
-                    await OutputTaskItemStringExExampleAsync("-------------------------------------------------------------------------------");
-                    await OutputTaskItemStringExExampleAsync(process.StartInfo.GetProcessStartInfoCommandline());
-                    await OutputTaskItemStringExExampleAsync("-------------------------------------------------------------------------------");
+                    await OutputWriteLineAsync("-------------------------------------------------------------------------------");
+                    await OutputWriteLineAsync(process.StartInfo.GetProcessStartInfoCommandline());
+                    await OutputWriteLineAsync("-------------------------------------------------------------------------------");
                     process.Start();
-                    process.OutputDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await OutputTaskItemStringExExampleAsync(e.Data); } catch (Exception ex) { /* Handle the exception */ } }); _joinableTasks.Add(joinableTask); };
-                    process.ErrorDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await OutputTaskItemStringExExampleAsync(e.Data); } catch (Exception ex) { /* Handle the exception */ } }); _joinableTasks.Add(joinableTask); };
+                    process.OutputDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await OutputWriteLineAsync(e.Data); } catch (Exception ex) { /* Handle the exception */ } }); _joinableTasks.Add(joinableTask); };
+                    process.ErrorDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await OutputWriteLineAsync(e.Data); } catch (Exception ex) { /* Handle the exception */ } }); _joinableTasks.Add(joinableTask); };
                     process.Start();
                     process.BeginErrorReadLine();
                     process.BeginOutputReadLine();
@@ -156,46 +138,8 @@ namespace Coree.VisualStudio.DotnetToolbar
             
             await System.Threading.Tasks.Task.WhenAll(_joinableTasks.Select(jt => jt.Task));
 
-            await OutputTaskItemStringExExampleAsync("Done");
+            await OutputWriteLineAsync("Done");
         }
-
-        private async System.Threading.Tasks.Task OutputTaskItemStringExExampleAsync(string buildMessage)
-        {
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
-            var dte2 = await package.GetServiceAsync(typeof(DTE2)).ConfigureAwait(false) as DTE2;
-
-            EnvDTE.OutputWindowPanes panes = dte2.ToolWindows.OutputWindow.OutputWindowPanes;
-            foreach (EnvDTE.OutputWindowPane pane in panes)
-            {
-                if (pane.Name.Contains("Build"))
-                {
-                    pane.OutputString(buildMessage + "\n");
-                    pane.Activate();
-                    return;
-                }
-            }
-        }
-
-
-
-
-
-        private async System.Threading.Tasks.Task OutputClearAsync()
-        {
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
-            var dte2 = await package.GetServiceAsync(typeof(DTE2)).ConfigureAwait(false) as DTE2;
-
-            EnvDTE.OutputWindowPanes panes = dte2.ToolWindows.OutputWindow.OutputWindowPanes;
-            foreach (EnvDTE.OutputWindowPane pane in panes)
-            {
-                if (pane.Name.Contains("Build"))
-                {
-                    pane.Clear();
-                    return;
-                }
-            }
-        }
-
 
     }
 }

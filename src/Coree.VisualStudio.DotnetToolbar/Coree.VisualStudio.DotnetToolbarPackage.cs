@@ -41,7 +41,6 @@ namespace Coree.VisualStudio.DotnetToolbar
         /// </summary>
         public const string PackageGuidString = "863aef23-089f-44d7-ba5c-e509e35cd199";
         
-        private DTE dte;
         private DTE2 dte2;
         private CancellationToken cancellationToken;
         private IVsSolution _solution;
@@ -66,8 +65,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             await Coree.VisualStudio.DotnetToolbar.CommandDotnetPack.InitializeAsync(this);
             await Coree.VisualStudio.DotnetToolbar.CommandDotnetPublish.InitializeAsync(this);
             await Coree.VisualStudio.DotnetToolbar.CommandDropDown.InitializeAsync(this);
-            dte = (DTE)await GetServiceAsync(typeof(DTE2)).ConfigureAwait(false);
-            dte2 = (DTE2)await GetServiceAsync(typeof(DTE2)).ConfigureAwait(false);
+            dte2 = (DTE2)await GetServiceAsync(typeof(DTE)).ConfigureAwait(false);
             await AdviseSolutionEventsAsync(cancellationToken);
         }
 
@@ -169,6 +167,7 @@ namespace Coree.VisualStudio.DotnetToolbar
         private async Task OutputAsync(string buildMessage)
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+       
 
             Window window = dte2.Windows.Item(EnvDTE.Constants.vsWindowKindOutput);
             window.Activate();
