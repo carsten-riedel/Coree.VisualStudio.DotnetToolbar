@@ -115,8 +115,8 @@ namespace Coree.VisualStudio.DotnetToolbar
         private async Task StartDotNetProcessAsync()
         {
             //await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
-            DTE dte = (DTE)await ServiceProvider.GetServiceAsync(typeof(DTE)).ConfigureAwait(false);
-            DTE2 dte2 = (DTE2)await ServiceProvider.GetServiceAsync(typeof(DTE)).ConfigureAwait(false);
+            DTE dte = (DTE)await ServiceProvider.GetServiceAsync(typeof(DTE2)).ConfigureAwait(false);
+            DTE2 dte2 = (DTE2)await ServiceProvider.GetServiceAsync(typeof(DTE2)).ConfigureAwait(false);
             Window window = dte2.Windows.Item(EnvDTE.Constants.vsWindowKindOutput);
             window.Activate();
 
@@ -163,7 +163,7 @@ namespace Coree.VisualStudio.DotnetToolbar
         private async Task OutputTaskItemStringExExampleAsync(string buildMessage)
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
-            var dte2 = await package.GetServiceAsync(typeof(DTE)).ConfigureAwait(false) as DTE2;
+            var dte2 = await package.GetServiceAsync(typeof(DTE2)).ConfigureAwait(false) as DTE2;
 
             EnvDTE.OutputWindowPanes panes = dte2.ToolWindows.OutputWindow.OutputWindowPanes;
             foreach (EnvDTE.OutputWindowPane pane in panes)
@@ -180,7 +180,7 @@ namespace Coree.VisualStudio.DotnetToolbar
         private async Task OutputClearAsync()
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
-            var dte2 = await package.GetServiceAsync(typeof(DTE)).ConfigureAwait(false) as DTE2;
+            var dte2 = await package.GetServiceAsync(typeof(DTE2)).ConfigureAwait(false) as DTE2;
 
             EnvDTE.OutputWindowPanes panes = dte2.ToolWindows.OutputWindow.OutputWindowPanes;
             foreach (EnvDTE.OutputWindowPane pane in panes)

@@ -24,7 +24,7 @@ namespace Coree.VisualStudio.DotnetToolbar
         internal async static Task<List<ProjectInfo>> GetProjectInfosAsync(AsyncPackage asyncPackage)
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(asyncPackage.DisposalToken);
-            var dte2 = await asyncPackage.GetServiceAsync(typeof(DTE)).ConfigureAwait(false) as DTE2;
+            var dte2 = await asyncPackage.GetServiceAsync(typeof(DTE2)).ConfigureAwait(false) as DTE2;
 
             List<ProjectInfo> projectInfos = new List<ProjectInfo>();
 

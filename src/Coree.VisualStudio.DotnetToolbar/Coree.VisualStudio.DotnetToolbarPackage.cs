@@ -66,8 +66,8 @@ namespace Coree.VisualStudio.DotnetToolbar
             await Coree.VisualStudio.DotnetToolbar.CommandDotnetPack.InitializeAsync(this);
             await Coree.VisualStudio.DotnetToolbar.CommandDotnetPublish.InitializeAsync(this);
             await Coree.VisualStudio.DotnetToolbar.CommandDropDown.InitializeAsync(this);
-            dte = (DTE)await GetServiceAsync(typeof(DTE)).ConfigureAwait(false);
-            dte2 = (DTE2)await GetServiceAsync(typeof(DTE)).ConfigureAwait(false);
+            dte = (DTE)await GetServiceAsync(typeof(DTE2)).ConfigureAwait(false);
+            dte2 = (DTE2)await GetServiceAsync(typeof(DTE2)).ConfigureAwait(false);
             await AdviseSolutionEventsAsync(cancellationToken);
         }
 
