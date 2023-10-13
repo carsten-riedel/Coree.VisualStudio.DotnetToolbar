@@ -31,6 +31,7 @@ namespace Coree.VisualStudio.DotnetToolbar
         private readonly AsyncPackage package;
 
         internal readonly MenuCommand MenuItem;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandDotnetPack"/> class.
         /// Adds our command handlers for menu (commands must exist in the command table file)
@@ -114,11 +115,20 @@ namespace Coree.VisualStudio.DotnetToolbar
         private async Task StartDotNetProcessAsync()
         {
             //await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
+            DTE dte = (DTE)await ServiceProvider.GetServiceAsync(typeof(DTE)).ConfigureAwait(false);
             DTE2 dte2 = (DTE2)await ServiceProvider.GetServiceAsync(typeof(DTE)).ConfigureAwait(false);
             Window window = dte2.Windows.Item(EnvDTE.Constants.vsWindowKindOutput);
             window.Activate();
 
             SolutionConfiguration2 configuration = (SolutionConfiguration2)dte2.Solution.SolutionBuild.ActiveConfiguration;
+
+            var configurationx = (SolutionBuild2)dte2.Solution.SolutionBuild;
+ 
+
+
+            var solutionFullName = ((Solution2)dte2.Solution).FullName;
+            string slnfile = solutionFullName;
+            string slndir = System.IO.Path.GetDirectoryName(slnfile);
 
             var projectInfos = await Helper.GetProjectInfosAsync(this.package);
 
@@ -126,28 +136,25 @@ namespace Coree.VisualStudio.DotnetToolbar
 
             List<JoinableTask> _joinableTasks = new List<JoinableTask>();
 
-            foreach (var projectInfo in projectInfos)
-            {
-                var process = new System.Diagnostics.Process();
-                process.StartInfo.UseShellExecute = false;
-                process.StartInfo.CreateNoWindow = true;
-                process.StartInfo.FileName = "dotnet.exe";
-                process.StartInfo.Arguments = $@"pack ""{projectInfo.FullProjectFileName}"" --configuration {configuration.Name}";
-                process.StartInfo.WorkingDirectory = $@"{projectInfo.FullPath}";
-                process.StartInfo.RedirectStandardError = true;
-                process.StartInfo.RedirectStandardOutput = true;
-                await OutputTaskItemStringExExampleAsync("-------------------------------------------------------------------------------");
-                await OutputTaskItemStringExExampleAsync(process.StartInfo.GetProcessStartInfoCommandline());
-                await OutputTaskItemStringExExampleAsync("-------------------------------------------------------------------------------");
-                process.Start();
-                process.OutputDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await OutputTaskItemStringExExampleAsync(e.Data); } catch (Exception ex) { /* Handle the exception */ } }); _joinableTasks.Add(joinableTask); };
-                process.ErrorDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await OutputTaskItemStringExExampleAsync(e.Data); } catch (Exception ex) { /* Handle the exception */ } }); _joinableTasks.Add(joinableTask); };
-                process.Start();
-                process.BeginErrorReadLine();
-                process.BeginOutputReadLine();
-                process.WaitForExit();
-            }
-            
+            var process = new System.Diagnostics.Process();
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.CreateNoWindow = true;
+            process.StartInfo.FileName = "dotnet.exe";
+            process.StartInfo.Arguments = $@"pack ""{slnfile}"" --configuration {configuration.Name} --force";
+            process.StartInfo.WorkingDirectory = $@"{slndir}";
+            process.StartInfo.RedirectStandardError = true;
+            process.StartInfo.RedirectStandardOutput = true;
+            await OutputTaskItemStringExExampleAsync("-------------------------------------------------------------------------------");
+            await OutputTaskItemStringExExampleAsync(process.StartInfo.GetProcessStartInfoCommandline());
+            await OutputTaskItemStringExExampleAsync("-------------------------------------------------------------------------------");
+            process.Start();
+            process.OutputDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await OutputTaskItemStringExExampleAsync(e.Data); } catch (Exception ex) { /* Handle the exception */ } }); _joinableTasks.Add(joinableTask); };
+            process.ErrorDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await OutputTaskItemStringExExampleAsync(e.Data); } catch (Exception ex) { /* Handle the exception */ } }); _joinableTasks.Add(joinableTask); };
+            process.Start();
+            process.BeginErrorReadLine();
+            process.BeginOutputReadLine();
+            process.WaitForExit();
+
             await Task.WhenAll(_joinableTasks.Select(jt => jt.Task));
 
             await OutputTaskItemStringExExampleAsync("Done");

@@ -73,7 +73,7 @@ namespace Coree.VisualStudio.DotnetToolbar
         /// Initializes the singleton instance of the command.
         /// </summary>
         /// <param name="package">Owner package, not null.</param>
-        public static async Task InitializeAsync(AsyncPackage package)
+        public static async System.Threading.Tasks.Task InitializeAsync(AsyncPackage package)
         {
             // Switch to the main thread - the call to AddCommand in Command3's constructor requires
             // the UI thread.
@@ -99,13 +99,13 @@ namespace Coree.VisualStudio.DotnetToolbar
         /// </summary>
         /// <param name="sender">Event sender.</param>
         /// <param name="e">Event args.</param>
-        private async Task ExecuteAsync(object sender, EventArgs e)
+        private async System.Threading.Tasks.Task ExecuteAsync(object sender, EventArgs e)
         {
             CommandDotnetBuild.Instance.MenuItem.Enabled = false;
             CommandDotnetPack.Instance.MenuItem.Enabled = false;
             CommandDotnetPublish.Instance.MenuItem.Enabled = false;
 
-            Task myTask = Task.Run(() => StartDotNetProcessAsync());
+            System.Threading.Tasks.Task myTask = System.Threading.Tasks.Task.Run(() => StartDotNetProcessAsync());
             await myTask;
 
             CommandDotnetBuild.Instance.MenuItem.Enabled = true;
@@ -113,7 +113,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             CommandDotnetPublish.Instance.MenuItem.Enabled = true;
         }
 
-        private async Task StartDotNetProcessAsync()
+        private async System.Threading.Tasks.Task StartDotNetProcessAsync()
         {
             //await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
             DTE2 dte2 = (DTE2)await ServiceProvider.GetServiceAsync(typeof(DTE)).ConfigureAwait(false);
@@ -154,12 +154,12 @@ namespace Coree.VisualStudio.DotnetToolbar
                 }
             }
             
-            await Task.WhenAll(_joinableTasks.Select(jt => jt.Task));
+            await System.Threading.Tasks.Task.WhenAll(_joinableTasks.Select(jt => jt.Task));
 
             await OutputTaskItemStringExExampleAsync("Done");
         }
 
-        private async Task OutputTaskItemStringExExampleAsync(string buildMessage)
+        private async System.Threading.Tasks.Task OutputTaskItemStringExExampleAsync(string buildMessage)
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
             var dte2 = await package.GetServiceAsync(typeof(DTE)).ConfigureAwait(false) as DTE2;
@@ -176,25 +176,11 @@ namespace Coree.VisualStudio.DotnetToolbar
             }
         }
 
-        private void OutputTaskItemStringExExample(string buildMessage)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            var dte2 = package.GetService<DTE,DTE2>();
-            EnvDTE.OutputWindowPanes panes = dte2.ToolWindows.OutputWindow.OutputWindowPanes;
-            foreach (EnvDTE.OutputWindowPane pane in panes)
-            {
-                if (pane.Name.Contains("Build"))
-                {
-                    pane.OutputString(buildMessage + "\n");
-                    pane.Activate();
-                    return;
-                }
-            }
-        }
 
 
 
-        private async Task OutputClearAsync()
+
+        private async System.Threading.Tasks.Task OutputClearAsync()
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
             var dte2 = await package.GetServiceAsync(typeof(DTE)).ConfigureAwait(false) as DTE2;
