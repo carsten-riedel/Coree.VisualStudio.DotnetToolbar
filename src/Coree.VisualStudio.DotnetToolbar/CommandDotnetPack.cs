@@ -95,21 +95,18 @@ namespace Coree.VisualStudio.DotnetToolbar
 
         private async Task StartDotNetProcessAsync()
         {
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
-            DTE dte = (DTE)await ServiceProvider.GetServiceAsync(typeof(DTE)).ConfigureAwait(false);
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(Package.DisposalToken);
+
             DTE2 dte2 = (DTE2)await ServiceProvider.GetServiceAsync(typeof(DTE)).ConfigureAwait(false);
-            Window window = dte2.Windows.Item(EnvDTE.Constants.vsWindowKindOutput);
-            window.Activate();
 
-            SolutionConfiguration2 configuration = (SolutionConfiguration2)dte2.Solution.SolutionBuild.ActiveConfiguration;
+            await WindowActivateAsync(Constants.vsWindowKindOutput);
 
-            var configurationx = (SolutionBuild2)dte2.Solution.SolutionBuild;
-
-            var solutionFullName = ((Solution2)dte2.Solution).FullName;
-            string slnfile = solutionFullName;
+            var configuration = await GetSolutionActiveConfigurationAsync();
+            
+            string slnfile = await GetSolutionFileNameAsync();
             string slndir = System.IO.Path.GetDirectoryName(slnfile);
 
-            var projectInfos = await Helper.GetProjectInfosAsync(this.package);
+            var projectInfos = await Helper.GetProjectInfosAsync(this.Package);
 
             await OutputWriteLineAsync(null, true);
 

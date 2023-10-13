@@ -6,13 +6,14 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.IO.Packaging;
 using System.Linq;
+using System.Runtime.ConstrainedExecution;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Coree.VisualStudio.DotnetToolbar
 {
-    /*
-    public static class Class1
+  
+    public static class AsyncPackageExtensions
     {
         public static async Task WindowActivateAsync(this AsyncPackage package , string constants)
         {
@@ -42,7 +43,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             return (SolutionConfiguration2)solution.SolutionBuild.ActiveConfiguration;
         }
 
-        public static async Task OutputWriteLineAsync(this AsyncPackage package,string message)
+        public static async Task OutputWriteLineAsync(this AsyncPackage package,string message, bool clear = false)
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
             DTE2 dte2 = (DTE2)await package.GetServiceAsync(typeof(DTE)).ConfigureAwait(false);
@@ -59,7 +60,10 @@ namespace Coree.VisualStudio.DotnetToolbar
                     }
                     else
                     {
-                        pane.Clear();
+                        if (clear == true)
+                        {
+                            pane.Clear();
+                        }
                     }
 
                     return;
@@ -68,6 +72,6 @@ namespace Coree.VisualStudio.DotnetToolbar
         }
 
     }
-    */
+ 
  
 }

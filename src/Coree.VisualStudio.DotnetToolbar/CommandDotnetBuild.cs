@@ -97,7 +97,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             string slnfile = await GetSolutionFileNameAsync();
             string slndir = System.IO.Path.GetDirectoryName(slnfile);
 
-            var projectInfos = await Helper.GetProjectInfosAsync(this.package);
+            var projectInfos = await Helper.GetProjectInfosAsync(this.Package);
 
             await OutputWriteLineAsync(null, true);
 

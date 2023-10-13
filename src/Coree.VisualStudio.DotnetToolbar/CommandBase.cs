@@ -8,13 +8,13 @@ namespace Coree.VisualStudio.DotnetToolbar
 {
     public abstract class CommandBase
     {
-        public AsyncPackage package { get; set; }
+        public AsyncPackage Package { get; set; }
 
         public Microsoft.VisualStudio.Shell.IAsyncServiceProvider ServiceProvider
         {
             get
             {
-                return this.package;
+                return this.Package;
             }
         }
 
@@ -22,67 +22,36 @@ namespace Coree.VisualStudio.DotnetToolbar
 
         public CommandBase(AsyncPackage package, OleMenuCommandService commandService)
         {
-            this.package = package ?? throw new ArgumentNullException(nameof(package));
+            this.Package = package ?? throw new ArgumentNullException(nameof(package));
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
 
-            this.package = package;
+            this.Package = package;
             this.commandService = commandService;
         }
 
         public async Task WindowActivateAsync(string constants)
         {
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
-            DTE2 dte2 = (DTE2)await package.GetServiceAsync(typeof(DTE)).ConfigureAwait(false);
-            Window window = dte2.Windows.Item(constants);
-            window.Activate();
+            await Package.WindowActivateAsync(constants);
         }
 
         public async Task OutputWriteLineAsync(string message, bool clear = false)
         {
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
-            DTE2 dte2 = (DTE2)await package.GetServiceAsync(typeof(DTE)).ConfigureAwait(false);
-
-            EnvDTE.OutputWindowPanes panes = dte2.ToolWindows.OutputWindow.OutputWindowPanes;
-            foreach (EnvDTE.OutputWindowPane pane in panes)
-            {
-                if (pane.Name.Contains("Build"))
-                {
-                    if (message != null)
-                    {
-                        pane.OutputString(message + Environment.NewLine);
-                        pane.Activate();
-                    }
-                    else
-                    {
-                        if (clear == true)
-                        {
-                            pane.Clear();
-                        }
-                    }
-
-                    return;
-                }
-            }
+            await Package.OutputWriteLineAsync(message,clear);
         }
 
         public async Task<SolutionConfiguration2> GetSolutionActiveConfigurationAsync()
         {
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
-            var solution = await GetSolutionAsync();
-            return (SolutionConfiguration2)solution.SolutionBuild.ActiveConfiguration;
+            return await Package.GetSolutionActiveConfigurationAsync(); ;
         }
 
         public async Task<_Solution> GetSolutionAsync()
         {
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
-            DTE2 dte2 = (DTE2)await package.GetServiceAsync(typeof(DTE)).ConfigureAwait(false);
-            return (_Solution)dte2.Solution;
+            return await Package.GetSolutionAsync();
         }
 
         public async Task<string> GetSolutionFileNameAsync()
         {
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
-            return (await GetSolutionAsync()).FullName;
+            return await Package.GetSolutionFileNameAsync();
         }
     }
 }

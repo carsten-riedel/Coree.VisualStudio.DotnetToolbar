@@ -98,14 +98,14 @@ namespace Coree.VisualStudio.DotnetToolbar
 
         private async System.Threading.Tasks.Task StartDotNetProcessAsync()
         {
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(Package.DisposalToken);
             DTE2 dte2 = (DTE2)await ServiceProvider.GetServiceAsync(typeof(DTE)).ConfigureAwait(false);
 
             await WindowActivateAsync(Constants.vsWindowKindOutput);
 
             var configuration = await GetSolutionActiveConfigurationAsync();
 
-            var projectInfos = await Helper.GetProjectInfosAsync(this.package);
+            var projectInfos = await Helper.GetProjectInfosAsync(this.Package);
 
             await OutputWriteLineAsync(null, true);
 
