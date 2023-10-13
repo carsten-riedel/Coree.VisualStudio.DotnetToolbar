@@ -34,8 +34,8 @@
 		  <Menu guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuToolBar" type="Toolbar">
 			  <CommandFlag>DefaultDocked</CommandFlag>
 			  <Strings>
-				  <ButtonText>Coree.VisualStudio.DotnetToolbar</ButtonText>
-				  <CommandName>Coree.VisualStudio.DotnetToolbar</CommandName>
+				  <ButtonText>DotnetToolbar</ButtonText>
+				  <CommandName>DotnetToolbar</CommandName>
 			  </Strings>
 		  </Menu>
 	  </Menus>
@@ -45,9 +45,11 @@
          must be a menu. -->
     <Groups>
       <Group guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuGroup" priority="0x0600">
-		<Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuToolBar" />
+		    <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuToolBar" />
       </Group>
     </Groups>
+
+
 
     <!--Buttons section. -->
     <!--This section defines the elements the user can interact with, like a menu command or a button
@@ -63,28 +65,40 @@
       <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="Id" priority="0x0100" type="Button">
         <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuGroup" />
         <Icon guid="guidImages" id="pngBuild" />
-		<CommandFlag>IconAndText</CommandFlag>
+		      <CommandFlag>IconAndText</CommandFlag>
         <Strings>
           <ButtonText>dotnet build</ButtonText>
         </Strings>
       </Button>
-      <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="Command2Id" priority="0x0100" type="Button">
+      <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="Command2Id" priority="0x0101" type="Button">
         <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuGroup" />
         <Icon guid="guidImages" id="pngPack" />
-		<CommandFlag>IconAndText</CommandFlag>
+		    <CommandFlag>IconAndText</CommandFlag>
         <Strings>
           <ButtonText>dotnet pack</ButtonText>
         </Strings>
       </Button>
-      <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="Command3Id" priority="0x0100" type="Button">
+      
+      <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="Command3Id" priority="0x0102" type="Button">
         <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuGroup" />
         <Icon guid="guidImages" id="pngPublish" />
-		<CommandFlag>IconAndText</CommandFlag>
+		    <CommandFlag>IconAndText</CommandFlag>
         <Strings>
           <ButtonText>dotnet publish</ButtonText>
         </Strings>
       </Button>
+
     </Buttons>
+
+    <Combos>
+      <Combo guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="cmdidMyDropDownCombo" priority="0x0103" type="DropDownCombo" defaultWidth="200" idCommandList="cmdidMyDropDownComboGetList">
+        <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuGroup" />
+        <CommandFlag>IconAndText</CommandFlag>
+        <Strings>
+          <ButtonText>Dotnet:</ButtonText>
+        </Strings>
+      </Combo>
+    </Combos>
 
     <!--The bitmaps section is used to define the bitmaps that are used for the commands.-->
     <Bitmaps>
@@ -103,11 +117,14 @@
 
     <!-- This is the guid used to group the menu commands together -->
     <GuidSymbol name="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" value="{7303216a-a2cb-4519-b645-a34ae1380a78}">
-	  <IDSymbol name="MyMenuToolBar" value="0x1000" />
-	  <IDSymbol name="MyMenuGroup" value="0x1020" />
+      
+	    <IDSymbol name="MyMenuToolBar" value="0x1000" />
+	    <IDSymbol name="MyMenuGroup" value="0x1020" />
       <IDSymbol name="Id" value="4129" />
       <IDSymbol name="Command2Id" value="4130" />
       <IDSymbol name="Command3Id" value="4131" />
+      <IDSymbol name="cmdidMyDropDownCombo" value="4132"/>
+      <IDSymbol name="cmdidMyDropDownComboGetList" value="4133"/>
     </GuidSymbol>
 
     <GuidSymbol name="guidImages" value="{32797b29-ae82-4c7c-ae0e-12eb5435f414}">

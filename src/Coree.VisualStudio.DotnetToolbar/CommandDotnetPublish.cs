@@ -31,7 +31,7 @@ namespace Coree.VisualStudio.DotnetToolbar
         /// </summary>
         private readonly AsyncPackage package;
 
-        internal readonly MenuCommand menuItem;
+        internal readonly MenuCommand MenuItem;
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandDotnetPublish"/> class.
         /// Adds our command handlers for menu (commands must exist in the command table file)
@@ -43,10 +43,10 @@ namespace Coree.VisualStudio.DotnetToolbar
             this.package = package ?? throw new ArgumentNullException(nameof(package));
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
 
-            var menuCommandID = new CommandID(CommandSet, CommandId);
-            menuItem = new MenuCommand((s, e) => ExecuteAsync(s, e), menuCommandID);
+            CommandID menuCommandID = new CommandID(CommandSet, CommandId);
+            MenuItem = new MenuCommand((s, e) => ExecuteAsync(s, e), menuCommandID);
 
-            commandService.AddCommand(menuItem);
+            commandService.AddCommand(MenuItem);
         }
 
         /// <summary>
@@ -101,16 +101,16 @@ namespace Coree.VisualStudio.DotnetToolbar
         /// <param name="e">Event args.</param>
         private async Task ExecuteAsync(object sender, EventArgs e)
         {
-            CommandDotnetBuild.Instance.menuItem.Enabled = false;
-            CommandDotnetPack.Instance.menuItem.Enabled = false;
-            CommandDotnetPublish.Instance.menuItem.Enabled = false;
+            CommandDotnetBuild.Instance.MenuItem.Enabled = false;
+            CommandDotnetPack.Instance.MenuItem.Enabled = false;
+            CommandDotnetPublish.Instance.MenuItem.Enabled = false;
 
             Task myTask = Task.Run(() => StartDotNetProcessAsync());
             await myTask;
 
-            CommandDotnetBuild.Instance.menuItem.Enabled = true;
-            CommandDotnetPack.Instance.menuItem.Enabled = true;
-            CommandDotnetPublish.Instance.menuItem.Enabled = true;
+            CommandDotnetBuild.Instance.MenuItem.Enabled = true;
+            CommandDotnetPack.Instance.MenuItem.Enabled = true;
+            CommandDotnetPublish.Instance.MenuItem.Enabled = true;
         }
 
         private async Task StartDotNetProcessAsync()
