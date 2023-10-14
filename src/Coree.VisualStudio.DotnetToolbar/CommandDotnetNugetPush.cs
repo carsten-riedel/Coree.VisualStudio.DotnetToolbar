@@ -5,20 +5,22 @@ using Microsoft.VisualStudio.Threading;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
+using System.IO;
 using System.Linq;
-using Task = System.Threading.Tasks.Task;
+using System.Threading.Tasks;
+
 
 namespace Coree.VisualStudio.DotnetToolbar
 {
     /// <summary>
     /// Command handler
     /// </summary>
-    internal sealed class CommandDotnetPack : CommandBase
+    internal sealed class CommandDotnetNugetPush : CommandBase
     {
         /// <summary>
         /// Command ID.
         /// </summary>
-        public const int CommandId = 4130;
+        public const int CommandId = 4134;
 
         /// <summary>
         /// Command menu group (command set GUID).
@@ -26,50 +28,43 @@ namespace Coree.VisualStudio.DotnetToolbar
         public static readonly Guid CommandSet = new Guid("7303216a-a2cb-4519-b645-a34ae1380a78");
 
         internal readonly MenuCommand MenuItem;
-
         /// <summary>
-        /// Initializes a new instance of the <see cref="CommandDotnetPack"/> class.
+        /// Initializes a new instance of the <see cref="CommandDotnetPublish"/> class.
         /// Adds our command handlers for menu (commands must exist in the command table file)
         /// </summary>
         /// <param name="package">Owner package, not null.</param>
         /// <param name="commandService">Command service to add command to, not null.</param>
-        private CommandDotnetPack(AsyncPackage package, OleMenuCommandService commandService) : base(package, commandService)
+        private CommandDotnetNugetPush(AsyncPackage package, OleMenuCommandService commandService) : base(package,commandService)
         {
-            var menuCommandID = new CommandID(CommandSet, CommandId);
+
+            CommandID menuCommandID = new CommandID(CommandSet, CommandId);
             MenuItem = new MenuCommand((s, e) => ExecuteAsync(s, e), menuCommandID);
+
             commandService.AddCommand(MenuItem);
         }
 
         /// <summary>
         /// Gets the instance of the command.
         /// </summary>
-        public static CommandDotnetPack Instance
+        public static CommandDotnetNugetPush Instance
         {
             get;
             private set;
         }
 
+
         /// <summary>
         /// Initializes the singleton instance of the command.
         /// </summary>
         /// <param name="package">Owner package, not null.</param>
-        public static async Task InitializeAsync(AsyncPackage package)
+        public static async System.Threading.Tasks.Task InitializeAsync(AsyncPackage package)
         {
-            // Switch to the main thread - the call to AddCommand in Command2's constructor requires
+            // Switch to the main thread - the call to AddCommand in Command3's constructor requires
             // the UI thread.
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
 
             OleMenuCommandService commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
-            Instance = new CommandDotnetPack(package, commandService);
-        }
-
-        private class ProjectInfo
-        {
-            public string FullProjectFileName { get; set; } = String.Empty;
-            public string FullPath { get; set; } = String.Empty;
-            public string TargetFrameworks { get; set; } = String.Empty;
-            public List<string> TargetFrameworksList { get; set; } = new List<string>();
-            public string FriendlyTargetFramework { get; set; } = String.Empty;
+            Instance = new CommandDotnetNugetPush(package, commandService);
         }
 
         /// <summary>
@@ -79,14 +74,14 @@ namespace Coree.VisualStudio.DotnetToolbar
         /// </summary>
         /// <param name="sender">Event sender.</param>
         /// <param name="e">Event args.</param>
-        private async Task ExecuteAsync(object sender, EventArgs e)
+        private async System.Threading.Tasks.Task ExecuteAsync(object sender, EventArgs e)
         {
             CommandDotnetBuild.Instance.MenuItem.Enabled = false;
             CommandDotnetPack.Instance.MenuItem.Enabled = false;
             CommandDotnetPublish.Instance.MenuItem.Enabled = false;
             CommandDotnetNugetPush.Instance.MenuItem.Enabled = false;
 
-            Task myTask = Task.Run(() => StartDotNetProcessAsync());
+            System.Threading.Tasks.Task myTask = System.Threading.Tasks.Task.Run(() => StartDotNetProcessAsync());
             await myTask;
 
             CommandDotnetBuild.Instance.MenuItem.Enabled = true;
@@ -95,18 +90,19 @@ namespace Coree.VisualStudio.DotnetToolbar
             CommandDotnetNugetPush.Instance.MenuItem.Enabled = true;
         }
 
-        private async Task StartDotNetProcessAsync()
+        private async System.Threading.Tasks.Task StartDotNetProcessAsync()
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(Package.DisposalToken);
-
             DTE2 dte2 = (DTE2)await ServiceProvider.GetServiceAsync(typeof(DTE)).ConfigureAwait(false);
 
             await WindowActivateAsync(Constants.vsWindowKindOutput);
 
             var configuration = await GetSolutionActiveConfigurationAsync();
-            
-            string slnfile = await GetSolutionFileNameAsync();
-            string slndir = System.IO.Path.GetDirectoryName(slnfile);
+            var solinfo = await GetSolutionAsync();
+            var solinfox = await GetSolutionPropertiesAsync();
+
+
+
 
             var projectInfos = await Helper.GetProjectInfosAsync(this.Package);
 
@@ -114,15 +110,37 @@ namespace Coree.VisualStudio.DotnetToolbar
 
             List<JoinableTask> _joinableTasks = new List<JoinableTask>();
 
+            NugetPushDialog nugetPushDialog = new NugetPushDialog(Package.UserLocalDataPath, solinfo.FullName, solinfox["Name"], (string)solinfo.Globals["SolutionGuid"]);
+            nugetPushDialog.ShowDialog();
+
+            if (nugetPushDialog.nugetPushDialogResult == NugetPushDialog.NugetPushDialogResult.Cancel)
+            {
+                await OutputWriteLineAsync("dotnet nuget push closed.");
+                return;
+            }
+
+            if (nugetPushDialog.nugetPushDialogResult == NugetPushDialog.NugetPushDialogResult.Close)
+            {
+                await OutputWriteLineAsync("dotnet nuget push canceled.");
+                return;
+            }
+
+            if (String.IsNullOrEmpty(nugetPushDialog.PackageLocation))
+            {
+                await OutputWriteLineAsync("dotnet nuget push canceled. No package specified.");
+                return;
+            }
+
+            
+
             var process = new System.Diagnostics.Process();
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.CreateNoWindow = true;
             process.StartInfo.FileName = "dotnet.exe";
-            process.StartInfo.Arguments = $@"pack ""{slnfile}"" --configuration {configuration.Name} --force";
-            process.StartInfo.WorkingDirectory = $@"{slndir}";
+            process.StartInfo.Arguments = $@"nuget push ""{nugetPushDialog.SolutionDir}{Path.DirectorySeparatorChar}{nugetPushDialog.PackageLocation}"" --api-key {nugetPushDialog.ApiKey} --source {nugetPushDialog.Source} --skip-duplicate";
+            process.StartInfo.WorkingDirectory = $@"{String.Empty}";
             process.StartInfo.RedirectStandardError = true;
             process.StartInfo.RedirectStandardOutput = true;
-
             await OutputWriteLineAsync("-------------------------------------------------------------------------------");
             await OutputWriteLineAsync(process.StartInfo.GetProcessStartInfoCommandline());
             await OutputWriteLineAsync("-------------------------------------------------------------------------------");
@@ -133,10 +151,12 @@ namespace Coree.VisualStudio.DotnetToolbar
             process.BeginErrorReadLine();
             process.BeginOutputReadLine();
             process.WaitForExit();
-
-            await Task.WhenAll(_joinableTasks.Select(jt => jt.Task));
+ 
+            
+            await System.Threading.Tasks.Task.WhenAll(_joinableTasks.Select(jt => jt.Task));
 
             await OutputWriteLineAsync("Done");
         }
+
     }
 }

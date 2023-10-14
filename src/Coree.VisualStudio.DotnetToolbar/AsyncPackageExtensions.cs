@@ -3,6 +3,7 @@ using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Dynamic;
 using System.IO.Packaging;
 using System.Linq;
@@ -71,6 +72,29 @@ namespace Coree.VisualStudio.DotnetToolbar
             }
         }
 
+        public static async Task<Dictionary<string, string>> GetSolutionPropertiesAsync(this AsyncPackage package)
+        {
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
+            DTE2 dte2 = (DTE2)await package.GetServiceAsync(typeof(DTE)).ConfigureAwait(false);
+            Dictionary<string,string> dict = new Dictionary<string,string>();
+            Properties properties = dte2.Solution.Properties;
+            foreach (Property item in properties)
+            {
+                try
+                {
+                    dict.Add(item.Name, item.Value.ToString());
+                    Debug.WriteLine($@"{item.Name},{item.Value}");
+                }
+                catch (Exception)
+                {
+                    Debug.WriteLine($@"{item.Name}");
+                }
+
+            }
+            return dict;
+        }
+
+       
     }
  
  

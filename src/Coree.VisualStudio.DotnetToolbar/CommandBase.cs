@@ -2,6 +2,7 @@
 using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Coree.VisualStudio.DotnetToolbar
@@ -52,6 +53,11 @@ namespace Coree.VisualStudio.DotnetToolbar
         public async Task<string> GetSolutionFileNameAsync()
         {
             return await Package.GetSolutionFileNameAsync();
+        }
+
+        public async Task<Dictionary<string, string>> GetSolutionPropertiesAsync()
+        {
+            return await Package.GetSolutionPropertiesAsync();
         }
     }
 }

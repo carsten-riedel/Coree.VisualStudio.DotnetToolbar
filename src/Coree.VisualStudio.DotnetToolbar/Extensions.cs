@@ -30,7 +30,7 @@ namespace Coree.VisualStudio.DotnetToolbar
 
             Projects solProjects = dte2.Solution.Projects;
             //string solutionDir = System.IO.Path.GetDirectoryName(dte2.Solution.FullName);
-
+            
             foreach (Project item in solProjects)
             {
 

@@ -66,15 +66,6 @@ namespace Coree.VisualStudio.DotnetToolbar
             Instance = new CommandDotnetPublish(package, commandService);
         }
 
-        private class ProjectInfo
-        {
-            public string FullProjectFileName { get; set; } = String.Empty;
-            public string FullPath { get; set; } = String.Empty;
-            public string TargetFrameworks { get; set; } = String.Empty;
-            public List<string> TargetFrameworksList { get; set; } = new List<string>();
-            public string FriendlyTargetFramework { get; set; } = String.Empty;
-        }
-
         /// <summary>
         /// This function is the callback used to execute the command when the menu item is clicked.
         /// See the constructor to see how the menu item is associated with this function using
@@ -87,6 +78,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             CommandDotnetBuild.Instance.MenuItem.Enabled = false;
             CommandDotnetPack.Instance.MenuItem.Enabled = false;
             CommandDotnetPublish.Instance.MenuItem.Enabled = false;
+            CommandDotnetNugetPush.Instance.MenuItem.Enabled = false;
 
             System.Threading.Tasks.Task myTask = System.Threading.Tasks.Task.Run(() => StartDotNetProcessAsync());
             await myTask;
@@ -94,6 +86,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             CommandDotnetBuild.Instance.MenuItem.Enabled = true;
             CommandDotnetPack.Instance.MenuItem.Enabled = true;
             CommandDotnetPublish.Instance.MenuItem.Enabled = true;
+            CommandDotnetNugetPush.Instance.MenuItem.Enabled = true;
         }
 
         private async System.Threading.Tasks.Task StartDotNetProcessAsync()
