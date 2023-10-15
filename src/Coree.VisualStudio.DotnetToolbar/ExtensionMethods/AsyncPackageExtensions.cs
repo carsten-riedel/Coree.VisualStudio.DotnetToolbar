@@ -4,7 +4,6 @@ using Microsoft.VisualStudio.Shell;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace Coree.VisualStudio.DotnetToolbar
@@ -15,15 +14,22 @@ namespace Coree.VisualStudio.DotnetToolbar
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
             DTE2 dte2 = (DTE2)await package.GetServiceAsync(typeof(DTE)).ConfigureAwait(false);
-            Window window = dte2.Windows.Item(constants);
-            window.Activate();
+            if (dte2 != null)
+            {
+                Window window = dte2.Windows.Item(constants);
+                window.Activate();
+            }
         }
 
         public static async Task<_Solution> GetSolutionAsync(this AsyncPackage package)
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
             DTE2 dte2 = (DTE2)await package.GetServiceAsync(typeof(DTE)).ConfigureAwait(false);
-            return (_Solution)dte2.Solution;
+            if (dte2 != null)
+            {
+                return (_Solution)dte2.Solution;
+            }
+            return null;
         }
 
         public static async Task<string> GetSolutionFileNameAsync(this AsyncPackage package)
@@ -43,26 +49,28 @@ namespace Coree.VisualStudio.DotnetToolbar
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
             DTE2 dte2 = (DTE2)await package.GetServiceAsync(typeof(DTE)).ConfigureAwait(false);
-
-            EnvDTE.OutputWindowPanes panes = dte2.ToolWindows.OutputWindow.OutputWindowPanes;
-            foreach (EnvDTE.OutputWindowPane pane in panes)
+            if (dte2 != null)
             {
-                if (pane.Name.Contains("Build"))
+                EnvDTE.OutputWindowPanes panes = dte2.ToolWindows.OutputWindow.OutputWindowPanes;
+                foreach (EnvDTE.OutputWindowPane pane in panes)
                 {
-                    if (message != null)
+                    if (pane.Name.Contains("Build"))
                     {
-                        pane.OutputString(message + Environment.NewLine);
-                        pane.Activate();
-                    }
-                    else
-                    {
-                        if (clear == true)
+                        if (message != null)
                         {
-                            pane.Clear();
+                            pane.OutputString(message + Environment.NewLine);
+                            pane.Activate();
                         }
-                    }
+                        else
+                        {
+                            if (clear == true)
+                            {
+                                pane.Clear();
+                            }
+                        }
 
-                    return;
+                        return;
+                    }
                 }
             }
         }
@@ -75,20 +83,24 @@ namespace Coree.VisualStudio.DotnetToolbar
 
         public static async Task<Dictionary<string, string>> GetSolutionPropertiesAsync(this AsyncPackage package)
         {
+            Dictionary<string, string> dict = new Dictionary<string, string>();
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
             DTE2 dte2 = (DTE2)await package.GetServiceAsync(typeof(DTE)).ConfigureAwait(false);
-            Dictionary<string, string> dict = new Dictionary<string, string>();
-            Properties properties = dte2.Solution.Properties;
-            foreach (Property item in properties)
+            if (dte2 != null)
             {
-                try
+                Properties properties = dte2.Solution.Properties;
+                foreach (Property item in properties)
                 {
-                    dict.Add(item.Name, item.Value.ToString());
+                    try
+                    {
+                        dict.Add(item.Name, item.Value.ToString());
+                    }
+                    catch (Exception)
+                    {
+                        Debug.WriteLine($@"{item.Name}");
+                    }
                 }
-                catch (Exception)
-                {
-                    Debug.WriteLine($@"{item.Name}");
-                }
+                return dict;
             }
             return dict;
         }
@@ -104,40 +116,44 @@ namespace Coree.VisualStudio.DotnetToolbar
 
         public static async Task<List<ProjectInfo>> GetProjectInfosAsync(this AsyncPackage asyncPackage)
         {
+            List<ProjectInfo> projectInfos = new List<ProjectInfo>();
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(asyncPackage.DisposalToken);
             var dte2 = await asyncPackage.GetServiceAsync(typeof(DTE)).ConfigureAwait(false) as DTE2;
 
-            List<ProjectInfo> projectInfos = new List<ProjectInfo>();
-
-            Projects solProjects = dte2.Solution.Projects;
-            //string solutionDir = System.IO.Path.GetDirectoryName(dte2.Solution.FullName);
-
-            foreach (Project item in solProjects)
+            if (dte2 != null)
             {
-                var ProjectInfoItem = new ProjectInfo()
-                {
-                    FullProjectFileName = (string)item.Properties.Item("FullProjectFileName").Value,
-                    TargetFrameworks = (string)item.Properties.Item("TargetFrameworks").Value,
-                    FriendlyTargetFramework = (string)item.Properties.Item("FriendlyTargetFramework").Value,
-                    FullPath = (string)item.Properties.Item("FullPath").Value
-                };
+                Projects solProjects = dte2.Solution.Projects;
+                //string solutionDir = System.IO.Path.GetDirectoryName(dte2.Solution.FullName);
 
-                if (ProjectInfoItem.TargetFrameworks != String.Empty)
+                foreach (Project item in solProjects)
                 {
-                    ProjectInfoItem.TargetFrameworksList.AddRange(ProjectInfoItem.TargetFrameworks.Split(';'));
+                    var ProjectInfoItem = new ProjectInfo()
+                    {
+                        FullProjectFileName = (string)item.Properties.Item("FullProjectFileName").Value,
+                        TargetFrameworks = (string)item.Properties.Item("TargetFrameworks").Value,
+                        FriendlyTargetFramework = (string)item.Properties.Item("FriendlyTargetFramework").Value,
+                        FullPath = (string)item.Properties.Item("FullPath").Value
+                    };
+
+                    if (ProjectInfoItem.TargetFrameworks != String.Empty)
+                    {
+                        ProjectInfoItem.TargetFrameworksList.AddRange(ProjectInfoItem.TargetFrameworks.Split(';'));
+                    }
+
+                    if (ProjectInfoItem.TargetFrameworksList.Count == 0)
+                    {
+                        ProjectInfoItem.TargetFrameworksList.Add(ProjectInfoItem.FriendlyTargetFramework);
+                    }
+
+                    projectInfos.Add(ProjectInfoItem);
+
+                    foreach (Property items in item.Properties)
+                    {
+                        Debug.WriteLine($@"{items.Name},{items.Value}");
+                    }
                 }
 
-                if (ProjectInfoItem.TargetFrameworksList.Count == 0)
-                {
-                    ProjectInfoItem.TargetFrameworksList.Add(ProjectInfoItem.FriendlyTargetFramework);
-                }
-
-                projectInfos.Add(ProjectInfoItem);
-
-                foreach (Property items in item.Properties)
-                {
-                    Debug.WriteLine($@"{items.Name},{items.Value}");
-                }
+                return projectInfos;
             }
 
             return projectInfos;

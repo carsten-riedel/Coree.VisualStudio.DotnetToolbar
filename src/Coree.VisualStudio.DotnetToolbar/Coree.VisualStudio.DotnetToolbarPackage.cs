@@ -1,7 +1,6 @@
 ﻿using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
 using System;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -58,11 +57,15 @@ namespace Coree.VisualStudio.DotnetToolbar
             await Coree.VisualStudio.DotnetToolbar.CommandDropDown.InitializeAsync(this);
             await Coree.VisualStudio.DotnetToolbar.CommandDotnetNugetPush.InitializeAsync(this);
             dte2 = (DTE2)await GetServiceAsync(typeof(DTE)).ConfigureAwait(false);
-            WindowEvents windowEvent = dte2.Events.WindowEvents;
-            EnvDTE.SolutionEvents solutionEvent = dte2.Events.SolutionEvents;
-            //windowEvent.WindowCreated += (Window window) => { _ = Task.Run(() => WindowEvent_WindowCreatedAsync(window)); };
-            solutionEvent.Opened += () => { _ = Task.Run(() => SolutionEvent_OpenedAsync()); };
-            solutionEvent.BeforeClosing += () => { _ = Task.Run(() => SolutionEvent_BeforeClosingAsync()); };
+
+            if (dte2 != null)
+            {
+                WindowEvents windowEvent = dte2.Events.WindowEvents;
+                EnvDTE.SolutionEvents solutionEvent = dte2.Events.SolutionEvents;
+                //windowEvent.WindowCreated += (Window window) => { _ = Task.Run(() => WindowEvent_WindowCreatedAsync(window)); };
+                solutionEvent.Opened += () => { _ = Task.Run(() => SolutionEvent_OpenedAsync()); };
+                solutionEvent.BeforeClosing += () => { _ = Task.Run(() => SolutionEvent_BeforeClosingAsync()); };
+            }
         }
 
         private async Task SolutionEvent_BeforeClosingAsync()
@@ -96,5 +99,4 @@ namespace Coree.VisualStudio.DotnetToolbar
             base.Dispose(disposing);
         }
     }
-
 }

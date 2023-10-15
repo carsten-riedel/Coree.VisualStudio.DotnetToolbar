@@ -4,6 +4,7 @@ using Microsoft.VisualStudio.Threading;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
+using System.Diagnostics;
 using System.Linq;
 using Task = System.Threading.Tasks.Task;
 
@@ -36,7 +37,11 @@ namespace Coree.VisualStudio.DotnetToolbar
         {
             var menuCommandID = new CommandID(CommandSet, CommandId);
 
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+#pragma warning disable VSTHRD110 // Observe result of async calls
             MenuItem = new MenuCommand((s, e) => ExecuteAsync(s, e), menuCommandID);
+#pragma warning restore VSTHRD110 // Observe result of async calls
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
             commandService.AddCommand(MenuItem);
         }
@@ -113,8 +118,8 @@ namespace Coree.VisualStudio.DotnetToolbar
             await OutputWriteLineAsync("-------------------------------------------------------------------------------");
             process.Start();
 
-            process.OutputDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await OutputWriteLineAsync(e.Data); } catch (Exception ex) { /* Handle the exception */ } }); _joinableTasks.Add(joinableTask); };
-            process.ErrorDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await OutputWriteLineAsync(e.Data); } catch (Exception ex) { /* Handle the exception */ } }); _joinableTasks.Add(joinableTask); };
+            process.OutputDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await OutputWriteLineAsync(e.Data); } catch (Exception ex) { Debug.WriteLine(ex.Message); } }); _joinableTasks.Add(joinableTask); };
+            process.ErrorDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await OutputWriteLineAsync(e.Data); } catch (Exception ex) { Debug.WriteLine(ex.Message); } }); _joinableTasks.Add(joinableTask); };
 
             process.Start();
             process.BeginErrorReadLine();

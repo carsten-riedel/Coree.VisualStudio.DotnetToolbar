@@ -39,12 +39,14 @@ namespace Coree.VisualStudio.DotnetToolbar
             commandService.AddCommand(menuMyDropDownComboGetListCommand);
 
             CommandID menuMyDropDownComboCommandID = new CommandID(CommandSet, cmdidMyDropDownCombo);
-            MenuCommand menuMyDropDownComboCommand = new OleMenuCommand(new EventHandler(OnMenuMyDropDownCombo), menuMyDropDownComboCommandID);
-            menuMyDropDownComboCommand.Enabled = false;
+            MenuCommand menuMyDropDownComboCommand = new OleMenuCommand(new EventHandler(OnMenuMyDropDownCombo), menuMyDropDownComboCommandID)
+            {
+                Enabled = false
+            };
             commandService.AddCommand(menuMyDropDownComboCommand);
         }
 
-        private string[] dropDownComboChoices = { "build", "pack", "publish" };
+        private readonly string[] dropDownComboChoices = { "build", "pack", "publish" };
         private string currentDropDownComboChoice = "build";
 
         private void OnMenuMyDropDownComboGetList(object sender, EventArgs e)
