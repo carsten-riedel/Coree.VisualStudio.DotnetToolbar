@@ -37,11 +37,7 @@ namespace Coree.VisualStudio.DotnetToolbar
         public const string PackageGuidString = "863aef23-089f-44d7-ba5c-e509e35cd199";
 
         private DTE2 dte2;
-        private CancellationToken cancellationToken;
-        private IVsSolution _solution;
-        private uint _hSolutionEvents = uint.MaxValue;
-
-        #region Package Members
+        //private CancellationToken cancellationToken;
 
         /// <summary>
         /// Initialization of the package; this method is called right after the package is sited, so this is the place
@@ -52,7 +48,7 @@ namespace Coree.VisualStudio.DotnetToolbar
         /// <returns>A task representing the async work of package initialization, or an already completed task if there is none. Do not return null from this method.</returns>
         protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
         {
-            this.cancellationToken = cancellationToken;
+            //this.cancellationToken = cancellationToken;
             // When initialized asynchronously, the current thread may be a background thread at this point.
             // Do any initialization that requires the UI thread after switching to the UI thread.
             await this.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
@@ -64,7 +60,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             dte2 = (DTE2)await GetServiceAsync(typeof(DTE)).ConfigureAwait(false);
             WindowEvents windowEvent = dte2.Events.WindowEvents;
             EnvDTE.SolutionEvents solutionEvent = dte2.Events.SolutionEvents;
-            windowEvent.WindowCreated += (Window window) => { _ = Task.Run(() => WindowEvent_WindowCreatedAsync(window)); };
+            //windowEvent.WindowCreated += (Window window) => { _ = Task.Run(() => WindowEvent_WindowCreatedAsync(window)); };
             solutionEvent.Opened += () => { _ = Task.Run(() => SolutionEvent_OpenedAsync()); };
             solutionEvent.BeforeClosing += () => { _ = Task.Run(() => SolutionEvent_BeforeClosingAsync()); };
         }
@@ -75,7 +71,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             CommandDotnetPack.Instance.MenuItem.Enabled = false;
             CommandDotnetPublish.Instance.MenuItem.Enabled = false;
             CommandDotnetNugetPush.Instance.MenuItem.Enabled = false;
-            await Task.Run(async () => await OutputAsync("DotnetToolbar disabled."));
+            await Task.Run(async () => await this.WindowOutputWriteLineAsync("DotnetToolbar disabled."));
         }
 
         private async Task SolutionEvent_OpenedAsync()
@@ -85,38 +81,20 @@ namespace Coree.VisualStudio.DotnetToolbar
             CommandDotnetPublish.Instance.MenuItem.Enabled = true;
             CommandDotnetNugetPush.Instance.MenuItem.Enabled = true;
 
-            await Task.Run(async () => await OutputAsync("DotnetToolbar enabled."));
+            await Task.Run(async () => await this.WindowOutputWriteLineAsync("DotnetToolbar enabled."));
         }
 
+        /*
         private async Task WindowEvent_WindowCreatedAsync(EnvDTE.Window window)
         {
             //await Task.Run(async () => await OutputAsync("WindowCreated."));
         }
+        */
 
-        protected override async void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
         }
-
-        private async Task OutputAsync(string buildMessage)
-        {
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
-
-            Window window = dte2.Windows.Item(EnvDTE.Constants.vsWindowKindOutput);
-            window.Activate();
-
-            EnvDTE.OutputWindowPanes panes = dte2.ToolWindows.OutputWindow.OutputWindowPanes;
-            foreach (EnvDTE.OutputWindowPane pane in panes)
-            {
-                if (pane.Name.Contains("Build"))
-                {
-                    pane.OutputString(buildMessage + "\n");
-                    pane.Activate();
-                    return;
-                }
-            }
-        }
     }
 
-    #endregion Package Members
 }

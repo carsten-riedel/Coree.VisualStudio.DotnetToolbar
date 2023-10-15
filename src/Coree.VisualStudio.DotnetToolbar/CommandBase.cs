@@ -20,7 +20,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             }
         }
 
-        public OleMenuCommandService commandService { get; set; }
+        public OleMenuCommandService CommandService { get; set; }
 
         public CommandBase(AsyncPackage package, OleMenuCommandService commandService)
         {
@@ -28,7 +28,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
 
             this.Package = package;
-            this.commandService = commandService;
+            this.CommandService = commandService;
         }
 
         public async Task WindowActivateAsync(string constants)

@@ -4,6 +4,7 @@ using Microsoft.VisualStudio.Shell;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace Coree.VisualStudio.DotnetToolbar
@@ -64,6 +65,12 @@ namespace Coree.VisualStudio.DotnetToolbar
                     return;
                 }
             }
+        }
+
+        public static async Task WindowOutputWriteLineAsync(this AsyncPackage package, string message, bool clear = false)
+        {
+            await package.WindowActivateAsync(Constants.vsWindowKindOutput);
+            await package.OutputWriteLineAsync(message, clear);
         }
 
         public static async Task<Dictionary<string, string>> GetSolutionPropertiesAsync(this AsyncPackage package)
