@@ -143,8 +143,5 @@ namespace Coree.VisualStudio.DotnetToolbar
             OleMenuCommandService commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
             Instance = new CommandDropDown(package, commandService);
         }
-
-
-
     }
 }

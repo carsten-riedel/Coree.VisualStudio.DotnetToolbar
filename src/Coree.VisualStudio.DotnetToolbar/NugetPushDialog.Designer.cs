@@ -56,7 +56,7 @@
             this.listBoxSource.Location = new System.Drawing.Point(15, 25);
             this.listBoxSource.Name = "listBoxSource";
             this.listBoxSource.ScrollAlwaysVisible = true;
-            this.listBoxSource.Size = new System.Drawing.Size(330, 56);
+            this.listBoxSource.Size = new System.Drawing.Size(379, 56);
             this.listBoxSource.TabIndex = 1;
             this.listBoxSource.SelectedIndexChanged += new System.EventHandler(this.listBoxSource_SelectedIndexChanged);
             // 
@@ -66,7 +66,7 @@
             this.listBoxNupkg.Location = new System.Drawing.Point(15, 100);
             this.listBoxNupkg.Name = "listBoxNupkg";
             this.listBoxNupkg.ScrollAlwaysVisible = true;
-            this.listBoxNupkg.Size = new System.Drawing.Size(330, 56);
+            this.listBoxNupkg.Size = new System.Drawing.Size(379, 56);
             this.listBoxNupkg.TabIndex = 2;
             this.listBoxNupkg.SelectedIndexChanged += new System.EventHandler(this.listBoxNupkg_SelectedIndexChanged);
             // 
@@ -83,7 +83,7 @@
             // 
             this.textBoxApiKey.Location = new System.Drawing.Point(15, 175);
             this.textBoxApiKey.Name = "textBoxApiKey";
-            this.textBoxApiKey.Size = new System.Drawing.Size(330, 20);
+            this.textBoxApiKey.Size = new System.Drawing.Size(379, 20);
             this.textBoxApiKey.TabIndex = 4;
             // 
             // label3
@@ -97,9 +97,9 @@
             // 
             // buttonPush
             // 
-            this.buttonPush.Location = new System.Drawing.Point(189, 201);
+            this.buttonPush.Location = new System.Drawing.Point(198, 201);
             this.buttonPush.Name = "buttonPush";
-            this.buttonPush.Size = new System.Drawing.Size(75, 23);
+            this.buttonPush.Size = new System.Drawing.Size(95, 23);
             this.buttonPush.TabIndex = 6;
             this.buttonPush.Text = "Push";
             this.buttonPush.UseVisualStyleBackColor = true;
@@ -107,9 +107,9 @@
             // 
             // buttonCancel
             // 
-            this.buttonCancel.Location = new System.Drawing.Point(270, 201);
+            this.buttonCancel.Location = new System.Drawing.Point(299, 201);
             this.buttonCancel.Name = "buttonCancel";
-            this.buttonCancel.Size = new System.Drawing.Size(75, 23);
+            this.buttonCancel.Size = new System.Drawing.Size(95, 23);
             this.buttonCancel.TabIndex = 7;
             this.buttonCancel.Text = "Cancel";
             this.buttonCancel.UseVisualStyleBackColor = true;
@@ -119,7 +119,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(355, 235);
+            this.ClientSize = new System.Drawing.Size(406, 235);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonPush);
             this.Controls.Add(this.label3);

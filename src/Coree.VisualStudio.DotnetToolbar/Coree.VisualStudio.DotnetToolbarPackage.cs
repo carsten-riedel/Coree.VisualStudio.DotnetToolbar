@@ -9,8 +9,10 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using Task = System.Threading.Tasks.Task;
 using EnvDTE80;
+using System.Linq;
 using System.IO.Packaging;
 using Microsoft.VisualStudio.Shell.Events;
+using Microsoft.VisualStudio.CommandBars;
 
 namespace Coree.VisualStudio.DotnetToolbar
 {
@@ -34,7 +36,7 @@ namespace Coree.VisualStudio.DotnetToolbar
     [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
     [Guid(PackageGuidString)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
-    public sealed class CoreeVisualStudioDotnetToolbarPackage : AsyncPackage, IVsSolutionEvents
+    public sealed class CoreeVisualStudioDotnetToolbarPackage : AsyncPackage
     {
         /// <summary>
         /// Coree.VisualStudio.DotnetToolbarPackage GUID string.
@@ -67,103 +69,45 @@ namespace Coree.VisualStudio.DotnetToolbar
             await Coree.VisualStudio.DotnetToolbar.CommandDropDown.InitializeAsync(this);
             await Coree.VisualStudio.DotnetToolbar.CommandDotnetNugetPush.InitializeAsync(this);
             dte2 = (DTE2)await GetServiceAsync(typeof(DTE)).ConfigureAwait(false);
-            await AdviseSolutionEventsAsync(cancellationToken);
+            WindowEvents windowEvent = dte2.Events.WindowEvents;
+            EnvDTE.SolutionEvents solutionEvent = dte2.Events.SolutionEvents;
+            windowEvent.WindowCreated += (Window window) => { _ = Task.Run(() => WindowEvent_WindowCreatedAsync(window)); };
+            solutionEvent.Opened += () => { _ = Task.Run(() => SolutionEvent_OpenedAsync()); };
+            solutionEvent.BeforeClosing += () => { _ = Task.Run(() => SolutionEvent_BeforeClosingAsync()); };
         }
 
-        protected override async void Dispose(bool disposing)
-        {
-            await UnadviseSolutionEventsAsync(this.cancellationToken);
-            base.Dispose(disposing);
-        }
 
-        private async Task AdviseSolutionEventsAsync(CancellationToken cancellationToken)
-        {
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
-            await UnadviseSolutionEventsAsync(cancellationToken);
-
-            _solution = await GetServiceAsync(typeof(SVsSolution)) as IVsSolution;
-
-            _solution?.AdviseSolutionEvents(this, out _hSolutionEvents);
-        }
-
-        private async Task UnadviseSolutionEventsAsync(CancellationToken cancellationToken)
-        {
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
-
-            if (_solution == null) return;
-            if (_hSolutionEvents != uint.MaxValue)
-            {
-                _solution.UnadviseSolutionEvents(_hSolutionEvents);
-                _hSolutionEvents = uint.MaxValue;
-            }
-
-            _solution = null;
-        }
-
-        #region Implementation of IVsSolutionEvents
-
-        int IVsSolutionEvents.OnAfterOpenProject(IVsHierarchy pHierarchy, int fAdded)
-        {
-            return VSConstants.S_OK;
-        }
-
-        int IVsSolutionEvents.OnQueryCloseProject(IVsHierarchy pHierarchy, int fRemoving, ref int pfCancel)
-        {
-            return VSConstants.S_OK;
-        }
-
-        int IVsSolutionEvents.OnBeforeCloseProject(IVsHierarchy pHierarchy, int fRemoved)
-        {
-            return VSConstants.S_OK;
-        }
-
-        int IVsSolutionEvents.OnAfterLoadProject(IVsHierarchy pStubHierarchy, IVsHierarchy pRealHierarchy)
-        {
-            return VSConstants.S_OK;
-        }
-
-        int IVsSolutionEvents.OnQueryUnloadProject(IVsHierarchy pRealHierarchy, ref int pfCancel)
-        {
-            return VSConstants.S_OK;
-        }
-
-        int IVsSolutionEvents.OnBeforeUnloadProject(IVsHierarchy pRealHierarchy, IVsHierarchy pStubHierarchy)
-        {
-            return VSConstants.S_OK;
-        }
-
-        int IVsSolutionEvents.OnAfterOpenSolution(object pUnkReserved, int fNewSolution)
-        {
-            CommandDotnetBuild.Instance.MenuItem.Enabled = true;
-            CommandDotnetPack.Instance.MenuItem.Enabled = true;
-            CommandDotnetPublish.Instance.MenuItem.Enabled = true;
-
-            Task.Run(async () => await OutputAsync("DotnetToolbar enabled."));
-
-            Trace.WriteLine("DotnetToolbar OnAfterOpenSolution", "VSTestPackage1");
-            return VSConstants.S_OK;
-        }
-
-        int IVsSolutionEvents.OnQueryCloseSolution(object pUnkReserved, ref int pfCancel)
-        {
-            return VSConstants.S_OK;
-        }
-
-        int IVsSolutionEvents.OnBeforeCloseSolution(object pUnkReserved)
-        {
-            return VSConstants.S_OK;
-        }
-
-        int IVsSolutionEvents.OnAfterCloseSolution(object pUnkReserved)
+        private async Task SolutionEvent_BeforeClosingAsync()
         {
             CommandDotnetBuild.Instance.MenuItem.Enabled = false;
             CommandDotnetPack.Instance.MenuItem.Enabled = false;
             CommandDotnetPublish.Instance.MenuItem.Enabled = false;
-            Task.Run(async () => await OutputAsync("DotnetToolbar disabled."));
-            return VSConstants.S_OK;
+            CommandDotnetNugetPush.Instance.MenuItem.Enabled = false;
+            await Task.Run(async () => await OutputAsync("DotnetToolbar disabled."));
+
         }
 
-        #endregion
+        private async Task SolutionEvent_OpenedAsync()
+        {
+            CommandDotnetBuild.Instance.MenuItem.Enabled = true;
+            CommandDotnetPack.Instance.MenuItem.Enabled = true;
+            CommandDotnetPublish.Instance.MenuItem.Enabled = true;
+            CommandDotnetNugetPush.Instance.MenuItem.Enabled = true;
+
+            await Task.Run(async () => await OutputAsync("DotnetToolbar enabled."));
+        }
+
+        private async Task WindowEvent_WindowCreatedAsync(EnvDTE.Window window)
+        {
+            //await Task.Run(async () => await OutputAsync("WindowCreated."));
+        }
+
+
+
+        protected override async void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+        }
 
         private async Task OutputAsync(string buildMessage)
         {
