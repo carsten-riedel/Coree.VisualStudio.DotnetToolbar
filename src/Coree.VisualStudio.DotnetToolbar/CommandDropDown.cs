@@ -1,17 +1,12 @@
 ﻿using EnvDTE;
-using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Threading;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.Design;
-using System.Linq;
 using System.Runtime.InteropServices;
 using Task = System.Threading.Tasks.Task;
 
-
-
 //https://github.com/microsoft/VSSDK-Extensibility-Samples/tree/master/Combo_Box/C%23
+
 namespace Coree.VisualStudio.DotnetToolbar
 {
     /// <summary>
@@ -23,6 +18,7 @@ namespace Coree.VisualStudio.DotnetToolbar
         /// Command ID.
         /// </summary>
         public const int cmdidMyDropDownCombo = 4132;
+
         public const int cmdidMyDropDownComboGetList = 4133;
 
         /// <summary>
@@ -30,14 +26,13 @@ namespace Coree.VisualStudio.DotnetToolbar
         /// </summary>
         public static readonly Guid CommandSet = new Guid("7303216a-a2cb-4519-b645-a34ae1380a78");
 
-
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandDotnetBuild"/> class.
         /// Adds our command handlers for menu (commands must exist in the command table file)
         /// </summary>
         /// <param name="package">Owner package, not null.</param>
         /// <param name="commandService">Command service to add command to, not null.</param>
-        private CommandDropDown(AsyncPackage package, OleMenuCommandService commandService) :base(package, commandService)
+        private CommandDropDown(AsyncPackage package, OleMenuCommandService commandService) : base(package, commandService)
         {
             CommandID menuMyDropDownComboGetListCommandID = new CommandID(CommandSet, cmdidMyDropDownComboGetList);
             OleMenuCommand menuMyDropDownComboGetListCommand = new OleMenuCommand(new EventHandler(OnMenuMyDropDownComboGetList), menuMyDropDownComboGetListCommandID);
@@ -85,7 +80,6 @@ namespace Coree.VisualStudio.DotnetToolbar
                     // when vOut is non-NULL, the IDE is requesting the current value for the combo
                     Marshal.GetNativeVariantForObject(currentDropDownComboChoice, vOut);
                 }
-
                 else if (eventArgs.InValue is string newChoice)
                 {
                     // new value was selected or typed in
@@ -106,7 +100,6 @@ namespace Coree.VisualStudio.DotnetToolbar
                         currentDropDownComboChoice = dropDownComboChoices[indexInput];
                         WindowActivateAsync(Constants.vsWindowKindOutput);
                         OutputWriteLineAsync($@"Choice: {currentDropDownComboChoice}");
-
                     }
                     else
                     {

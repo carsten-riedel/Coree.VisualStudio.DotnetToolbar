@@ -4,6 +4,7 @@ using Microsoft.VisualStudio.Shell;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using static Coree.VisualStudio.DotnetToolbar.AsyncPackageExtensions;
 
 namespace Coree.VisualStudio.DotnetToolbar
 {
@@ -37,7 +38,7 @@ namespace Coree.VisualStudio.DotnetToolbar
 
         public async Task OutputWriteLineAsync(string message, bool clear = false)
         {
-            await Package.OutputWriteLineAsync(message,clear);
+            await Package.OutputWriteLineAsync(message, clear);
         }
 
         public async Task<SolutionConfiguration2> GetSolutionActiveConfigurationAsync()
@@ -58,6 +59,11 @@ namespace Coree.VisualStudio.DotnetToolbar
         public async Task<Dictionary<string, string>> GetSolutionPropertiesAsync()
         {
             return await Package.GetSolutionPropertiesAsync();
+        }
+
+        public async Task<List<ProjectInfo>> GetProjectInfosAsync()
+        {
+            return await Package.GetProjectInfosAsync();
         }
     }
 }

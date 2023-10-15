@@ -63,15 +63,6 @@ namespace Coree.VisualStudio.DotnetToolbar
             Instance = new CommandDotnetPack(package, commandService);
         }
 
-        private class ProjectInfo
-        {
-            public string FullProjectFileName { get; set; } = String.Empty;
-            public string FullPath { get; set; } = String.Empty;
-            public string TargetFrameworks { get; set; } = String.Empty;
-            public List<string> TargetFrameworksList { get; set; } = new List<string>();
-            public string FriendlyTargetFramework { get; set; } = String.Empty;
-        }
-
         /// <summary>
         /// This function is the callback used to execute the command when the menu item is clicked.
         /// See the constructor to see how the menu item is associated with this function using
@@ -104,11 +95,9 @@ namespace Coree.VisualStudio.DotnetToolbar
             await WindowActivateAsync(Constants.vsWindowKindOutput);
 
             var configuration = await GetSolutionActiveConfigurationAsync();
-            
+
             string slnfile = await GetSolutionFileNameAsync();
             string slndir = System.IO.Path.GetDirectoryName(slnfile);
-
-            var projectInfos = await Helper.GetProjectInfosAsync(this.Package);
 
             await OutputWriteLineAsync(null, true);
 

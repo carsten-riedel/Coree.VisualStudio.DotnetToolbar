@@ -30,26 +30,24 @@
     called "command set" and is used to group different command inside a logically related
     group; your package should define its own command set in order to avoid collisions
     with command ids defined by other packages. -->
-	  <Menus>
-		  <Menu guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuToolBar" type="Toolbar">
-			  <CommandFlag>DefaultDocked</CommandFlag>
-			  <Strings>
-				  <ButtonText>DotnetToolbar</ButtonText>
-				  <CommandName>DotnetToolbar</CommandName>
-			  </Strings>
-		  </Menu>
-	  </Menus>
+    <Menus>
+      <Menu guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuToolBar" type="Toolbar">
+        <CommandFlag>DefaultDocked</CommandFlag>
+        <Strings>
+          <ButtonText>DotnetToolbar</ButtonText>
+          <CommandName>DotnetToolbar</CommandName>
+        </Strings>
+      </Menu>
+    </Menus>
     <!-- In this section you can define new menu groups. A menu group is a container for
          other menus or buttons (commands); from a visual point of view you can see the
          group as the part of a menu contained between two lines. The parent of a group
          must be a menu. -->
     <Groups>
       <Group guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuGroup" priority="0x0600">
-		    <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuToolBar" />
+        <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuToolBar" />
       </Group>
     </Groups>
-
-
 
     <!--Buttons section. -->
     <!--This section defines the elements the user can interact with, like a menu command or a button
@@ -65,7 +63,7 @@
       <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="Id" priority="0x0100" type="Button">
         <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuGroup" />
         <Icon guid="guidImages" id="pngBuild" />
-		      <CommandFlag>IconAndText</CommandFlag>
+        <CommandFlag>IconAndText</CommandFlag>
         <Strings>
           <ButtonText>dotnet build</ButtonText>
         </Strings>
@@ -73,7 +71,7 @@
       <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="Command2Id" priority="0x0101" type="Button">
         <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuGroup" />
         <Icon guid="guidImages" id="pngPack" />
-		    <CommandFlag>IconAndText</CommandFlag>
+        <CommandFlag>IconAndText</CommandFlag>
         <Strings>
           <ButtonText>dotnet pack</ButtonText>
         </Strings>
@@ -87,18 +85,15 @@
           <ButtonText>dotnet nuget push</ButtonText>
         </Strings>
       </Button>
-      
+
       <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="Command3Id" priority="0x0103" type="Button">
         <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuGroup" />
         <Icon guid="guidImages" id="pngPublish" />
-		    <CommandFlag>IconAndText</CommandFlag>
+        <CommandFlag>IconAndText</CommandFlag>
         <Strings>
           <ButtonText>dotnet publish</ButtonText>
         </Strings>
       </Button>
-
-
-      
     </Buttons>
 
     <Combos>
@@ -128,15 +123,14 @@
 
     <!-- This is the guid used to group the menu commands together -->
     <GuidSymbol name="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" value="{7303216a-a2cb-4519-b645-a34ae1380a78}">
-      
-	    <IDSymbol name="MyMenuToolBar" value="0x1000" />
-	    <IDSymbol name="MyMenuGroup" value="0x1020" />
+      <IDSymbol name="MyMenuToolBar" value="0x1000" />
+      <IDSymbol name="MyMenuGroup" value="0x1020" />
       <IDSymbol name="Id" value="4129" />
       <IDSymbol name="Command2Id" value="4130" />
       <IDSymbol name="Command3Id" value="4131" />
       <IDSymbol name="Command4Id" value="4134" />
-      <IDSymbol name="cmdidMyDropDownCombo" value="4132"/>
-      <IDSymbol name="cmdidMyDropDownComboGetList" value="4133"/>
+      <IDSymbol name="cmdidMyDropDownCombo" value="4132" />
+      <IDSymbol name="cmdidMyDropDownComboGetList" value="4133" />
     </GuidSymbol>
 
     <GuidSymbol name="guidImages" value="{32797b29-ae82-4c7c-ae0e-12eb5435f414}">
@@ -147,6 +141,5 @@
       <IDSymbol name="pngCube" value="5" />
       <IDSymbol name="pngUpload" value="6" />
     </GuidSymbol>
-
   </Symbols>
 </CommandTable>

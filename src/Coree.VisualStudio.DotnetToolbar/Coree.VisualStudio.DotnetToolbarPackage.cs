@@ -1,18 +1,11 @@
 ﻿using EnvDTE;
-using Microsoft.VisualStudio;
+using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Task = System.Threading.Tasks.Task;
-using EnvDTE80;
-using System.Linq;
-using System.IO.Packaging;
-using Microsoft.VisualStudio.Shell.Events;
-using Microsoft.VisualStudio.CommandBars;
 
 namespace Coree.VisualStudio.DotnetToolbar
 {
@@ -42,7 +35,7 @@ namespace Coree.VisualStudio.DotnetToolbar
         /// Coree.VisualStudio.DotnetToolbarPackage GUID string.
         /// </summary>
         public const string PackageGuidString = "863aef23-089f-44d7-ba5c-e509e35cd199";
-        
+
         private DTE2 dte2;
         private CancellationToken cancellationToken;
         private IVsSolution _solution;
@@ -76,7 +69,6 @@ namespace Coree.VisualStudio.DotnetToolbar
             solutionEvent.BeforeClosing += () => { _ = Task.Run(() => SolutionEvent_BeforeClosingAsync()); };
         }
 
-
         private async Task SolutionEvent_BeforeClosingAsync()
         {
             CommandDotnetBuild.Instance.MenuItem.Enabled = false;
@@ -84,7 +76,6 @@ namespace Coree.VisualStudio.DotnetToolbar
             CommandDotnetPublish.Instance.MenuItem.Enabled = false;
             CommandDotnetNugetPush.Instance.MenuItem.Enabled = false;
             await Task.Run(async () => await OutputAsync("DotnetToolbar disabled."));
-
         }
 
         private async Task SolutionEvent_OpenedAsync()
@@ -102,8 +93,6 @@ namespace Coree.VisualStudio.DotnetToolbar
             //await Task.Run(async () => await OutputAsync("WindowCreated."));
         }
 
-
-
         protected override async void Dispose(bool disposing)
         {
             base.Dispose(disposing);
@@ -112,7 +101,6 @@ namespace Coree.VisualStudio.DotnetToolbar
         private async Task OutputAsync(string buildMessage)
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
-       
 
             Window window = dte2.Windows.Item(EnvDTE.Constants.vsWindowKindOutput);
             window.Activate();
@@ -129,6 +117,6 @@ namespace Coree.VisualStudio.DotnetToolbar
             }
         }
     }
+
     #endregion Package Members
 }
-

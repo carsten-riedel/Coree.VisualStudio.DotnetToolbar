@@ -89,17 +89,12 @@ namespace Coree.VisualStudio.DotnetToolbar
 
         private async Task StartDotNetProcessAsync()
         {
-            //await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
-            //dte2 = (DTE2)await ServiceProvider.GetServiceAsync(typeof(DTE)).ConfigureAwait(false);
-
             await WindowActivateAsync(Constants.vsWindowKindOutput);
 
             var activeConfiguration = await GetSolutionActiveConfigurationAsync();
 
             string slnfile = await GetSolutionFileNameAsync();
             string slndir = System.IO.Path.GetDirectoryName(slnfile);
-
-            var projectInfos = await Helper.GetProjectInfosAsync(this.Package);
 
             await OutputWriteLineAsync(null, true);
 

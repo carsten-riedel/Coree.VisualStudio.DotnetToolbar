@@ -7,8 +7,6 @@ using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
-
 
 namespace Coree.VisualStudio.DotnetToolbar
 {
@@ -28,15 +26,15 @@ namespace Coree.VisualStudio.DotnetToolbar
         public static readonly Guid CommandSet = new Guid("7303216a-a2cb-4519-b645-a34ae1380a78");
 
         internal readonly MenuCommand MenuItem;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandDotnetPublish"/> class.
         /// Adds our command handlers for menu (commands must exist in the command table file)
         /// </summary>
         /// <param name="package">Owner package, not null.</param>
         /// <param name="commandService">Command service to add command to, not null.</param>
-        private CommandDotnetNugetPush(AsyncPackage package, OleMenuCommandService commandService) : base(package,commandService)
+        private CommandDotnetNugetPush(AsyncPackage package, OleMenuCommandService commandService) : base(package, commandService)
         {
-
             CommandID menuCommandID = new CommandID(CommandSet, CommandId);
             MenuItem = new MenuCommand((s, e) => ExecuteAsync(s, e), menuCommandID);
 
@@ -51,7 +49,6 @@ namespace Coree.VisualStudio.DotnetToolbar
             get;
             private set;
         }
-
 
         /// <summary>
         /// Initializes the singleton instance of the command.
@@ -101,11 +98,6 @@ namespace Coree.VisualStudio.DotnetToolbar
             var solinfo = await GetSolutionAsync();
             var solinfox = await GetSolutionPropertiesAsync();
 
-
-
-
-            var projectInfos = await Helper.GetProjectInfosAsync(this.Package);
-
             await OutputWriteLineAsync(null, true);
 
             List<JoinableTask> _joinableTasks = new List<JoinableTask>();
@@ -131,8 +123,6 @@ namespace Coree.VisualStudio.DotnetToolbar
                 return;
             }
 
-            
-
             var process = new System.Diagnostics.Process();
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.CreateNoWindow = true;
@@ -151,12 +141,10 @@ namespace Coree.VisualStudio.DotnetToolbar
             process.BeginErrorReadLine();
             process.BeginOutputReadLine();
             process.WaitForExit();
- 
-            
+
             await System.Threading.Tasks.Task.WhenAll(_joinableTasks.Select(jt => jt.Task));
 
             await OutputWriteLineAsync("Done");
         }
-
     }
 }

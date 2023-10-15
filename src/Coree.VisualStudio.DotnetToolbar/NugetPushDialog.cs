@@ -1,5 +1,4 @@
 ﻿using CredentialManagement;
-using EnvDTE;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
@@ -27,38 +26,35 @@ namespace Coree.VisualStudio.DotnetToolbar
         private string SolutionName { get; set; }
         private string SolutionGuid { get; set; }
 
-        
-
-        public NugetPushDialog(string UserDataPath,string SolutionLocation,string SolutionName,string SolutionGuid)
+        public NugetPushDialog(string UserDataPath, string SolutionLocation, string SolutionName, string SolutionGuid)
         {
             this.UserDataPath = UserDataPath;
-            this.SolutionLocation = SolutionLocation; 
+            this.SolutionLocation = SolutionLocation;
             this.SolutionName = SolutionName;
-            this.SolutionGuid = SolutionGuid;   
+            this.SolutionGuid = SolutionGuid;
             this.SolutionDir = System.IO.Path.GetDirectoryName(SolutionLocation);
 
             var nugets = System.IO.Directory.GetFiles(this.SolutionDir, "*.nupkg", System.IO.SearchOption.AllDirectories).ToList();
             var shortnuget = new List<string>();
-            nugets.ForEach(e => shortnuget.Add(e.Substring(this.SolutionDir.Length+1)));
+            nugets.ForEach(e => shortnuget.Add(e.Substring(this.SolutionDir.Length + 1)));
 
             InitializeComponent();
 
-            listBoxNupkg.Items.AddRange(shortnuget.ToArray());
+            listBoxPackages.Items.AddRange(shortnuget.ToArray());
 
-            if (listBoxNupkg.Items.Count > 0)
+            if (listBoxPackages.Items.Count > 0)
             {
-                listBoxNupkg.SelectedIndex = 0;
-                PackageLocation = listBoxNupkg.Items[listBoxNupkg.SelectedIndex].ToString();
+                listBoxPackages.SelectedIndex = 0;
+                PackageLocation = listBoxPackages.Items[listBoxPackages.SelectedIndex].ToString();
             }
 
-            if (listBoxSource.Items.Count > 0)
+            if (listBoxPackageSource.Items.Count > 0)
             {
-                listBoxSource.SelectedIndex = 0;
-                Source = listBoxSource.Items[listBoxSource.SelectedIndex].ToString();
+                listBoxPackageSource.SelectedIndex = 0;
+                Source = listBoxPackageSource.Items[listBoxPackageSource.SelectedIndex].ToString();
             }
 
             LoadDotnetToolbarCredential();
-
         }
 
         private void LoadDotnetToolbarCredential()
@@ -78,7 +74,6 @@ namespace Coree.VisualStudio.DotnetToolbar
             {
                 textBoxApiKey.Text = credential.Password;
                 ApiKey = credential.Password;
-                
             }
         }
 
@@ -123,14 +118,13 @@ namespace Coree.VisualStudio.DotnetToolbar
 
         private void listBoxNupkg_SelectedIndexChanged(object sender, System.EventArgs e)
         {
-            PackageLocation = listBoxNupkg.Items[listBoxNupkg.SelectedIndex].ToString();
+            PackageLocation = listBoxPackages.Items[listBoxPackages.SelectedIndex].ToString();
         }
 
         private void listBoxSource_SelectedIndexChanged(object sender, System.EventArgs e)
         {
-       
             SaveUpdateCredential(textBoxApiKey.Text);
-            Source = listBoxSource.Items[listBoxSource.SelectedIndex].ToString();
+            Source = listBoxPackageSource.Items[listBoxPackageSource.SelectedIndex].ToString();
             LoadDotnetToolbarCredential();
         }
     }

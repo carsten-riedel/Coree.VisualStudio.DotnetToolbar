@@ -98,7 +98,7 @@ namespace Coree.VisualStudio.DotnetToolbar
 
             var configuration = await GetSolutionActiveConfigurationAsync();
 
-            var projectInfos = await Helper.GetProjectInfosAsync(this.Package);
+            var projectInfos = await GetProjectInfosAsync();
 
             await OutputWriteLineAsync(null, true);
 

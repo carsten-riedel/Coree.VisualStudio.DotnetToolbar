@@ -4,19 +4,13 @@ using Microsoft.VisualStudio.Shell;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Dynamic;
-using System.IO.Packaging;
-using System.Linq;
-using System.Runtime.ConstrainedExecution;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Coree.VisualStudio.DotnetToolbar
 {
-  
     public static class AsyncPackageExtensions
     {
-        public static async Task WindowActivateAsync(this AsyncPackage package , string constants)
+        public static async Task WindowActivateAsync(this AsyncPackage package, string constants)
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
             DTE2 dte2 = (DTE2)await package.GetServiceAsync(typeof(DTE)).ConfigureAwait(false);
@@ -44,7 +38,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             return (SolutionConfiguration2)solution.SolutionBuild.ActiveConfiguration;
         }
 
-        public static async Task OutputWriteLineAsync(this AsyncPackage package,string message, bool clear = false)
+        public static async Task OutputWriteLineAsync(this AsyncPackage package, string message, bool clear = false)
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
             DTE2 dte2 = (DTE2)await package.GetServiceAsync(typeof(DTE)).ConfigureAwait(false);
@@ -76,26 +70,70 @@ namespace Coree.VisualStudio.DotnetToolbar
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
             DTE2 dte2 = (DTE2)await package.GetServiceAsync(typeof(DTE)).ConfigureAwait(false);
-            Dictionary<string,string> dict = new Dictionary<string,string>();
+            Dictionary<string, string> dict = new Dictionary<string, string>();
             Properties properties = dte2.Solution.Properties;
             foreach (Property item in properties)
             {
                 try
                 {
                     dict.Add(item.Name, item.Value.ToString());
-                    Debug.WriteLine($@"{item.Name},{item.Value}");
                 }
                 catch (Exception)
                 {
                     Debug.WriteLine($@"{item.Name}");
                 }
-
             }
             return dict;
         }
 
-       
+        public class ProjectInfo
+        {
+            public string FullProjectFileName { get; set; } = String.Empty;
+            public string FullPath { get; set; } = String.Empty;
+            public string TargetFrameworks { get; set; } = String.Empty;
+            public List<string> TargetFrameworksList { get; set; } = new List<string>();
+            public string FriendlyTargetFramework { get; set; } = String.Empty;
+        }
+
+        public static async Task<List<ProjectInfo>> GetProjectInfosAsync(this AsyncPackage asyncPackage)
+        {
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(asyncPackage.DisposalToken);
+            var dte2 = await asyncPackage.GetServiceAsync(typeof(DTE)).ConfigureAwait(false) as DTE2;
+
+            List<ProjectInfo> projectInfos = new List<ProjectInfo>();
+
+            Projects solProjects = dte2.Solution.Projects;
+            //string solutionDir = System.IO.Path.GetDirectoryName(dte2.Solution.FullName);
+
+            foreach (Project item in solProjects)
+            {
+                var ProjectInfoItem = new ProjectInfo()
+                {
+                    FullProjectFileName = (string)item.Properties.Item("FullProjectFileName").Value,
+                    TargetFrameworks = (string)item.Properties.Item("TargetFrameworks").Value,
+                    FriendlyTargetFramework = (string)item.Properties.Item("FriendlyTargetFramework").Value,
+                    FullPath = (string)item.Properties.Item("FullPath").Value
+                };
+
+                if (ProjectInfoItem.TargetFrameworks != String.Empty)
+                {
+                    ProjectInfoItem.TargetFrameworksList.AddRange(ProjectInfoItem.TargetFrameworks.Split(';'));
+                }
+
+                if (ProjectInfoItem.TargetFrameworksList.Count == 0)
+                {
+                    ProjectInfoItem.TargetFrameworksList.Add(ProjectInfoItem.FriendlyTargetFramework);
+                }
+
+                projectInfos.Add(ProjectInfoItem);
+
+                foreach (Property items in item.Properties)
+                {
+                    Debug.WriteLine($@"{items.Name},{items.Value}");
+                }
+            }
+
+            return projectInfos;
+        }
     }
- 
- 
 }
