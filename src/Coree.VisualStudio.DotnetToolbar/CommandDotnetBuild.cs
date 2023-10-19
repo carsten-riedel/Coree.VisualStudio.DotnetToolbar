@@ -124,7 +124,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             process.Start();
             process.BeginErrorReadLine();
             process.BeginOutputReadLine();
-            process.WaitForExit();
+            await process.WaitForExitAsync();
 
             await Task.WhenAll(_joinableTasks.Select(jt => jt.Task));
 

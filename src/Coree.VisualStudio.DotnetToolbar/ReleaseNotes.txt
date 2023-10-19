@@ -1,0 +1,19 @@
+﻿# DotnetToolbar 0.1.61 Release Notes
+Release Date: 2023-10-19
+
+## New Features
+
+## Enhancements
+- Added https://www.powershellgallery.com/api/v2/package to the list of availible sources.
+- Quick rework of the NugetPushDialog.
+
+## Bug Fixes
+- Resolved issue where the toolbar didn't execute async
+
+## Upcoming Features
+- Auto extract/mod and push .nupkg to https://www.powershellgallery.com/api/v2/package
+- Configuration Menu
+- dotnet clean
+- del bin/obj
+
+

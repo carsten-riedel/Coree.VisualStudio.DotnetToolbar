@@ -41,8 +41,10 @@ namespace Coree.VisualStudio.DotnetToolbar
             CommandID menuMyDropDownComboCommandID = new CommandID(CommandSet, cmdidMyDropDownCombo);
             MenuCommand menuMyDropDownComboCommand = new OleMenuCommand(new EventHandler(OnMenuMyDropDownCombo), menuMyDropDownComboCommandID)
             {
-                Enabled = false
+                Enabled = false,
+                Visible = false
             };
+       
             commandService.AddCommand(menuMyDropDownComboCommand);
         }
 

@@ -41,7 +41,6 @@ namespace Coree.VisualStudio.DotnetToolbar
             MenuItem = new MenuCommand((s, e) => ExecuteAsync(s, e), menuCommandID);
 #pragma warning restore VSTHRD110 // Observe result of async calls
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-
             commandService.AddCommand(MenuItem);
         }
 
@@ -127,7 +126,7 @@ namespace Coree.VisualStudio.DotnetToolbar
                     process.Start();
                     process.BeginErrorReadLine();
                     process.BeginOutputReadLine();
-                    process.WaitForExit();
+                    await process.WaitForExitAsync();
                 }
             }
 
