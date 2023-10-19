@@ -88,14 +88,25 @@
 
       <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="Command3Id" priority="0x0103" type="Button">
         <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuGroup" />
-        <Icon guid="guidImages" id="pngPublish" />
+        <Icon guid="guidImages" id="pngUploadFile" />
         <CommandFlag>IconAndText</CommandFlag>
         <Strings>
           <ButtonText>dotnet publish</ButtonText>
         </Strings>
       </Button>
+
+      <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="CommandSettings" priority="0x0104" type="Button">
+        <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuGroup" />
+        <Icon guid="guidImages" id="pngSettings" />
+        <CommandFlag>IconAndText</CommandFlag>
+        <Strings>
+          <ButtonText>Settings</ButtonText>
+        </Strings>
+      </Button>
+      
     </Buttons>
 
+    <!-- 
     <Combos>
       <Combo guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="cmdidMyDropDownCombo" priority="0x0104" type="DropDownCombo" defaultWidth="200" idCommandList="cmdidMyDropDownComboGetList">
         <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuGroup" />
@@ -105,6 +116,7 @@
         </Strings>
       </Combo>
     </Combos>
+    -->
 
     <!--The bitmaps section is used to define the bitmaps that are used for the commands.-->
     <Bitmaps>
@@ -113,7 +125,7 @@
             bitmap strip containing the bitmaps and then there are the numeric ids of the elements used
             inside a button definition. An important aspect of this declaration is that the element id
             must be the actual index (1-based) of the bitmap inside the bitmap strip. -->
-      <Bitmap guid="guidImages" href="Resources\CommandBar.png" usedList="pngBuild, pngPack, pngPublish, pngDebug, pngCube, pngUpload" />
+      <Bitmap guid="guidImages" href="Resources\CommandBar.png" usedList="pngBuild, pngPack, pngPublish, pngDebug, pngCube, pngUpload, pngUploadFile, pngSettings" />
     </Bitmaps>
   </Commands>
 
@@ -129,8 +141,11 @@
       <IDSymbol name="Command2Id" value="4130" />
       <IDSymbol name="Command3Id" value="4131" />
       <IDSymbol name="Command4Id" value="4134" />
-      <IDSymbol name="cmdidMyDropDownCombo" value="4132" />
-      <IDSymbol name="cmdidMyDropDownComboGetList" value="4133" />
+      <IDSymbol name="CommandSettings" value="4135" />
+      <!-- 
+        <IDSymbol name="cmdidMyDropDownCombo" value="4132" />
+        <IDSymbol name="cmdidMyDropDownComboGetList" value="4133" />
+      -->
     </GuidSymbol>
 
     <GuidSymbol name="guidImages" value="{32797b29-ae82-4c7c-ae0e-12eb5435f414}">
@@ -140,6 +155,8 @@
       <IDSymbol name="pngDebug" value="4" />
       <IDSymbol name="pngCube" value="5" />
       <IDSymbol name="pngUpload" value="6" />
+      <IDSymbol name="pngUploadFile" value="7" />
+      <IDSymbol name="pngSettings" value="8" />
     </GuidSymbol>
   </Symbols>
 </CommandTable>

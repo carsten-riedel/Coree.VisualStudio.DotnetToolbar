@@ -1,9 +1,13 @@
 ﻿using EnvDTE;
 using EnvDTE80;
+using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Events;
+using Microsoft.VisualStudio.Shell.Interop;
 using System;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 using Task = System.Threading.Tasks.Task;
 
 namespace Coree.VisualStudio.DotnetToolbar
@@ -28,6 +32,8 @@ namespace Coree.VisualStudio.DotnetToolbar
     [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
     [Guid(PackageGuidString)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
+    [ProvideAutoLoad(VSConstants.UICONTEXT.SolutionOpening_string, PackageAutoLoadFlags.BackgroundLoad)]
+    [ProvideAutoLoad(UIContextGuids80.NoSolution, PackageAutoLoadFlags.BackgroundLoad)]
     public sealed class CoreeVisualStudioDotnetToolbarPackage : AsyncPackage
     {
         /// <summary>
@@ -58,14 +64,23 @@ namespace Coree.VisualStudio.DotnetToolbar
             await Coree.VisualStudio.DotnetToolbar.CommandDotnetNugetPush.InitializeAsync(this);
             dte2 = (DTE2)await GetServiceAsync(typeof(DTE)).ConfigureAwait(false);
 
+            Microsoft.VisualStudio.Shell.Events.SolutionEvents.OnAfterOpenSolution += (s, e) => { _ = Task.Run(() => SolutionEvent_OpenedAsync()); };
+
             if (dte2 != null)
             {
                 WindowEvents windowEvent = dte2.Events.WindowEvents;
                 EnvDTE.SolutionEvents solutionEvent = dte2.Events.SolutionEvents;
                 //windowEvent.WindowCreated += (Window window) => { _ = Task.Run(() => WindowEvent_WindowCreatedAsync(window)); };
-                solutionEvent.Opened += () => { _ = Task.Run(() => SolutionEvent_OpenedAsync()); };
+                //solutionEvent.Opened += () => { _ = Task.Run(() => SolutionEvent_OpenedAsync()); };
                 solutionEvent.BeforeClosing += () => { _ = Task.Run(() => SolutionEvent_BeforeClosingAsync()); };
+                
+
             }
+        }
+
+        private void HandleOpenSolution(object sender, OpenSolutionEventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         private async Task SolutionEvent_BeforeClosingAsync()
@@ -86,6 +101,7 @@ namespace Coree.VisualStudio.DotnetToolbar
 
             await Task.Run(async () => await this.WindowOutputWriteLineAsync("DotnetToolbar enabled."));
         }
+
 
         /*
         private async Task WindowEvent_WindowCreatedAsync(EnvDTE.Window window)
