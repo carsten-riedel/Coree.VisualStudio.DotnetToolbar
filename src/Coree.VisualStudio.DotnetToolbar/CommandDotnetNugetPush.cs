@@ -82,14 +82,15 @@ namespace Coree.VisualStudio.DotnetToolbar
             CommandDotnetPack.Instance.MenuItem.Enabled = false;
             CommandDotnetPublish.Instance.MenuItem.Enabled = false;
             CommandDotnetNugetPush.Instance.MenuItem.Enabled = false;
+            CommandDotnetClean.Instance.MenuItem.Enabled = false;
 
-            System.Threading.Tasks.Task myTask = System.Threading.Tasks.Task.Run(() => StartDotNetProcessAsync());
-            await myTask;
+            await StartDotNetProcessAsync();
 
             CommandDotnetBuild.Instance.MenuItem.Enabled = true;
             CommandDotnetPack.Instance.MenuItem.Enabled = true;
             CommandDotnetPublish.Instance.MenuItem.Enabled = true;
             CommandDotnetNugetPush.Instance.MenuItem.Enabled = true;
+            CommandDotnetClean.Instance.MenuItem.Enabled = true;
         }
 
         private async System.Threading.Tasks.Task StartDotNetProcessAsync()

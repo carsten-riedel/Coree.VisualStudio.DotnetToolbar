@@ -13,12 +13,12 @@ namespace Coree.VisualStudio.DotnetToolbar
     /// <summary>
     /// Command handler
     /// </summary>
-    internal sealed class CommandDotnetBuild : CommandBase
+    internal sealed class CommandDotnetClean : CommandBase
     {
         /// <summary>
         /// Command ID.
         /// </summary>
-        public const int CommandId = 4129;
+        public const int CommandId = 4136;
 
         /// <summary>
         /// Command menu group (command set GUID).
@@ -33,7 +33,7 @@ namespace Coree.VisualStudio.DotnetToolbar
         /// </summary>
         /// <param name="package">Owner package, not null.</param>
         /// <param name="commandService">Command service to add command to, not null.</param>
-        private CommandDotnetBuild(AsyncPackage package, OleMenuCommandService commandService) : base(package, commandService)
+        private CommandDotnetClean(AsyncPackage package, OleMenuCommandService commandService) : base(package, commandService)
         {
             var menuCommandID = new CommandID(CommandSet, CommandId);
 
@@ -49,7 +49,7 @@ namespace Coree.VisualStudio.DotnetToolbar
         /// <summary>
         /// Gets the instance of the command.
         /// </summary>
-        public static CommandDotnetBuild Instance
+        public static CommandDotnetClean Instance
         {
             get;
             private set;
@@ -66,7 +66,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
 
             OleMenuCommandService commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
-            Instance = new CommandDotnetBuild(package, commandService);
+            Instance = new CommandDotnetClean(package, commandService);
         }
 
         /// <summary>
@@ -110,7 +110,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.CreateNoWindow = true;
             process.StartInfo.FileName = "dotnet.exe";
-            process.StartInfo.Arguments = $@"build ""{slnfile}"" --configuration {activeConfiguration.Name}";
+            process.StartInfo.Arguments = $@"clean ""{slnfile}"" --configuration {activeConfiguration.Name}";
             process.StartInfo.WorkingDirectory = $@"{slndir}";
             process.StartInfo.RedirectStandardError = true;
             process.StartInfo.RedirectStandardOutput = true;
