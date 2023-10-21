@@ -46,6 +46,12 @@ namespace Coree.VisualStudio.DotnetToolbar
         private DTE2 dte2;
         //private CancellationToken cancellationToken;
 
+        public static CoreeVisualStudioDotnetToolbarPackage Instance
+        {
+            get;
+            private set;
+        }
+
         /// <summary>
         /// Initialization of the package; this method is called right after the package is sited, so this is the place
         /// where you can put all the initialization code that rely on services provided by VisualStudio.
