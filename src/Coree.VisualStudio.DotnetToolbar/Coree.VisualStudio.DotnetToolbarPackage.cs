@@ -73,26 +73,24 @@ namespace Coree.VisualStudio.DotnetToolbar
 
         public CoreeVisualStudioDotnetToolbarPackage()
         {
-            
+            Microsoft.VisualStudio.Shell.Events.SolutionEvents.OnAfterOpenSolution += (sender, e) => { _ = Task.Run(() => SolutionEvents_OnAfterOpenSolutionAsync(sender, e)); };
+            Microsoft.VisualStudio.Shell.Events.SolutionEvents.OnBeforeCloseSolution += (sender, e) => { _ = Task.Run(() => SolutionEvents_OnBeforeCloseSolutionAsync(sender, e)); };
         }
 
-        private async Task SolutionEvent_BeforeClosingAsync()
+        private async Task SolutionEvents_OnBeforeCloseSolutionAsync(object sender, EventArgs e)
         {
-            CommandDotnetBuild.Instance.MenuItem.Enabled = false;
-            CommandDotnetPack.Instance.MenuItem.Enabled = false;
-            CommandDotnetPublish.Instance.MenuItem.Enabled = false;
-            CommandDotnetNugetPush.Instance.MenuItem.Enabled = false;
-            await Task.Run(async () => await this.WindowOutputWriteLineAsync("DotnetToolbar disabled."));
+            await this.JoinableTaskFactory.SwitchToMainThreadAsync();
+            DTE2 dte2 = (DTE2)await this.GetServiceAsync(typeof(DTE));
+            dte2.WindowActivateEx();
+            dte2.AddText("Build", "DotnetToolbar OnBeforeCloseSolution");
         }
 
-        private async Task SolutionEvent_OpenedAsync()
+        private async Task SolutionEvents_OnAfterOpenSolutionAsync(object sender, OpenSolutionEventArgs e)
         {
-            CommandDotnetBuild.Instance.MenuItem.Enabled = true;
-            CommandDotnetPack.Instance.MenuItem.Enabled = true;
-            CommandDotnetPublish.Instance.MenuItem.Enabled = true;
-            CommandDotnetNugetPush.Instance.MenuItem.Enabled = true;
-
-            await Task.Run(async () => await this.WindowOutputWriteLineAsync("DotnetToolbar enabled."));
+            await this.JoinableTaskFactory.SwitchToMainThreadAsync();
+            DTE2 dte2 = (DTE2)await this.GetServiceAsync(typeof(DTE));
+            dte2.WindowActivateEx();
+            dte2.AddText("Build", "DotnetToolbar OnAfterOpenSolution");
         }
         protected override void Dispose(bool disposing)
         {
