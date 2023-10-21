@@ -43,9 +43,6 @@ namespace Coree.VisualStudio.DotnetToolbar
         /// </summary>
         public const string PackageGuidString = "863aef23-089f-44d7-ba5c-e509e35cd199";
 
-        private DTE2 dte2;
-        //private CancellationToken cancellationToken;
-
         public static CoreeVisualStudioDotnetToolbarPackage Instance
         {
             get;
@@ -70,8 +67,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             await Coree.VisualStudio.DotnetToolbar.CommandDotnetPublish.InitializeAsync(this);
             await Coree.VisualStudio.DotnetToolbar.CommandDropDown.InitializeAsync(this);
             await Coree.VisualStudio.DotnetToolbar.CommandDotnetNugetPush.InitializeAsync(this);
-            dte2 = (DTE2)await GetServiceAsync(typeof(DTE)).ConfigureAwait(false);
-
+            Instance = this;
         }
 
 
