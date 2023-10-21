@@ -45,6 +45,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="CommandDeleteBinObj.cs" />
+    <Compile Include="CommandSettings.cs" />
+    <Compile Include="CommandDotnetClean.cs" />
     <Compile Include="ExtensionMethods\AsyncPackageExtensions.cs" />
     <Compile Include="CommandBase.cs" />
     <Compile Include="CommandDotnetNugetPush.cs" />

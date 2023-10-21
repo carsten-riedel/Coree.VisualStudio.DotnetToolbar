@@ -82,6 +82,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             CommandDotnetPack.Instance.MenuItem.Enabled = false;
             CommandDotnetPublish.Instance.MenuItem.Enabled = false;
             CommandDotnetNugetPush.Instance.MenuItem.Enabled = false;
+            CommandDotnetClean.Instance.MenuItem.Enabled = false;
 
             Task myTask = Task.Run(() => StartDotNetProcessAsync());
             await myTask;
@@ -90,6 +91,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             CommandDotnetPack.Instance.MenuItem.Enabled = true;
             CommandDotnetPublish.Instance.MenuItem.Enabled = true;
             CommandDotnetNugetPush.Instance.MenuItem.Enabled = true;
+            CommandDotnetClean.Instance.MenuItem.Enabled = true;
         }
 
         private async Task StartDotNetProcessAsync()

@@ -64,9 +64,13 @@ namespace Coree.VisualStudio.DotnetToolbar
             await this.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
             await Coree.VisualStudio.DotnetToolbar.CommandDotnetBuild.InitializeAsync(this);
             await Coree.VisualStudio.DotnetToolbar.CommandDotnetPack.InitializeAsync(this);
-            await Coree.VisualStudio.DotnetToolbar.CommandDotnetPublish.InitializeAsync(this);
-            await Coree.VisualStudio.DotnetToolbar.CommandDropDown.InitializeAsync(this);
             await Coree.VisualStudio.DotnetToolbar.CommandDotnetNugetPush.InitializeAsync(this);
+            await Coree.VisualStudio.DotnetToolbar.CommandDotnetPublish.InitializeAsync(this);
+            await Coree.VisualStudio.DotnetToolbar.CommandDotnetClean.InitializeAsync(this);
+            await Coree.VisualStudio.DotnetToolbar.CommandDeleteBinObj.InitializeAsync(this);
+            await Coree.VisualStudio.DotnetToolbar.CommandSettings.InitializeAsync(this);
+
+            //await Coree.VisualStudio.DotnetToolbar.CommandDropDown.InitializeAsync(this);
             Instance = this;
         }
 

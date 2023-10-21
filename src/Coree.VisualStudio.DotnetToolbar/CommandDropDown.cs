@@ -17,9 +17,9 @@ namespace Coree.VisualStudio.DotnetToolbar
         /// <summary>
         /// Command ID.
         /// </summary>
-        public const int cmdidMyDropDownCombo = 4132;
+        public const int cmdidMyDropDownCombo = 4170;
 
-        public const int cmdidMyDropDownComboGetList = 4133;
+        public const int cmdidMyDropDownComboGetList = 4171;
 
         /// <summary>
         /// Command menu group (command set GUID).

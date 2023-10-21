@@ -6,20 +6,21 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
-using Task = System.Threading.Tasks.Task;
+using System.Threading.Tasks;
 
 namespace Coree.VisualStudio.DotnetToolbar
 {
     /// <summary>
     /// Command handler
     /// </summary>
-    internal sealed class CommandDotnetPack : CommandBase
+    internal sealed class CommandDotnetClean : CommandBase
     {
         /// <summary>
         /// Command ID.
         /// </summary>
-        public const int CommandId = 4130;
+        public const int CommandId = 4136;
 
         /// <summary>
         /// Command menu group (command set GUID).
@@ -29,26 +30,27 @@ namespace Coree.VisualStudio.DotnetToolbar
         internal readonly MenuCommand MenuItem;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CommandDotnetPack"/> class.
+        /// Initializes a new instance of the <see cref="CommandDotnetPublish"/> class.
         /// Adds our command handlers for menu (commands must exist in the command table file)
         /// </summary>
         /// <param name="package">Owner package, not null.</param>
         /// <param name="commandService">Command service to add command to, not null.</param>
-        private CommandDotnetPack(AsyncPackage package, OleMenuCommandService commandService) : base(package, commandService)
+        private CommandDotnetClean(AsyncPackage package, OleMenuCommandService commandService) : base(package, commandService)
         {
-            var menuCommandID = new CommandID(CommandSet, CommandId);
+            CommandID menuCommandID = new CommandID(CommandSet, CommandId);
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 #pragma warning disable VSTHRD110 // Observe result of async calls
             MenuItem = new MenuCommand((s, e) => ExecuteAsync(s, e), menuCommandID);
 #pragma warning restore VSTHRD110 // Observe result of async calls
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+
             commandService.AddCommand(MenuItem);
         }
 
         /// <summary>
         /// Gets the instance of the command.
         /// </summary>
-        public static CommandDotnetPack Instance
+        public static CommandDotnetClean Instance
         {
             get;
             private set;
@@ -58,14 +60,14 @@ namespace Coree.VisualStudio.DotnetToolbar
         /// Initializes the singleton instance of the command.
         /// </summary>
         /// <param name="package">Owner package, not null.</param>
-        public static async Task InitializeAsync(AsyncPackage package)
+        public static async System.Threading.Tasks.Task InitializeAsync(AsyncPackage package)
         {
-            // Switch to the main thread - the call to AddCommand in Command2's constructor requires
+            // Switch to the main thread - the call to AddCommand in Command3's constructor requires
             // the UI thread.
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
 
             OleMenuCommandService commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
-            Instance = new CommandDotnetPack(package, commandService);
+            Instance = new CommandDotnetClean(package, commandService);
         }
 
         /// <summary>
@@ -75,7 +77,7 @@ namespace Coree.VisualStudio.DotnetToolbar
         /// </summary>
         /// <param name="sender">Event sender.</param>
         /// <param name="e">Event args.</param>
-        private async Task ExecuteAsync(object sender, EventArgs e)
+        private async System.Threading.Tasks.Task ExecuteAsync(object sender, EventArgs e)
         {
             CommandDotnetBuild.Instance.MenuItem.Enabled = false;
             CommandDotnetPack.Instance.MenuItem.Enabled = false;
@@ -83,7 +85,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             CommandDotnetNugetPush.Instance.MenuItem.Enabled = false;
             CommandDotnetClean.Instance.MenuItem.Enabled = false;
 
-            Task myTask = Task.Run(() => StartDotNetProcessAsync());
+            System.Threading.Tasks.Task myTask = System.Threading.Tasks.Task.Run(() => StartDotNetProcessAsync());
             await myTask;
 
             CommandDotnetBuild.Instance.MenuItem.Enabled = true;
@@ -93,15 +95,11 @@ namespace Coree.VisualStudio.DotnetToolbar
             CommandDotnetClean.Instance.MenuItem.Enabled = true;
         }
 
-        private async Task StartDotNetProcessAsync()
+        private async System.Threading.Tasks.Task StartDotNetProcessAsync()
         {
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(Package.DisposalToken);
-
-            DTE2 dte2 = (DTE2)await ServiceProvider.GetServiceAsync(typeof(DTE)).ConfigureAwait(false);
-
             await WindowActivateAsync(Constants.vsWindowKindOutput);
 
-            var configuration = await GetSolutionActiveConfigurationAsync();
+            var activeConfiguration = await GetSolutionActiveConfigurationAsync();
 
             string slnfile = await GetSolutionFileNameAsync();
             string slndir = System.IO.Path.GetDirectoryName(slnfile);
@@ -114,17 +112,18 @@ namespace Coree.VisualStudio.DotnetToolbar
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.CreateNoWindow = true;
             process.StartInfo.FileName = "dotnet.exe";
-            process.StartInfo.Arguments = $@"pack ""{slnfile}"" --configuration {configuration.Name} --force";
+            process.StartInfo.Arguments = $@"clean ""{slnfile}"" --configuration {activeConfiguration.Name}";
             process.StartInfo.WorkingDirectory = $@"{slndir}";
             process.StartInfo.RedirectStandardError = true;
             process.StartInfo.RedirectStandardOutput = true;
-
             await OutputWriteLineAsync("-------------------------------------------------------------------------------");
             await OutputWriteLineAsync(process.StartInfo.GetProcessStartInfoCommandline());
             await OutputWriteLineAsync("-------------------------------------------------------------------------------");
             process.Start();
+
             process.OutputDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await OutputWriteLineAsync(e.Data); } catch (Exception ex) { Debug.WriteLine(ex.Message); } }); _joinableTasks.Add(joinableTask); };
             process.ErrorDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await OutputWriteLineAsync(e.Data); } catch (Exception ex) { Debug.WriteLine(ex.Message); } }); _joinableTasks.Add(joinableTask); };
+
             process.Start();
             process.BeginErrorReadLine();
             process.BeginOutputReadLine();
