@@ -2,14 +2,14 @@
 using EnvDTE80;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Events;
 using Microsoft.VisualStudio.Shell.Interop;
 using System;
 using System.CodeDom;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using Task = System.Threading.Tasks.Task;
+using Coree.VisualStudio.DotnetToolbar.ExtensionMethods;
+using Microsoft.VisualStudio.Shell.Events;
 
 namespace Coree.VisualStudio.DotnetToolbar
 {
