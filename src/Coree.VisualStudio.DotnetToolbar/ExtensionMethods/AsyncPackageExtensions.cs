@@ -4,6 +4,7 @@ using Microsoft.VisualStudio.Shell;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Coree.VisualStudio.DotnetToolbar
@@ -147,10 +148,17 @@ namespace Coree.VisualStudio.DotnetToolbar
 
                     projectInfos.Add(ProjectInfoItem);
 
+                    for (int i = 0; i < projectInfos.Count; i++)
+                    {
+                        projectInfos[i].TargetFrameworksList = projectInfos[i].TargetFrameworksList.Where(e => e != "").ToList();
+                    }
+
                     foreach (Property items in item.Properties)
                     {
                         Debug.WriteLine($@"{items.Name},{items.Value}");
                     }
+
+                   
                 }
 
                 return projectInfos;
