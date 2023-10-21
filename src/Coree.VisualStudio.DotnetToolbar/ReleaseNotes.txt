@@ -1,17 +1,4 @@
-﻿# DotnetToolbar 0.1.63 Release Notes
-Release Date: 2023-10-20
-
-## New Features
-Added dotnet clean
-
-## Enhancements
-- Added del bin/obj and Settings menu items for future use.
-
-## Bug Fixes
-- Rewritten solution opened event, needed for future settings load save export import
-
-
-# DotnetToolbar 0.1.61 Release Notes
+﻿# DotnetToolbar 0.1.61 Release Notes
 Release Date: 2023-10-19
 
 ## New Features

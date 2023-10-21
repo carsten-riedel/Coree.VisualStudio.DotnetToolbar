@@ -60,7 +60,7 @@
               <CommandFlag>DefaultInvisible</CommandFlag>
               <CommandFlag>DynamicVisibility</CommandFlag>
           If you do not want an image next to your command, remove the Icon node /> -->
-      <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="CommandBuild" priority="0x0100" type="Button">
+      <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="Id" priority="0x0100" type="Button">
         <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuGroup" />
         <Icon guid="guidImages" id="pngBuild" />
         <CommandFlag>IconAndText</CommandFlag>
@@ -68,7 +68,7 @@
           <ButtonText>dotnet build</ButtonText>
         </Strings>
       </Button>
-      <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="CommandPack" priority="0x0101" type="Button">
+      <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="Command2Id" priority="0x0101" type="Button">
         <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuGroup" />
         <Icon guid="guidImages" id="pngPack" />
         <CommandFlag>IconAndText</CommandFlag>
@@ -77,7 +77,7 @@
         </Strings>
       </Button>
 
-      <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="CommandPush" priority="0x0102" type="Button">
+      <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="Command4Id" priority="0x0102" type="Button">
         <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuGroup" />
         <Icon guid="guidImages" id="pngUpload" />
         <CommandFlag>IconAndText</CommandFlag>
@@ -86,7 +86,7 @@
         </Strings>
       </Button>
 
-      <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="CommandPublish" priority="0x0103" type="Button">
+      <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="Command3Id" priority="0x0103" type="Button">
         <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuGroup" />
         <Icon guid="guidImages" id="pngUploadFile" />
         <CommandFlag>IconAndText</CommandFlag>
@@ -95,25 +95,7 @@
         </Strings>
       </Button>
 
-      <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="CommandClean" priority="0x0104" type="Button">
-        <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuGroup" />
-        <Icon guid="guidImages" id="pngClean" />
-        <CommandFlag>IconAndText</CommandFlag>
-        <Strings>
-          <ButtonText>dotnet clean</ButtonText>
-        </Strings>
-      </Button>
-
-      <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="CommandDelete" priority="0x0105" type="Button">
-        <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuGroup" />
-        <Icon guid="guidImages" id="pngDelete" />
-        <CommandFlag>IconAndText</CommandFlag>
-        <Strings>
-          <ButtonText>del bin/obj</ButtonText>
-        </Strings>
-      </Button>
-
-      <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="CommandSettings" priority="0x0106" type="Button">
+      <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="CommandSettings" priority="0x0104" type="Button">
         <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuGroup" />
         <Icon guid="guidImages" id="pngSettings" />
         <CommandFlag>IconAndText</CommandFlag>
@@ -143,7 +125,7 @@
             bitmap strip containing the bitmaps and then there are the numeric ids of the elements used
             inside a button definition. An important aspect of this declaration is that the element id
             must be the actual index (1-based) of the bitmap inside the bitmap strip. -->
-      <Bitmap guid="guidImages" href="Resources\CommandBar.png" usedList="pngBuild, pngPack, pngPublish, pngDebug, pngCube, pngUpload, pngUploadFile, pngSettings, pngClean, pngDelete" />
+      <Bitmap guid="guidImages" href="Resources\CommandBar.png" usedList="pngBuild, pngPack, pngPublish, pngDebug, pngCube, pngUpload, pngUploadFile, pngSettings" />
     </Bitmaps>
   </Commands>
 
@@ -155,13 +137,11 @@
     <GuidSymbol name="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" value="{7303216a-a2cb-4519-b645-a34ae1380a78}">
       <IDSymbol name="MyMenuToolBar" value="0x1000" />
       <IDSymbol name="MyMenuGroup" value="0x1020" />
-      <IDSymbol name="CommandBuild" value="4129" />
-      <IDSymbol name="CommandPack" value="4130" />
-      <IDSymbol name="CommandPush" value="4131" />
-      <IDSymbol name="CommandPublish" value="4134" />
+      <IDSymbol name="Id" value="4129" />
+      <IDSymbol name="Command2Id" value="4130" />
+      <IDSymbol name="Command3Id" value="4131" />
+      <IDSymbol name="Command4Id" value="4134" />
       <IDSymbol name="CommandSettings" value="4135" />
-      <IDSymbol name="CommandClean" value="4136" />
-      <IDSymbol name="CommandDelete" value="4137" />
       <!-- 
         <IDSymbol name="cmdidMyDropDownCombo" value="4132" />
         <IDSymbol name="cmdidMyDropDownComboGetList" value="4133" />
@@ -177,8 +157,6 @@
       <IDSymbol name="pngUpload" value="6" />
       <IDSymbol name="pngUploadFile" value="7" />
       <IDSymbol name="pngSettings" value="8" />
-      <IDSymbol name="pngClean" value="9" />
-      <IDSymbol name="pngDelete" value="10" />
     </GuidSymbol>
   </Symbols>
 </CommandTable>
