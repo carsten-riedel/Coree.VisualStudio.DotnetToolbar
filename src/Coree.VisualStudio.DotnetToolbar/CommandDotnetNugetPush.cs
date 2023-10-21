@@ -112,13 +112,13 @@ namespace Coree.VisualStudio.DotnetToolbar
 
             if (nugetPushDialog.nugetPushDialogResult == NugetPushDialog.NugetPushDialogResult.Cancel)
             {
-                await OutputWriteLineAsync("dotnet nuget push closed.");
+                await OutputWriteLineAsync("dotnet nuget push canceled.");
                 return;
             }
 
             if (nugetPushDialog.nugetPushDialogResult == NugetPushDialog.NugetPushDialogResult.Close)
             {
-                await OutputWriteLineAsync("dotnet nuget push canceled.");
+                await OutputWriteLineAsync("dotnet nuget push closed.");
                 return;
             }
 
