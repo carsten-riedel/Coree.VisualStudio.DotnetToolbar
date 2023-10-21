@@ -1,5 +1,6 @@
 ﻿using EnvDTE;
 using EnvDTE80;
+using Microsoft.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Threading;
 using System;
@@ -134,7 +135,15 @@ namespace Coree.VisualStudio.DotnetToolbar
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.CreateNoWindow = true;
             process.StartInfo.FileName = "dotnet.exe";
-            process.StartInfo.Arguments = $@"nuget push ""{nugetPushDialog.SolutionDir}{Path.DirectorySeparatorChar}{nugetPushDialog.PackageLocation}"" --api-key {nugetPushDialog.ApiKey} --source {nugetPushDialog.Source} --skip-duplicate";
+            if (nugetPushDialog.ApiKey!=String.Empty)
+            {
+                process.StartInfo.Arguments = $@"nuget push ""{nugetPushDialog.SolutionDir}{Path.DirectorySeparatorChar}{nugetPushDialog.PackageLocation}"" --api-key {nugetPushDialog.ApiKey} --source {nugetPushDialog.Source}";
+            }
+            else
+            {
+                process.StartInfo.Arguments = $@"nuget push ""{nugetPushDialog.SolutionDir}{Path.DirectorySeparatorChar}{nugetPushDialog.PackageLocation}"" --source {nugetPushDialog.Source}";
+            }
+            
             process.StartInfo.WorkingDirectory = $@"{String.Empty}";
             process.StartInfo.RedirectStandardError = true;
             process.StartInfo.RedirectStandardOutput = true;

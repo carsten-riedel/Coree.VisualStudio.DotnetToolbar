@@ -115,6 +115,25 @@ namespace Coree.VisualStudio.DotnetToolbar
             public string FriendlyTargetFramework { get; set; } = String.Empty;
         }
 
+        public static async Task<string> GetProjectItemAsync(this Project item,string name, AsyncPackage Package )
+        {
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(Package.DisposalToken);
+
+            if (item.Properties == null)
+            {
+                return string.Empty;
+            }
+            try
+            {
+                return (string)item.Properties.Item(name).Value;
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
+            
+        }
+
         public static async Task<List<ProjectInfo>> GetProjectInfosAsync(this AsyncPackage asyncPackage)
         {
             List<ProjectInfo> projectInfos = new List<ProjectInfo>();
@@ -130,10 +149,10 @@ namespace Coree.VisualStudio.DotnetToolbar
                 {
                     var ProjectInfoItem = new ProjectInfo()
                     {
-                        FullProjectFileName = (string)item.Properties.Item("FullProjectFileName").Value,
-                        TargetFrameworks = (string)item.Properties.Item("TargetFrameworks").Value,
-                        FriendlyTargetFramework = (string)item.Properties.Item("FriendlyTargetFramework").Value,
-                        FullPath = (string)item.Properties.Item("FullPath").Value
+                        FullProjectFileName = await GetProjectItemAsync(item,"FullProjectFileName",asyncPackage),
+                        TargetFrameworks = await GetProjectItemAsync(item, "TargetFrameworks", asyncPackage),
+                        FriendlyTargetFramework = await GetProjectItemAsync(item, "FriendlyTargetFramework", asyncPackage),
+                        FullPath = await GetProjectItemAsync(item, "FullPath", asyncPackage)
                     };
 
                     if (ProjectInfoItem.TargetFrameworks != String.Empty)
@@ -153,10 +172,22 @@ namespace Coree.VisualStudio.DotnetToolbar
                         projectInfos[i].TargetFrameworksList = projectInfos[i].TargetFrameworksList.Where(e => e != "").ToList();
                     }
 
-                    foreach (Property items in item.Properties)
+                    if (item.Properties != null)
                     {
-                        Debug.WriteLine($@"{items.Name},{items.Value}");
+                        foreach (Property items in item.Properties)
+                        {
+                            try
+                            {
+                                Debug.WriteLine($@"{items.Name},{items.Value}");
+                            }
+                            catch (Exception)
+                            {
+                                Debug.WriteLine($@"{items.Name}");
+                            }
+
+                        }
                     }
+
 
                    
                 }

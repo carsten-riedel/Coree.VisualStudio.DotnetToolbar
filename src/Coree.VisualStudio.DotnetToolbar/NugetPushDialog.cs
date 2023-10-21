@@ -1,7 +1,10 @@
 ﻿using CredentialManagement;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using System.Xml.Linq;
 
 namespace Coree.VisualStudio.DotnetToolbar
 {
@@ -40,7 +43,17 @@ namespace Coree.VisualStudio.DotnetToolbar
             var shortnuget = new List<string>();
             nugets.ForEach(e => shortnuget.Add(e.Substring(this.SolutionDir.Length + 1)));
 
+            var config = ReadNugetConfig();
+
             InitializeComponent();
+
+            foreach (var nu in config)
+            {
+                if (!listBoxPackageSource.Items.Contains(nu.Value))
+                {
+                    listBoxPackageSource.Items.Add(nu.Value);
+                }
+            }
 
             listBoxPackages.Items.AddRange(shortnuget.ToArray());
 
@@ -57,6 +70,26 @@ namespace Coree.VisualStudio.DotnetToolbar
             }
 
             LoadDotnetToolbarCredential();
+        }
+
+        private Dictionary<string, string> ReadNugetConfig()
+        {
+            string roamingPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string filePath = Path.Combine(roamingPath, @"NuGet\nuget.config");
+
+            string fileContents = File.ReadAllText(filePath);
+            XDocument doc = XDocument.Parse(fileContents);
+
+            Dictionary<string, string> packageSources = new Dictionary<string, string>();
+
+            foreach (var source in doc.Descendants("packageSources").Elements("add"))
+            {
+                string key = source.Attribute("key").Value;
+                string value = source.Attribute("value").Value;
+                packageSources.Add(key, value);
+            }
+
+            return packageSources;
         }
 
         private void LoadDotnetToolbarCredential()

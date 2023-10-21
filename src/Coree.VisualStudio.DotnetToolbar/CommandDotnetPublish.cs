@@ -1,5 +1,6 @@
 ﻿using EnvDTE;
 using EnvDTE80;
+using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Threading;
 using System;
@@ -97,7 +98,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(Package.DisposalToken);
             DTE2 dte2 = (DTE2)await ServiceProvider.GetServiceAsync(typeof(DTE)).ConfigureAwait(false);
 
-            await WindowActivateAsync(Constants.vsWindowKindOutput);
+            await WindowActivateAsync(EnvDTE.Constants.vsWindowKindOutput);
 
             var configuration = await GetSolutionActiveConfigurationAsync();
 
@@ -107,10 +108,12 @@ namespace Coree.VisualStudio.DotnetToolbar
 
             List<JoinableTask> _joinableTasks = new List<JoinableTask>();
 
+            bool done = false;
             foreach (var projectInfo in projectInfos)
             {
                 foreach (var targetFramework in projectInfo.TargetFrameworksList)
                 {
+                    done = true;
                     var process = new System.Diagnostics.Process();
                     process.StartInfo.UseShellExecute = false;
                     process.StartInfo.CreateNoWindow = true;
@@ -133,6 +136,11 @@ namespace Coree.VisualStudio.DotnetToolbar
             }
 
             await System.Threading.Tasks.Task.WhenAll(_joinableTasks.Select(jt => jt.Task));
+
+            if (!done)
+            {
+                await OutputWriteLineAsync("Non SDK Style project ?");
+            }
 
             await OutputWriteLineAsync("Done");
         }
