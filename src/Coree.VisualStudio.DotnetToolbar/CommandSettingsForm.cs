@@ -33,7 +33,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             }
             if (radioButton2.Checked)
             {
-                CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsPublish.PublishSolutionProject = !radioButton1.Checked;
+                CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsPublish.PublishSolutionProject = radioButton1.Checked;
             }
             JsonHelper.WriteToFile(CoreeVisualStudioDotnetToolbarPackage.Instance.Settings, CoreeVisualStudioDotnetToolbarPackage.Instance.SettingsFileName);
         }

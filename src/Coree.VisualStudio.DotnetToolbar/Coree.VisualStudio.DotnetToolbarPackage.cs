@@ -70,6 +70,16 @@ namespace Coree.VisualStudio.DotnetToolbar
             await Coree.VisualStudio.DotnetToolbar.CommandDeleteBinObj.InitializeAsync(this);
             await Coree.VisualStudio.DotnetToolbar.CommandSettings.InitializeAsync(this);
 
+
+            bool isSolutionLoaded = await IsSolutionLoadedAsync();
+
+            if (isSolutionLoaded)
+            {
+                await SolutionEvents_OnAfterOpenSolutionAsync();
+            }
+
+            Microsoft.VisualStudio.Shell.Events.SolutionEvents.OnAfterOpenSolution += (sender, e) => { _ = Task.Run(() => SolutionEvents_OnAfterOpenSolutionAsync(sender, e)); };
+
             //await Coree.VisualStudio.DotnetToolbar.CommandDropDown.InitializeAsync(this);
             Instance = this;
         }
@@ -77,8 +87,18 @@ namespace Coree.VisualStudio.DotnetToolbar
         //Try later on https://github.com/madskristensen/SolutionLoadSample
         public CoreeVisualStudioDotnetToolbarPackage()
         {
-            Microsoft.VisualStudio.Shell.Events.SolutionEvents.OnAfterOpenSolution += (sender, e) => { _ = Task.Run(() => SolutionEvents_OnAfterOpenSolutionAsync(sender, e)); };
+            //Microsoft.VisualStudio.Shell.Events.SolutionEvents.OnAfterOpenSolution += (sender, e) => { _ = Task.Run(() => SolutionEvents_OnAfterOpenSolutionAsync(sender, e)); };
             Microsoft.VisualStudio.Shell.Events.SolutionEvents.OnBeforeCloseSolution += (sender, e) => { _ = Task.Run(() => SolutionEvents_OnBeforeCloseSolutionAsync(sender, e)); };
+        }
+
+        private async Task<bool> IsSolutionLoadedAsync()
+        {
+            await JoinableTaskFactory.SwitchToMainThreadAsync();
+            var solService = await GetServiceAsync(typeof(SVsSolution)) as IVsSolution;
+
+            ErrorHandler.ThrowOnFailure(solService.GetProperty((int)__VSPROPID.VSPROPID_IsSolutionOpen, out object value));
+
+            return value is bool isSolOpen && isSolOpen;
         }
 
         private async Task SolutionEvents_OnBeforeCloseSolutionAsync(object sender, EventArgs e)
@@ -98,7 +118,7 @@ namespace Coree.VisualStudio.DotnetToolbar
         public SolutionSettings Settings { get; set; }
         public string SettingsFileName { get; set; }
 
-        private async Task SolutionEvents_OnAfterOpenSolutionAsync(object sender, OpenSolutionEventArgs e)
+        private async Task SolutionEvents_OnAfterOpenSolutionAsync(object sender =null, OpenSolutionEventArgs e = null)
         {
             await this.JoinableTaskFactory.SwitchToMainThreadAsync();
             DTE2 dte2 = (DTE2)await this.GetServiceAsync(typeof(DTE));
