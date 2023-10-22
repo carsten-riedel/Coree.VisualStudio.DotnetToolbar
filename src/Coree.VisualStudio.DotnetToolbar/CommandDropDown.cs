@@ -44,7 +44,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             commandService.AddCommand(menuMyDropDownComboGetListCommand);
 
             CommandID menuMyDropDownComboCommandID = new CommandID(CommandSet, cmdidMyDropDownCombo);
-            MenuCommand menuMyDropDownComboCommand = new OleMenuCommand((s, e) => OnMenuMyDropDownComboAsync(s, e), menuMyDropDownComboCommandID);
+            MenuCommand menuMyDropDownComboCommand = new OleMenuCommand(async (s, e) => OnMenuMyDropDownComboAsync(s, e), menuMyDropDownComboCommandID);
             commandService.AddCommand(menuMyDropDownComboCommand);
         }
 
