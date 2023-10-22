@@ -1,4 +1,12 @@
-﻿# DotnetToolbar 0.1.66 Release Notes
+﻿# DotnetToolbar 0.1.68 Release Notes
+Release Date: 2023-10-22
+
+## New Features
+- Settings Dialog first draft.
+- Option general: Block execution of non sdk style projects.
+- Option general: Kill all dotnet process before execute.
+
+# DotnetToolbar 0.1.66 Release Notes
 Release Date: 2023-10-21
 
 ## Bug Fixes
