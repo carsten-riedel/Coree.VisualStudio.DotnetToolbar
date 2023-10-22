@@ -4,8 +4,10 @@ using Microsoft.VisualStudio.Shell;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Coree.VisualStudio.DotnetToolbar
 {
@@ -113,9 +115,13 @@ namespace Coree.VisualStudio.DotnetToolbar
             public string TargetFrameworks { get; set; } = String.Empty;
             public List<string> TargetFrameworksList { get; set; } = new List<string>();
             public string FriendlyTargetFramework { get; set; } = String.Empty;
+            public bool IsSdkStyle { get; set; } = false;
+            public string File { get; set; } = String.Empty;
+
+            
         }
 
-        public static async Task<string> GetProjectItemAsync(this Project item,string name, AsyncPackage Package )
+        public static async Task<string> GetProjectItemAsync(this Project item, string name, AsyncPackage Package)
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(Package.DisposalToken);
 
@@ -131,7 +137,6 @@ namespace Coree.VisualStudio.DotnetToolbar
             {
                 return string.Empty;
             }
-            
         }
 
         public static async Task<List<ProjectInfo>> GetProjectInfosAsync(this AsyncPackage asyncPackage)
@@ -149,11 +154,26 @@ namespace Coree.VisualStudio.DotnetToolbar
                 {
                     var ProjectInfoItem = new ProjectInfo()
                     {
-                        FullProjectFileName = await GetProjectItemAsync(item,"FullProjectFileName",asyncPackage),
+                        File = item.FullName,
+                        FullProjectFileName = await GetProjectItemAsync(item, "FullProjectFileName", asyncPackage),
                         TargetFrameworks = await GetProjectItemAsync(item, "TargetFrameworks", asyncPackage),
                         FriendlyTargetFramework = await GetProjectItemAsync(item, "FriendlyTargetFramework", asyncPackage),
                         FullPath = await GetProjectItemAsync(item, "FullPath", asyncPackage)
                     };
+
+                    if (ProjectInfoItem.File != String.Empty)
+                    {
+                        string fileContents = File.ReadAllText(ProjectInfoItem.File);
+                        XDocument doc = XDocument.Parse(fileContents);
+                        if (doc.Root.Attribute("Sdk") != null)
+                        {
+                            ProjectInfoItem.IsSdkStyle = true;
+                        }
+                        else
+                        {
+                            ProjectInfoItem.IsSdkStyle = false;
+                        }
+                    }
 
                     if (ProjectInfoItem.TargetFrameworks != String.Empty)
                     {
@@ -162,7 +182,7 @@ namespace Coree.VisualStudio.DotnetToolbar
 
                     if (ProjectInfoItem.TargetFrameworksList.Count == 0)
                     {
-                        ProjectInfoItem.TargetFrameworksList.Add(ProjectInfoItem.FriendlyTargetFramework);
+                        ProjectInfoItem.TargetFrameworksList.Add(ProjectInfoItem.FriendlyTargetFramework.Trim(';'));
                     }
 
                     projectInfos.Add(ProjectInfoItem);
@@ -171,6 +191,8 @@ namespace Coree.VisualStudio.DotnetToolbar
                     {
                         projectInfos[i].TargetFrameworksList = projectInfos[i].TargetFrameworksList.Where(e => e != "").ToList();
                     }
+
+                    projectInfos = projectInfos.Where(e => e.File != String.Empty).ToList();
 
                     if (item.Properties != null)
                     {
@@ -184,12 +206,8 @@ namespace Coree.VisualStudio.DotnetToolbar
                             {
                                 Debug.WriteLine($@"{items.Name}");
                             }
-
                         }
                     }
-
-
-                   
                 }
 
                 return projectInfos;

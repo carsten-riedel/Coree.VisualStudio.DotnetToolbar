@@ -9,5 +9,6 @@ namespace Coree.VisualStudio.DotnetToolbar
     public class SolutionSettings
     {
         public bool KillAllDotnetProcessBeforeExectue { get; set; } = false;
+        public bool BlockNonSdkExecute { get; set; } = true;
     }
 }

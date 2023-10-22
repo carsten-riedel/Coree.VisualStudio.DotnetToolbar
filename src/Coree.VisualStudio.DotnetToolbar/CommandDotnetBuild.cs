@@ -114,6 +114,28 @@ namespace Coree.VisualStudio.DotnetToolbar
                 (new System.Diagnostics.Process()).AllDontNetKill("dotnet");
             }
 
+            if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.BlockNonSdkExecute)
+            {
+                var projectInfos = await GetProjectInfosAsync();
+
+                bool found = false;
+                foreach (var item in projectInfos)
+                {
+                    if (item.IsSdkStyle == false)
+                    {
+                        await OutputWriteLineAsync("-------------------------------------------------------------------------------");
+                        await OutputWriteLineAsync($"Non SDK style project file {item.File} !");
+                        await OutputWriteLineAsync("-------------------------------------------------------------------------------");
+                        found = true;
+                    }
+                }
+                if (found)
+                {
+                    await OutputWriteLineAsync("Done");
+                    return;
+                }
+            }
+
             var process = new System.Diagnostics.Process();
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.CreateNoWindow = true;

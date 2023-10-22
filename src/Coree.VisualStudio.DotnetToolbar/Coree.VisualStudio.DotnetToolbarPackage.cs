@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Coree.VisualStudio.DotnetToolbar.ExtensionMethods;
 using Microsoft.VisualStudio.Shell.Events;
+using Microsoft.CSharp.RuntimeBinder;
 
 namespace Coree.VisualStudio.DotnetToolbar
 {
@@ -70,7 +71,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             await Coree.VisualStudio.DotnetToolbar.CommandDeleteBinObj.InitializeAsync(this);
             await Coree.VisualStudio.DotnetToolbar.CommandSettings.InitializeAsync(this);
 
-            await Coree.VisualStudio.DotnetToolbar.CommandDropDown.InitializeAsync(this);
+            //await Coree.VisualStudio.DotnetToolbar.CommandDropDown.InitializeAsync(this);
             Instance = this;
         }
 
@@ -119,14 +120,35 @@ namespace Coree.VisualStudio.DotnetToolbar
             Settings = JsonHelper.ReadFromFile<SolutionSettings>(SettingsFileName);
 
             dte2.AddText("Build", $"DotnetToolbar settings file loaded {SettingsFileName}");
-            CommandSettings.Instance.MenuItem.Enabled = true;
-            CommandDotnetBuild.Instance.MenuItem.Enabled = true;
-            CommandDotnetPack.Instance.MenuItem.Enabled = true;
-            CommandDotnetPublish.Instance.MenuItem.Enabled = true;
-            CommandDotnetNugetPush.Instance.MenuItem.Enabled = true;
-            CommandDotnetClean.Instance.MenuItem.Enabled = true;
+
+
+
+
+            // Usage
+            EnableMenuItemIfInstanceNotNull(CommandSettings.Instance);
+            EnableMenuItemIfInstanceNotNull(CommandDotnetBuild.Instance);
+            EnableMenuItemIfInstanceNotNull(CommandDotnetPack.Instance);
+            EnableMenuItemIfInstanceNotNull(CommandDotnetPublish.Instance);
+            EnableMenuItemIfInstanceNotNull(CommandDotnetNugetPush.Instance);
+            EnableMenuItemIfInstanceNotNull(CommandDotnetClean.Instance);
 
         }
+
+        void EnableMenuItemIfInstanceNotNull(dynamic commandInstance)
+        {
+            try
+            {
+                if (commandInstance != null && commandInstance.MenuItem != null)
+                {
+                    commandInstance.MenuItem.Enabled = true;
+                }
+            }
+            catch (RuntimeBinderException)
+            {
+                // Handle the case where MenuItem or Enabled does not exist.
+            }
+        }
+
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
