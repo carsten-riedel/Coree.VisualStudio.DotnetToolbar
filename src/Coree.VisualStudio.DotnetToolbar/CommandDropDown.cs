@@ -1,8 +1,11 @@
 ﻿using EnvDTE;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Threading;
 using System;
 using System.ComponentModel.Design;
+using System.IO.Packaging;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using Task = System.Threading.Tasks.Task;
 
 //https://github.com/microsoft/VSSDK-Extensibility-Samples/tree/master/Combo_Box/C%23
@@ -17,9 +20,9 @@ namespace Coree.VisualStudio.DotnetToolbar
         /// <summary>
         /// Command ID.
         /// </summary>
-        public const int cmdidMyDropDownCombo = 4170;
+        public const int cmdidMyDropDownCombo = 5000;
 
-        public const int cmdidMyDropDownComboGetList = 4171;
+        public const int cmdidMyDropDownComboGetList = 5001;
 
         /// <summary>
         /// Command menu group (command set GUID).
@@ -35,24 +38,39 @@ namespace Coree.VisualStudio.DotnetToolbar
         private CommandDropDown(AsyncPackage package, OleMenuCommandService commandService) : base(package, commandService)
         {
             CommandID menuMyDropDownComboGetListCommandID = new CommandID(CommandSet, cmdidMyDropDownComboGetList);
-            OleMenuCommand menuMyDropDownComboGetListCommand = new OleMenuCommand(new EventHandler(OnMenuMyDropDownComboGetList), menuMyDropDownComboGetListCommandID);
+
+            OleMenuCommand menuMyDropDownComboGetListCommand = new OleMenuCommand(async (s, e) => OnMenuMyDropDownComboGetListAsync(s, e), menuMyDropDownComboGetListCommandID);
+
             commandService.AddCommand(menuMyDropDownComboGetListCommand);
 
             CommandID menuMyDropDownComboCommandID = new CommandID(CommandSet, cmdidMyDropDownCombo);
-            MenuCommand menuMyDropDownComboCommand = new OleMenuCommand(new EventHandler(OnMenuMyDropDownCombo), menuMyDropDownComboCommandID)
-            {
-                Enabled = false,
-                Visible = false
-            };
-       
+            MenuCommand menuMyDropDownComboCommand = new OleMenuCommand((s, e) => OnMenuMyDropDownComboAsync(s, e), menuMyDropDownComboCommandID);
             commandService.AddCommand(menuMyDropDownComboCommand);
         }
+
+
+        /// <summary>
+        /// Initializes the singleton instance of the command.
+        /// </summary>
+        /// <param name="package">Owner package, not null.</param>
+        public static async Task InitializeAsync(AsyncPackage package)
+        {
+            // Switch to the main thread - the call to AddCommand in 's constructor requires
+            // the UI thread.
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
+
+            OleMenuCommandService commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
+            Instance = new CommandDropDown(package, commandService);
+        }
+
 
         private readonly string[] dropDownComboChoices = { "build", "pack", "publish" };
         private string currentDropDownComboChoice = "build";
 
-        private void OnMenuMyDropDownComboGetList(object sender, EventArgs e)
+        private async Task OnMenuMyDropDownComboGetListAsync(object sender, EventArgs e)
         {
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(Package.DisposalToken);
+
             if (e is OleMenuCmdEventArgs eventArgs)
             {
                 object inParam = eventArgs.InValue;
@@ -73,8 +91,10 @@ namespace Coree.VisualStudio.DotnetToolbar
             }
         }
 
-        private void OnMenuMyDropDownCombo(object sender, EventArgs e)
+        private async Task OnMenuMyDropDownComboAsync(object sender, EventArgs e)
         {
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(Package.DisposalToken);
+
             if (e is OleMenuCmdEventArgs eventArgs)
             {
                 IntPtr vOut = eventArgs.OutValue;
@@ -102,8 +122,8 @@ namespace Coree.VisualStudio.DotnetToolbar
                     if (validInput)
                     {
                         currentDropDownComboChoice = dropDownComboChoices[indexInput];
-                        WindowActivateAsync(Constants.vsWindowKindOutput);
-                        OutputWriteLineAsync($@"Choice: {currentDropDownComboChoice}");
+                        await WindowActivateAsync(Constants.vsWindowKindOutput);
+                        await OutputWriteLineAsync($@"Choice: {currentDropDownComboChoice}");
                     }
                     else
                     {
@@ -127,18 +147,5 @@ namespace Coree.VisualStudio.DotnetToolbar
             private set;
         }
 
-        /// <summary>
-        /// Initializes the singleton instance of the command.
-        /// </summary>
-        /// <param name="package">Owner package, not null.</param>
-        public static async Task InitializeAsync(AsyncPackage package)
-        {
-            // Switch to the main thread - the call to AddCommand in 's constructor requires
-            // the UI thread.
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
-
-            OleMenuCommandService commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
-            Instance = new CommandDropDown(package, commandService);
-        }
     }
 }

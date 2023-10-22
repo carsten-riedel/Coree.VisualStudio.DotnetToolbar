@@ -84,6 +84,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             CommandDotnetPublish.Instance.MenuItem.Enabled = false;
             CommandDotnetNugetPush.Instance.MenuItem.Enabled = false;
             CommandDotnetClean.Instance.MenuItem.Enabled = false;
+            CommandSettings.Instance.MenuItem.Enabled = false;
 
             System.Threading.Tasks.Task myTask = System.Threading.Tasks.Task.Run(() => StartDotNetProcessAsync());
             await myTask;
@@ -93,6 +94,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             CommandDotnetPublish.Instance.MenuItem.Enabled = true;
             CommandDotnetNugetPush.Instance.MenuItem.Enabled = true;
             CommandDotnetClean.Instance.MenuItem.Enabled = true;
+            CommandSettings.Instance.MenuItem.Enabled = true;
         }
 
         private async System.Threading.Tasks.Task StartDotNetProcessAsync()
@@ -104,13 +106,13 @@ namespace Coree.VisualStudio.DotnetToolbar
 
             var configuration = await GetSolutionActiveConfigurationAsync();
             var solinfo = await GetSolutionAsync();
-            var solinfox = await GetSolutionPropertiesAsync();
+            var solutionProperties = await GetSolutionPropertiesAsync();
 
             await OutputWriteLineAsync(null, true);
 
             List<JoinableTask> _joinableTasks = new List<JoinableTask>();
 
-            NugetPushDialog nugetPushDialog = new NugetPushDialog(Package.UserLocalDataPath, solinfo.FullName, solinfox["Name"], (string)solinfo.Globals["SolutionGuid"]);
+            NugetPushDialog nugetPushDialog = new NugetPushDialog(Package.UserLocalDataPath, solinfo.FullName, solutionProperties["Name"], (string)solinfo.Globals["SolutionGuid"]);
             nugetPushDialog.ShowDialog();
 
             if (nugetPushDialog.nugetPushDialogResult == NugetPushDialog.NugetPushDialogResult.Cancel)
@@ -129,6 +131,11 @@ namespace Coree.VisualStudio.DotnetToolbar
             {
                 await OutputWriteLineAsync("dotnet nuget push canceled. No package specified.");
                 return;
+            }
+
+            if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.KillAllDotnetProcessBeforeExectue)
+            {
+                (new System.Diagnostics.Process()).AllDontNetKill("dotnet");
             }
 
             var process = new System.Diagnostics.Process();

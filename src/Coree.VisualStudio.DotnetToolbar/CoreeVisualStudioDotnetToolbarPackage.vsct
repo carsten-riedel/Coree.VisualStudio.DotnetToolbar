@@ -124,9 +124,9 @@
       
     </Buttons>
 
-    <!-- 
+    <!--
     <Combos>
-      <Combo guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="cmdidMyDropDownCombo" priority="0x0104" type="DropDownCombo" defaultWidth="200" idCommandList="cmdidMyDropDownComboGetList">
+      <Combo guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="cmdidMyDropDownCombo" priority="0x0107" type="DropDownCombo" defaultWidth="200" idCommandList="cmdidMyDropDownComboGetList">
         <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuGroup" />
         <CommandFlag>IconAndText</CommandFlag>
         <Strings>
@@ -162,10 +162,10 @@
       <IDSymbol name="CommandIdDotnetClean" value="4136" />
       <IDSymbol name="CommandIdDeleteBinObj" value="4137" />
       <IDSymbol name="CommandIdSettings" value="4135" />
-      <!-- 
-        <IDSymbol name="cmdidMyDropDownCombo" value="4132" />
-        <IDSymbol name="cmdidMyDropDownComboGetList" value="4133" />
-      -->
+      
+      <IDSymbol name="cmdidMyDropDownCombo" value="5000" />
+      <IDSymbol name="cmdidMyDropDownComboGetList" value="5001" />
+      
     </GuidSymbol>
 
     <GuidSymbol name="guidImages" value="{32797b29-ae82-4c7c-ae0e-12eb5435f414}">

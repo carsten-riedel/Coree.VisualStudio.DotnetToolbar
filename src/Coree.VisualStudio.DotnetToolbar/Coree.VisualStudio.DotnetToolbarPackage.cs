@@ -70,7 +70,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             await Coree.VisualStudio.DotnetToolbar.CommandDeleteBinObj.InitializeAsync(this);
             await Coree.VisualStudio.DotnetToolbar.CommandSettings.InitializeAsync(this);
 
-            //await Coree.VisualStudio.DotnetToolbar.CommandDropDown.InitializeAsync(this);
+            await Coree.VisualStudio.DotnetToolbar.CommandDropDown.InitializeAsync(this);
             Instance = this;
         }
 
@@ -87,7 +87,16 @@ namespace Coree.VisualStudio.DotnetToolbar
             DTE2 dte2 = (DTE2)await this.GetServiceAsync(typeof(DTE));
             dte2.WindowActivateEx();
             dte2.AddText("Build", "DotnetToolbar OnBeforeCloseSolution");
+            CommandSettings.Instance.MenuItem.Enabled = false;
+            CommandDotnetBuild.Instance.MenuItem.Enabled = false;
+            CommandDotnetPack.Instance.MenuItem.Enabled = false;
+            CommandDotnetPublish.Instance.MenuItem.Enabled = false;
+            CommandDotnetNugetPush.Instance.MenuItem.Enabled = false;
+            CommandDotnetClean.Instance.MenuItem.Enabled = false;
         }
+
+        public SolutionSettings Settings { get; set; }
+        public string SettingsFileName { get; set; }
 
         private async Task SolutionEvents_OnAfterOpenSolutionAsync(object sender, OpenSolutionEventArgs e)
         {
@@ -95,6 +104,28 @@ namespace Coree.VisualStudio.DotnetToolbar
             DTE2 dte2 = (DTE2)await this.GetServiceAsync(typeof(DTE));
             dte2.WindowActivateEx();
             dte2.AddText("Build", "DotnetToolbar OnAfterOpenSolution");
+
+            var solinfo = await this.GetSolutionAsync();
+            var solutionProperties = await this.GetSolutionPropertiesAsync();
+
+            SettingsFileName = $@"{UserLocalDataPath}\{solutionProperties["Name"]}_{(string)solinfo.Globals["SolutionGuid"]}.json";
+            
+            bool Created = JsonHelper.CreateDefault<SolutionSettings>(SettingsFileName);
+            if (Created == true )
+            {
+                dte2.AddText("Build", $"DotnetToolbar settings file created {SettingsFileName}");
+            }
+
+            Settings = JsonHelper.ReadFromFile<SolutionSettings>(SettingsFileName);
+
+            dte2.AddText("Build", $"DotnetToolbar settings file loaded {SettingsFileName}");
+            CommandSettings.Instance.MenuItem.Enabled = true;
+            CommandDotnetBuild.Instance.MenuItem.Enabled = true;
+            CommandDotnetPack.Instance.MenuItem.Enabled = true;
+            CommandDotnetPublish.Instance.MenuItem.Enabled = true;
+            CommandDotnetNugetPush.Instance.MenuItem.Enabled = true;
+            CommandDotnetClean.Instance.MenuItem.Enabled = true;
+
         }
         protected override void Dispose(bool disposing)
         {

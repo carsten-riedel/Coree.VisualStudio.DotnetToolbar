@@ -84,6 +84,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             CommandDotnetPublish.Instance.MenuItem.Enabled = false;
             CommandDotnetNugetPush.Instance.MenuItem.Enabled = false;
             CommandDotnetClean.Instance.MenuItem.Enabled = false;
+            CommandSettings.Instance.MenuItem.Enabled = false;
 
             System.Threading.Tasks.Task myTask = System.Threading.Tasks.Task.Run(() => StartDotNetProcessAsync());
             await myTask;
@@ -93,6 +94,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             CommandDotnetPublish.Instance.MenuItem.Enabled = true;
             CommandDotnetNugetPush.Instance.MenuItem.Enabled = true;
             CommandDotnetClean.Instance.MenuItem.Enabled = true;
+            CommandSettings.Instance.MenuItem.Enabled = true;
         }
 
         private async System.Threading.Tasks.Task StartDotNetProcessAsync()
@@ -107,6 +109,11 @@ namespace Coree.VisualStudio.DotnetToolbar
             await OutputWriteLineAsync(null, true);
 
             List<JoinableTask> _joinableTasks = new List<JoinableTask>();
+
+            if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.KillAllDotnetProcessBeforeExectue)
+            {
+                (new System.Diagnostics.Process()).AllDontNetKill("dotnet");
+            }
 
             var process = new System.Diagnostics.Process();
             process.StartInfo.UseShellExecute = false;
