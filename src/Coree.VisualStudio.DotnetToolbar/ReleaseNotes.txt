@@ -1,4 +1,11 @@
-﻿# DotnetToolbar 0.1.69 Release Notes
+﻿# DotnetToolbar 0.1.70 Release Notes
+Release Date: 2023-10-22
+
+## New Features
+- changed solution load to https://github.com/madskristensen/SolutionLoadSample
+
+
+# DotnetToolbar 0.1.69 Release Notes
 Release Date: 2023-10-22
 
 ## New Features
