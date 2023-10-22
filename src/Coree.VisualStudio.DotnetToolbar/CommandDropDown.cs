@@ -1,11 +1,8 @@
 ﻿using EnvDTE;
 using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Threading;
 using System;
 using System.ComponentModel.Design;
-using System.IO.Packaging;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 using Task = System.Threading.Tasks.Task;
 
 //https://github.com/microsoft/VSSDK-Extensibility-Samples/tree/master/Combo_Box/C%23
@@ -48,7 +45,6 @@ namespace Coree.VisualStudio.DotnetToolbar
             commandService.AddCommand(menuMyDropDownComboCommand);
         }
 
-
         /// <summary>
         /// Initializes the singleton instance of the command.
         /// </summary>
@@ -62,7 +58,6 @@ namespace Coree.VisualStudio.DotnetToolbar
             OleMenuCommandService commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
             Instance = new CommandDropDown(package, commandService);
         }
-
 
         private readonly string[] dropDownComboChoices = { "build", "pack", "publish" };
         private string currentDropDownComboChoice = "build";
@@ -146,6 +141,5 @@ namespace Coree.VisualStudio.DotnetToolbar
             get;
             private set;
         }
-
     }
 }

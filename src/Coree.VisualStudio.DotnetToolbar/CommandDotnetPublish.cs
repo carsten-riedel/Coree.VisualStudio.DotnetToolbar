@@ -103,22 +103,21 @@ namespace Coree.VisualStudio.DotnetToolbar
             await WindowActivateAsync(EnvDTE.Constants.vsWindowKindOutput);
 
             var configuration = await GetSolutionActiveConfigurationAsync();
-
             var projectInfos = await GetProjectInfosAsync();
+            string slnfile = await GetSolutionFileNameAsync();
+            string slndir = System.IO.Path.GetDirectoryName(slnfile);
 
             await OutputWriteLineAsync(null, true);
 
             List<JoinableTask> _joinableTasks = new List<JoinableTask>();
 
-            if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.KillAllDotnetProcessBeforeExectue)
+            if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsGeneral.KillAllDotnetProcessBeforeExectue)
             {
                 (new System.Diagnostics.Process()).AllDontNetKill("dotnet");
             }
 
-
-            if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.BlockNonSdkExecute)
+            if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsGeneral.BlockNonSdkExecute)
             {
- 
                 bool found = false;
                 foreach (var item in projectInfos)
                 {
@@ -138,29 +137,54 @@ namespace Coree.VisualStudio.DotnetToolbar
             }
 
             bool done = false;
-            foreach (var projectInfo in projectInfos)
+            if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsPublish.PublishSolutionProject)
             {
-                foreach (var targetFramework in projectInfo.TargetFrameworksList)
+                done = true;
+                var process = new System.Diagnostics.Process();
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.CreateNoWindow = true;
+                process.StartInfo.FileName = "dotnet.exe";
+                process.StartInfo.Arguments = $@"publish ""{slnfile}"" --configuration {configuration.Name} --force";
+                process.StartInfo.WorkingDirectory = $@"{slndir}";
+                process.StartInfo.RedirectStandardError = true;
+                process.StartInfo.RedirectStandardOutput = true;
+                await OutputWriteLineAsync("-------------------------------------------------------------------------------");
+                await OutputWriteLineAsync(process.StartInfo.GetProcessStartInfoCommandline());
+                await OutputWriteLineAsync("-------------------------------------------------------------------------------");
+                process.Start();
+                process.OutputDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await OutputWriteLineAsync(e.Data); } catch (Exception ex) { Debug.WriteLine(ex.Message); } }); _joinableTasks.Add(joinableTask); };
+                process.ErrorDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await OutputWriteLineAsync(e.Data); } catch (Exception ex) { Debug.WriteLine(ex.Message); } }); _joinableTasks.Add(joinableTask); };
+                process.Start();
+                process.BeginErrorReadLine();
+                process.BeginOutputReadLine();
+                await process.WaitForExitAsync();
+            }
+            else
+            {
+                foreach (var projectInfo in projectInfos)
                 {
-                    done = true;
-                    var process = new System.Diagnostics.Process();
-                    process.StartInfo.UseShellExecute = false;
-                    process.StartInfo.CreateNoWindow = true;
-                    process.StartInfo.FileName = "dotnet.exe";
-                    process.StartInfo.Arguments = $@"publish ""{projectInfo.FullProjectFileName}"" --configuration {configuration.Name} --framework {targetFramework}";
-                    process.StartInfo.WorkingDirectory = $@"{projectInfo.FullPath}";
-                    process.StartInfo.RedirectStandardError = true;
-                    process.StartInfo.RedirectStandardOutput = true;
-                    await OutputWriteLineAsync("-------------------------------------------------------------------------------");
-                    await OutputWriteLineAsync(process.StartInfo.GetProcessStartInfoCommandline());
-                    await OutputWriteLineAsync("-------------------------------------------------------------------------------");
-                    process.Start();
-                    process.OutputDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await OutputWriteLineAsync(e.Data); } catch (Exception ex) { Debug.WriteLine(ex.Message); } }); _joinableTasks.Add(joinableTask); };
-                    process.ErrorDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await OutputWriteLineAsync(e.Data); } catch (Exception ex) { Debug.WriteLine(ex.Message); } }); _joinableTasks.Add(joinableTask); };
-                    process.Start();
-                    process.BeginErrorReadLine();
-                    process.BeginOutputReadLine();
-                    await process.WaitForExitAsync();
+                    foreach (var targetFramework in projectInfo.TargetFrameworksList)
+                    {
+                        done = true;
+                        var process = new System.Diagnostics.Process();
+                        process.StartInfo.UseShellExecute = false;
+                        process.StartInfo.CreateNoWindow = true;
+                        process.StartInfo.FileName = "dotnet.exe";
+                        process.StartInfo.Arguments = $@"publish ""{projectInfo.FullProjectFileName}"" --configuration {configuration.Name} --framework {targetFramework}";
+                        process.StartInfo.WorkingDirectory = $@"{projectInfo.FullPath}";
+                        process.StartInfo.RedirectStandardError = true;
+                        process.StartInfo.RedirectStandardOutput = true;
+                        await OutputWriteLineAsync("-------------------------------------------------------------------------------");
+                        await OutputWriteLineAsync(process.StartInfo.GetProcessStartInfoCommandline());
+                        await OutputWriteLineAsync("-------------------------------------------------------------------------------");
+                        process.Start();
+                        process.OutputDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await OutputWriteLineAsync(e.Data); } catch (Exception ex) { Debug.WriteLine(ex.Message); } }); _joinableTasks.Add(joinableTask); };
+                        process.ErrorDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await OutputWriteLineAsync(e.Data); } catch (Exception ex) { Debug.WriteLine(ex.Message); } }); _joinableTasks.Add(joinableTask); };
+                        process.Start();
+                        process.BeginErrorReadLine();
+                        process.BeginOutputReadLine();
+                        await process.WaitForExitAsync();
+                    }
                 }
             }
 

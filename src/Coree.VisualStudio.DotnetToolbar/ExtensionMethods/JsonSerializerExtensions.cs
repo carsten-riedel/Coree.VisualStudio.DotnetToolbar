@@ -7,7 +7,8 @@ namespace Coree.VisualStudio.DotnetToolbar.ExtensionMethods
         public static T ReadFromFile<T>(string file)
         {
             var contents = System.IO.File.ReadAllText(file);
-            return System.Text.Json.JsonSerializer.Deserialize<T>(contents);
+            var result = System.Text.Json.JsonSerializer.Deserialize<T>(contents);
+            return result;
         }
 
         public static bool CreateDefault<T>(string file)

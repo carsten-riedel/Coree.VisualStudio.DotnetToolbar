@@ -8,14 +8,33 @@ namespace Coree.VisualStudio.DotnetToolbar
         public CommandSettingsForm()
         {
             InitializeComponent();
-            checkBox1.Checked = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.KillAllDotnetProcessBeforeExectue;
-            checkBox2.Checked = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.BlockNonSdkExecute;
+            checkBox1.Checked = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsGeneral.KillAllDotnetProcessBeforeExectue;
+            checkBox2.Checked = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsGeneral.BlockNonSdkExecute;
+            if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsPublish.PublishSolutionProject)
+            {
+                radioButton1.Checked = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsPublish.PublishSolutionProject;
+                radioButton2.Checked = !CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsPublish.PublishSolutionProject;
+            }
+            else
+            {
+                radioButton1.Checked = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsPublish.PublishSolutionProject;
+                radioButton2.Checked = !CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsPublish.PublishSolutionProject;
+            }
+            
         }
 
         private void CommandSettingsForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.KillAllDotnetProcessBeforeExectue = checkBox1.Checked;
-            CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.BlockNonSdkExecute = checkBox2.Checked;
+            CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsGeneral.KillAllDotnetProcessBeforeExectue = checkBox1.Checked;
+            CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsGeneral.BlockNonSdkExecute = checkBox2.Checked;
+            if (radioButton1.Checked)
+            {
+                CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsPublish.PublishSolutionProject = radioButton1.Checked;
+            }
+            if (radioButton2.Checked)
+            {
+                CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsPublish.PublishSolutionProject = !radioButton1.Checked;
+            }
             JsonHelper.WriteToFile(CoreeVisualStudioDotnetToolbarPackage.Instance.Settings, CoreeVisualStudioDotnetToolbarPackage.Instance.SettingsFileName);
         }
 

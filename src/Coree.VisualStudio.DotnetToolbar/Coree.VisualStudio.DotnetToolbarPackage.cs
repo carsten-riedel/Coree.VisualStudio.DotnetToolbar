@@ -1,16 +1,15 @@
-﻿using EnvDTE;
+﻿using Coree.VisualStudio.DotnetToolbar.ExtensionMethods;
+using EnvDTE;
 using EnvDTE80;
+using Microsoft.CSharp.RuntimeBinder;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Events;
 using Microsoft.VisualStudio.Shell.Interop;
 using System;
-using System.CodeDom;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using Coree.VisualStudio.DotnetToolbar.ExtensionMethods;
-using Microsoft.VisualStudio.Shell.Events;
-using Microsoft.CSharp.RuntimeBinder;
 
 namespace Coree.VisualStudio.DotnetToolbar
 {
@@ -110,9 +109,9 @@ namespace Coree.VisualStudio.DotnetToolbar
             var solutionProperties = await this.GetSolutionPropertiesAsync();
 
             SettingsFileName = $@"{UserLocalDataPath}\{solutionProperties["Name"]}_{(string)solinfo.Globals["SolutionGuid"]}.json";
-            
+
             bool Created = JsonHelper.CreateDefault<SolutionSettings>(SettingsFileName);
-            if (Created == true )
+            if (Created == true)
             {
                 dte2.AddText("Build", $"DotnetToolbar settings file created {SettingsFileName}");
             }
@@ -121,9 +120,6 @@ namespace Coree.VisualStudio.DotnetToolbar
 
             dte2.AddText("Build", $"DotnetToolbar settings file loaded {SettingsFileName}");
 
-
-
-
             // Usage
             EnableMenuItemIfInstanceNotNull(CommandSettings.Instance);
             EnableMenuItemIfInstanceNotNull(CommandDotnetBuild.Instance);
@@ -131,10 +127,9 @@ namespace Coree.VisualStudio.DotnetToolbar
             EnableMenuItemIfInstanceNotNull(CommandDotnetPublish.Instance);
             EnableMenuItemIfInstanceNotNull(CommandDotnetNugetPush.Instance);
             EnableMenuItemIfInstanceNotNull(CommandDotnetClean.Instance);
-
         }
 
-        void EnableMenuItemIfInstanceNotNull(dynamic commandInstance)
+        private void EnableMenuItemIfInstanceNotNull(dynamic commandInstance)
         {
             try
             {
