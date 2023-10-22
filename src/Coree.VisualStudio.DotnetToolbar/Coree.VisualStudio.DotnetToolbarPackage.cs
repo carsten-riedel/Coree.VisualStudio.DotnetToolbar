@@ -75,7 +75,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             Instance = this;
         }
 
-
+        //Try later on https://github.com/madskristensen/SolutionLoadSample
         public CoreeVisualStudioDotnetToolbarPackage()
         {
             Microsoft.VisualStudio.Shell.Events.SolutionEvents.OnAfterOpenSolution += (sender, e) => { _ = Task.Run(() => SolutionEvents_OnAfterOpenSolutionAsync(sender, e)); };
