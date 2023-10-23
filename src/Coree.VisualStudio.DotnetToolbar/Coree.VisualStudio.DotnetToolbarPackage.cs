@@ -6,11 +6,8 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Events;
 using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.VCProjectEngine;
 using System;
-using System.Diagnostics;
 using System.IO;
-using System.IO.Packaging;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -74,12 +71,11 @@ namespace Coree.VisualStudio.DotnetToolbar
             await Coree.VisualStudio.DotnetToolbar.CommandDeleteBinObj.InitializeAsync(this);
             await Coree.VisualStudio.DotnetToolbar.CommandSettings.InitializeAsync(this);
 
-
             bool isSolutionLoaded = await IsSolutionLoadedAsync();
 
             if (isSolutionLoaded)
             {
-                await SolutionEvents_OnAfterOpenSolutionAsync();
+                await SolutionEvents_OnAfterOpenSolutionAsync(null, new OpenSolutionEventArgs(false));
             }
 
             Microsoft.VisualStudio.Shell.Events.SolutionEvents.OnAfterOpenSolution += (sender, e) => { _ = Task.Run(() => SolutionEvents_OnAfterOpenSolutionAsync(sender, e)); };
@@ -122,28 +118,38 @@ namespace Coree.VisualStudio.DotnetToolbar
         public SolutionSettings Settings { get; set; }
         public string SettingsFileName { get; set; }
 
-        private async Task SolutionEvents_OnAfterOpenSolutionAsync(object sender =null, OpenSolutionEventArgs e = null)
+        private async Task SolutionEvents_OnAfterOpenSolutionAsync(object sender = null, OpenSolutionEventArgs e = null)
         {
             await this.JoinableTaskFactory.SwitchToMainThreadAsync();
             DTE2 dte2 = (DTE2)await this.GetServiceAsync(typeof(DTE));
             dte2.WindowActivateEx();
             dte2.AddText("Build", "DotnetToolbar OnAfterOpenSolution");
 
-            var solinfo = await this.GetSolutionAsync();
-            var solutionProperties = await this.GetSolutionPropertiesAsync();
+            Solution solinfo;
+            System.Collections.Generic.Dictionary<string, string> solutionProperties;
+            try
+            {
+                solinfo = (Solution)await this.GetSolutionAsync();
+                solutionProperties = await this.GetSolutionPropertiesAsync();
+            }
+            catch (Exception ex)
+            {
+                dte2.AddText("Build", $"Exception: {ex.Message}");
+                return;
+            }
 
             string guid = "";
+
             if (e.IsNewSolution)
             {
                 guid = GetSolutionGuid($"{solutionProperties["Path"]}");
+                dte2.AddText("Build", $"Got guid from file");
             }
             else
             {
                 guid = $"{(string)solinfo.Globals["SolutionGuid"]}";
+                dte2.AddText("Build", $"Got guid from globals");
             }
-            
-            
-
 
             SettingsFileName = $@"{UserLocalDataPath}\{solutionProperties["Name"]}_{guid}.json";
 
@@ -166,7 +172,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             EnableMenuItemIfInstanceNotNull(CommandDotnetClean.Instance);
         }
 
-        static string GetSolutionGuid(string filePath)
+        private static string GetSolutionGuid(string filePath)
         {
             string line;
 
