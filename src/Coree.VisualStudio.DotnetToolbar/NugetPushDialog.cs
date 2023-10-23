@@ -28,7 +28,7 @@ namespace Coree.VisualStudio.DotnetToolbar
         public string SolutionDir { get; set; }
         private string SolutionName { get; set; }
         private string SolutionGuid { get; set; }
-        private string CredManagerTarget { get; set; }
+
 
         public NugetPushDialog(string UserDataPath, string SolutionLocation, string SolutionName, string SolutionGuid)
         {
@@ -37,7 +37,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             this.SolutionName = SolutionName;
             this.SolutionGuid = SolutionGuid;
             this.SolutionDir = System.IO.Path.GetDirectoryName(SolutionLocation);
-            this.CredManagerTarget = $"DotnetToolbar/{SolutionName}/{SolutionGuid}";
+
 
             var nugets = System.IO.Directory.GetFiles(this.SolutionDir, "*.nupkg", System.IO.SearchOption.AllDirectories).ToList();
             var shortnuget = new List<string>();
@@ -94,6 +94,7 @@ namespace Coree.VisualStudio.DotnetToolbar
 
         private void LoadDotnetToolbarCredential()
         {
+            var CredManagerTarget = $"DotnetToolbar/{SolutionName}/{SolutionGuid}/{Source}";
             Credential credential = new Credential
             {
                 Target = CredManagerTarget,
@@ -114,9 +115,10 @@ namespace Coree.VisualStudio.DotnetToolbar
 
         private void SaveUpdateCredential(string password)
         {
+            var CredManagerTarget = $"DotnetToolbar/{SolutionName}/{SolutionGuid}/{Source}";
             Credential credential = new Credential
             {
-                Username = $"{SolutionGuid}",
+                Username = $"{SolutionName}",
                 Password = password,
                 Target = CredManagerTarget,
                 Type = CredentialType.Generic,

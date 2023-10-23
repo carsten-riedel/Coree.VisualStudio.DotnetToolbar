@@ -1,4 +1,15 @@
-﻿# DotnetToolbar 0.1.70 Release Notes
+﻿# DotnetToolbar 0.1.71 Release Notes
+Release Date: 2023-10-22
+
+## New Features
+- Nodereuse false in settings
+
+## Bug Fixes
+- fix for newly create projects.
+
+
+
+# DotnetToolbar 0.1.70 Release Notes
 Release Date: 2023-10-22
 
 ## New Features

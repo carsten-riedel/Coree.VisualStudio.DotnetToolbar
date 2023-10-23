@@ -137,6 +137,8 @@ namespace Coree.VisualStudio.DotnetToolbar
                 }
             }
 
+            var nodeResuse = $"--nodeReuse:{CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsGeneral.NodeReuse.ToString().ToLower()}";
+
             bool done = false;
             if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsPublish.PublishSolutionProject)
             {
@@ -145,7 +147,7 @@ namespace Coree.VisualStudio.DotnetToolbar
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.CreateNoWindow = true;
                 process.StartInfo.FileName = "dotnet.exe";
-                process.StartInfo.Arguments = $@"publish ""{slnfile}"" --configuration {configuration.Name} --force";
+                process.StartInfo.Arguments = $@"publish ""{slnfile}"" {nodeResuse} --configuration {configuration.Name} --force";
                 process.StartInfo.WorkingDirectory = $@"{slndir}";
                 process.StartInfo.RedirectStandardError = true;
                 process.StartInfo.RedirectStandardOutput = true;
@@ -171,7 +173,7 @@ namespace Coree.VisualStudio.DotnetToolbar
                         process.StartInfo.UseShellExecute = false;
                         process.StartInfo.CreateNoWindow = true;
                         process.StartInfo.FileName = "dotnet.exe";
-                        process.StartInfo.Arguments = $@"publish ""{projectInfo.FullProjectFileName}"" --configuration {configuration.Name} --framework {targetFramework}";
+                        process.StartInfo.Arguments = $@"publish ""{projectInfo.FullProjectFileName}"" {nodeResuse} --configuration {configuration.Name} --framework {targetFramework}";
                         process.StartInfo.WorkingDirectory = $@"{projectInfo.FullPath}";
                         process.StartInfo.RedirectStandardError = true;
                         process.StartInfo.RedirectStandardOutput = true;

@@ -11,6 +11,7 @@
     {
         public bool KillAllDotnetProcessBeforeExectue { get; set; } = false;
         public bool BlockNonSdkExecute { get; set; } = true;
+        public bool NodeReuse { get; set; } = false;
     }
 
     public class SolutionSettings

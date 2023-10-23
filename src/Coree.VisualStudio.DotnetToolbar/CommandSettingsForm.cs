@@ -10,6 +10,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             InitializeComponent();
             checkBox1.Checked = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsGeneral.KillAllDotnetProcessBeforeExectue;
             checkBox2.Checked = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsGeneral.BlockNonSdkExecute;
+            checkBox3.Checked = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsGeneral.NodeReuse;
             if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsPublish.PublishSolutionProject)
             {
                 radioButton1.Checked = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsPublish.PublishSolutionProject;
@@ -27,6 +28,7 @@ namespace Coree.VisualStudio.DotnetToolbar
         {
             CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsGeneral.KillAllDotnetProcessBeforeExectue = checkBox1.Checked;
             CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsGeneral.BlockNonSdkExecute = checkBox2.Checked;
+            CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsGeneral.NodeReuse = checkBox3.Checked;
             if (radioButton1.Checked)
             {
                 CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsPublish.PublishSolutionProject = radioButton1.Checked;

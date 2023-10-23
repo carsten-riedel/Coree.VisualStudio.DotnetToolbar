@@ -6,7 +6,11 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Events;
 using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.VCProjectEngine;
 using System;
+using System.Diagnostics;
+using System.IO;
+using System.IO.Packaging;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -128,7 +132,20 @@ namespace Coree.VisualStudio.DotnetToolbar
             var solinfo = await this.GetSolutionAsync();
             var solutionProperties = await this.GetSolutionPropertiesAsync();
 
-            SettingsFileName = $@"{UserLocalDataPath}\{solutionProperties["Name"]}_{(string)solinfo.Globals["SolutionGuid"]}.json";
+            string guid = "";
+            if (e.IsNewSolution)
+            {
+                guid = GetSolutionGuid($"{solutionProperties["Path"]}");
+            }
+            else
+            {
+                guid = $"{(string)solinfo.Globals["SolutionGuid"]}";
+            }
+            
+            
+
+
+            SettingsFileName = $@"{UserLocalDataPath}\{solutionProperties["Name"]}_{guid}.json";
 
             bool Created = JsonHelper.CreateDefault<SolutionSettings>(SettingsFileName);
             if (Created == true)
@@ -147,6 +164,26 @@ namespace Coree.VisualStudio.DotnetToolbar
             EnableMenuItemIfInstanceNotNull(CommandDotnetPublish.Instance);
             EnableMenuItemIfInstanceNotNull(CommandDotnetNugetPush.Instance);
             EnableMenuItemIfInstanceNotNull(CommandDotnetClean.Instance);
+        }
+
+        static string GetSolutionGuid(string filePath)
+        {
+            string line;
+
+            using (StreamReader reader = new StreamReader(filePath))
+            {
+                while ((line = reader.ReadLine()) != null)
+                {
+                    if (line.Contains("SolutionGuid"))
+                    {
+                        int indexOfEquals = line.IndexOf("=");
+                        string guidString = line.Substring(indexOfEquals + 1).Trim();
+                        return guidString;
+                    }
+                }
+            }
+
+            return null;
         }
 
         private void EnableMenuItemIfInstanceNotNull(dynamic commandInstance)

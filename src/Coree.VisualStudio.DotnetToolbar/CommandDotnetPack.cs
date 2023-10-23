@@ -140,11 +140,13 @@ namespace Coree.VisualStudio.DotnetToolbar
                 }
             }
 
+            var nodeResuse = $"--nodeReuse:{CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsGeneral.NodeReuse.ToString().ToLower()}";
+
             var process = new System.Diagnostics.Process();
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.CreateNoWindow = true;
             process.StartInfo.FileName = "dotnet.exe";
-            process.StartInfo.Arguments = $@"pack ""{slnfile}"" --configuration {configuration.Name} --force";
+            process.StartInfo.Arguments = $@"pack ""{slnfile}"" {nodeResuse} --configuration {configuration.Name} --force";
             process.StartInfo.WorkingDirectory = $@"{slndir}";
             process.StartInfo.RedirectStandardError = true;
             process.StartInfo.RedirectStandardOutput = true;

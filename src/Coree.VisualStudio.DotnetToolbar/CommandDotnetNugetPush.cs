@@ -160,17 +160,19 @@ namespace Coree.VisualStudio.DotnetToolbar
                 }
             }
 
+            var nodeResuse = $"--nodeReuse:{CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsGeneral.NodeReuse.ToString().ToLower()}";
+
             var process = new System.Diagnostics.Process();
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.CreateNoWindow = true;
             process.StartInfo.FileName = "dotnet.exe";
             if (nugetPushDialog.ApiKey != String.Empty)
             {
-                process.StartInfo.Arguments = $@"nuget push ""{nugetPushDialog.SolutionDir}{Path.DirectorySeparatorChar}{nugetPushDialog.PackageLocation}"" --api-key {nugetPushDialog.ApiKey} --source {nugetPushDialog.Source}";
+                process.StartInfo.Arguments = $@"nuget push ""{nugetPushDialog.SolutionDir}{Path.DirectorySeparatorChar}{nugetPushDialog.PackageLocation}"" {nodeResuse} --api-key {nugetPushDialog.ApiKey} --source {nugetPushDialog.Source}";
             }
             else
             {
-                process.StartInfo.Arguments = $@"nuget push ""{nugetPushDialog.SolutionDir}{Path.DirectorySeparatorChar}{nugetPushDialog.PackageLocation}"" --source {nugetPushDialog.Source}";
+                process.StartInfo.Arguments = $@"nuget push ""{nugetPushDialog.SolutionDir}{Path.DirectorySeparatorChar}{nugetPushDialog.PackageLocation}"" {nodeResuse} --source {nugetPushDialog.Source}";
             }
 
             process.StartInfo.WorkingDirectory = $@"{String.Empty}";
