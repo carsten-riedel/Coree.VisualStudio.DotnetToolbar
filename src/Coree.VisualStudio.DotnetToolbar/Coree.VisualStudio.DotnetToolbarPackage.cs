@@ -7,6 +7,7 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Events;
 using Microsoft.VisualStudio.Shell.Interop;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -50,6 +51,9 @@ namespace Coree.VisualStudio.DotnetToolbar
             private set;
         }
 
+        public SolutionSettings Settings { get; set; }
+        public string SettingsFileName { get; set; }
+
         /// <summary>
         /// Initialization of the package; this method is called right after the package is sited, so this is the place
         /// where you can put all the initialization code that rely on services provided by VisualStudio.
@@ -63,13 +67,14 @@ namespace Coree.VisualStudio.DotnetToolbar
             // When initialized asynchronously, the current thread may be a background thread at this point.
             // Do any initialization that requires the UI thread after switching to the UI thread.
             await this.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
-            await Coree.VisualStudio.DotnetToolbar.CommandDotnetBuild.InitializeAsync(this);
-            await Coree.VisualStudio.DotnetToolbar.CommandDotnetPack.InitializeAsync(this);
-            await Coree.VisualStudio.DotnetToolbar.CommandDotnetNugetPush.InitializeAsync(this);
-            await Coree.VisualStudio.DotnetToolbar.CommandDotnetPublish.InitializeAsync(this);
-            await Coree.VisualStudio.DotnetToolbar.CommandDotnetClean.InitializeAsync(this);
-            await Coree.VisualStudio.DotnetToolbar.CommandDeleteBinObj.InitializeAsync(this);
-            await Coree.VisualStudio.DotnetToolbar.CommandSettings.InitializeAsync(this);
+            await CommandDotnetBuild.InitializeAsync(this);
+            await CommandDotnetPack.InitializeAsync(this);
+            await CommandDotnetNugetPush.InitializeAsync(this);
+            await CommandDotnetPublish.InitializeAsync(this);
+            await CommandDotnetClean.InitializeAsync(this);
+            await CommandDeleteBinObj.InitializeAsync(this);
+            await CommandSettings.InitializeAsync(this);
+            //await CommandDropDown.InitializeAsync(this);
 
             bool isSolutionLoaded = await IsSolutionLoadedAsync();
 
@@ -80,14 +85,13 @@ namespace Coree.VisualStudio.DotnetToolbar
 
             Microsoft.VisualStudio.Shell.Events.SolutionEvents.OnAfterOpenSolution += (sender, e) => { _ = Task.Run(() => SolutionEvents_OnAfterOpenSolutionAsync(sender, e)); };
 
-            //await Coree.VisualStudio.DotnetToolbar.CommandDropDown.InitializeAsync(this);
+            
             Instance = this;
+          
         }
 
-        //Try later on https://github.com/madskristensen/SolutionLoadSample
         public CoreeVisualStudioDotnetToolbarPackage()
         {
-            //Microsoft.VisualStudio.Shell.Events.SolutionEvents.OnAfterOpenSolution += (sender, e) => { _ = Task.Run(() => SolutionEvents_OnAfterOpenSolutionAsync(sender, e)); };
             Microsoft.VisualStudio.Shell.Events.SolutionEvents.OnBeforeCloseSolution += (sender, e) => { _ = Task.Run(() => SolutionEvents_OnBeforeCloseSolutionAsync(sender, e)); };
         }
 
@@ -106,7 +110,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             await this.JoinableTaskFactory.SwitchToMainThreadAsync();
             DTE2 dte2 = (DTE2)await this.GetServiceAsync(typeof(DTE));
             dte2.WindowActivateEx();
-            dte2.AddText("Build", "DotnetToolbar OnBeforeCloseSolution");
+            dte2.AddText("DotnetToolbar", "DotnetToolbar: Closeing the solution.");
             CommandSettings.Instance.MenuItem.Enabled = false;
             CommandDotnetBuild.Instance.MenuItem.Enabled = false;
             CommandDotnetPack.Instance.MenuItem.Enabled = false;
@@ -115,55 +119,39 @@ namespace Coree.VisualStudio.DotnetToolbar
             CommandDotnetClean.Instance.MenuItem.Enabled = false;
         }
 
-        public SolutionSettings Settings { get; set; }
-        public string SettingsFileName { get; set; }
-
         private async Task SolutionEvents_OnAfterOpenSolutionAsync(object sender = null, OpenSolutionEventArgs e = null)
         {
             await this.JoinableTaskFactory.SwitchToMainThreadAsync();
             DTE2 dte2 = (DTE2)await this.GetServiceAsync(typeof(DTE));
             dte2.WindowActivateEx();
-            dte2.AddText("Build", "DotnetToolbar OnAfterOpenSolution");
+            dte2.AddText("DotnetToolbar", "DotnetToolbar: Opening the solution.");
 
-            Solution solinfo;
-            System.Collections.Generic.Dictionary<string, string> solutionProperties;
-            try
-            {
-                solinfo = (Solution)await this.GetSolutionAsync();
-                solutionProperties = await this.GetSolutionPropertiesAsync();
-            }
-            catch (Exception ex)
-            {
-                dte2.AddText("Build", $"Exception: {ex.Message}");
-                return;
-            }
+            Solution solinfo = (Solution)await this.GetSolutionAsync();
+            Dictionary<string, string> solutionProperties = await this.GetSolutionPropertiesAsync();
 
-            string guid = "";
+            string SolutionGuid = "";
 
             if (e.IsNewSolution)
             {
-                guid = GetSolutionGuid($"{solutionProperties["Path"]}");
-                dte2.AddText("Build", $"Got guid from file");
+                SolutionGuid = GetSolutionGuid($"{solutionProperties["Path"]}");
             }
             else
             {
-                guid = $"{(string)solinfo.Globals["SolutionGuid"]}";
-                dte2.AddText("Build", $"Got guid from globals");
+                SolutionGuid = $"{(string)solinfo.Globals["SolutionGuid"]}";
             }
 
-            SettingsFileName = $@"{UserLocalDataPath}\{solutionProperties["Name"]}_{guid}.json";
+            SettingsFileName = $@"{UserLocalDataPath}\{solutionProperties["Name"]}_{SolutionGuid}.json";
 
             bool Created = JsonHelper.CreateDefault<SolutionSettings>(SettingsFileName);
             if (Created == true)
             {
-                dte2.AddText("Build", $"DotnetToolbar settings file created {SettingsFileName}");
+                dte2.AddText("DotnetToolbar", $"DotnetToolbar: Default settings file created {SettingsFileName}");
             }
 
             Settings = JsonHelper.ReadFromFile<SolutionSettings>(SettingsFileName);
 
-            dte2.AddText("Build", $"DotnetToolbar settings file loaded {SettingsFileName}");
+            dte2.AddText("DotnetToolbar", $"DotnetToolbar: Settings file loaded {SettingsFileName}");
 
-            // Usage
             EnableMenuItemIfInstanceNotNull(CommandSettings.Instance);
             EnableMenuItemIfInstanceNotNull(CommandDotnetBuild.Instance);
             EnableMenuItemIfInstanceNotNull(CommandDotnetPack.Instance);

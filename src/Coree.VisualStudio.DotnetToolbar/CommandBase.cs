@@ -55,7 +55,6 @@ namespace Coree.VisualStudio.DotnetToolbar
         {
             return await Package.GetSolutionFileNameAsync();
         }
-
         public async Task<Dictionary<string, string>> GetSolutionPropertiesAsync()
         {
             return await Package.GetSolutionPropertiesAsync();

@@ -82,7 +82,6 @@ namespace Coree.VisualStudio.DotnetToolbar
         private async System.Threading.Tasks.Task StartDotNetProcessAsync()
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(Package.DisposalToken);
-            DTE2 dte2 = (DTE2)await ServiceProvider.GetServiceAsync(typeof(DTE)).ConfigureAwait(false);
 
             CommandSettingsForm commandSettingsForm = new CommandSettingsForm();
             commandSettingsForm.ShowDialog();

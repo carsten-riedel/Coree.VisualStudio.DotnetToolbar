@@ -1,12 +1,15 @@
 ﻿using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.TaskStatusCenter;
 using Microsoft.VisualStudio.Threading;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using Task = System.Threading.Tasks.Task;
 
 namespace Coree.VisualStudio.DotnetToolbar
@@ -100,9 +103,13 @@ namespace Coree.VisualStudio.DotnetToolbar
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(Package.DisposalToken);
 
+      
+
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(Package.DisposalToken);
+
             DTE2 dte2 = (DTE2)await ServiceProvider.GetServiceAsync(typeof(DTE)).ConfigureAwait(false);
 
-            await WindowActivateAsync(Constants.vsWindowKindOutput);
+            await WindowActivateAsync(EnvDTE.Constants.vsWindowKindOutput);
 
             var configuration = await GetSolutionActiveConfigurationAsync();
 
@@ -113,12 +120,14 @@ namespace Coree.VisualStudio.DotnetToolbar
 
             List<JoinableTask> _joinableTasks = new List<JoinableTask>();
 
-            if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsGeneral.KillAllDotnetProcessBeforeExectue)
+            if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.KillAllDotnetProcessBeforeExectue)
             {
-                (new System.Diagnostics.Process()).AllDontNetKill("dotnet");
+                //(new System.Diagnostics.Process()).AllDontNetKill("dotnet");
+                //(new System.Diagnostics.Process()).AllDontNetKill("MSBuild");
+                //(new System.Diagnostics.Process()).AllDontNetKill("VBCSCompiler");
             }
 
-            if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsGeneral.BlockNonSdkExecute)
+            if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.BlockNonSdkExecute)
             {
                 var projectInfos = await GetProjectInfosAsync();
 
@@ -140,13 +149,31 @@ namespace Coree.VisualStudio.DotnetToolbar
                 }
             }
 
-            var nodeResuse = $"--nodeReuse:{CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsGeneral.NodeReuse.ToString().ToLower()}";
+            dynamic TaskStatusCenter = (SVsTaskStatusCenterService)await ServiceProvider.GetServiceAsync(typeof(SVsTaskStatusCenterService));
+
+            int InProgressCount;
+            do
+            {
+                InProgressCount = TaskStatusCenter.InProgressCount;
+                if (InProgressCount != 0)
+                {
+                    await OutputWriteLineAsync("Waiting for TaskStatusCenter to finish.");
+                    await Task.Delay(3000); // Delay for 500 milliseconds before next check
+                }
+            } while (InProgressCount != 0);
+
+            var nodeResuse = $"--nodeReuse:{CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.NodeReuse.ToString().ToLower()}";
+
+            ProcessStartInfoExtensions.quickexec("cmd", "/C dotnet build-server shutdown", $@"{slndir}");
+            ProcessStartInfoExtensions.quickexec("cmd", "/C dotnet restore --disable-parallel --force --force-evaluate --use-lock-file", $@"{slndir}");
+
+            
 
             var process = new System.Diagnostics.Process();
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.CreateNoWindow = true;
-            process.StartInfo.FileName = "dotnet.exe";
-            process.StartInfo.Arguments = $@"pack ""{slnfile}"" {nodeResuse} --configuration {configuration.Name} --force";
+            process.StartInfo.FileName = "cmd";
+            process.StartInfo.Arguments = $@"/c dotnet pack ""{slnfile}"" /p:DisablePackageAssetsCache=true -maxcpucount:1 {nodeResuse} --configuration {configuration.Name} --force";
             process.StartInfo.WorkingDirectory = $@"{slndir}";
             process.StartInfo.RedirectStandardError = true;
             process.StartInfo.RedirectStandardOutput = true;
@@ -160,11 +187,24 @@ namespace Coree.VisualStudio.DotnetToolbar
             process.Start();
             process.BeginErrorReadLine();
             process.BeginOutputReadLine();
+
+            // Block until the process exits
             await process.WaitForExitAsync();
 
             await Task.WhenAll(_joinableTasks.Select(jt => jt.Task));
 
             await OutputWriteLineAsync("Done");
+
+            if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.KillAllDotnetProcessBeforeExectue)
+            {
+                //(new System.Diagnostics.Process()).AllDontNetKill("dotnet");
+                //(new System.Diagnostics.Process()).AllDontNetKill("MSBuild");
+                //(new System.Diagnostics.Process()).AllDontNetKill("VBCSCompiler");
+            }
+
         }
+
+
+
     }
 }

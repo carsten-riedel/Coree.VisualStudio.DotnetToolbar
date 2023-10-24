@@ -1,4 +1,18 @@
-﻿# DotnetToolbar 0.1.71 Release Notes
+﻿# DotnetToolbar 0.1.72 - 0.1.77 Release Notes
+Release Date: 2023-10-22
+
+## New Features
+- NugetPush: Hide api key in commandline output.
+
+## Enhancements
+- Added some taskstatus center wait function. Needs to be investigated further.
+
+## Bug Fixes
+- Serveral attemts to get the solution guid (new project creation). Did behave differently -> Quickstart.
+- minor code cleanup
+
+
+# DotnetToolbar 0.1.71 Release Notes
 Release Date: 2023-10-22
 
 ## New Features
@@ -6,8 +20,6 @@ Release Date: 2023-10-22
 
 ## Bug Fixes
 - fix for newly create projects.
-
-
 
 # DotnetToolbar 0.1.70 Release Notes
 Release Date: 2023-10-22

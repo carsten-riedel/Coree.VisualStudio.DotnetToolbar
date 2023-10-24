@@ -2,12 +2,14 @@
 using EnvDTE80;
 using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.TaskStatusCenter;
 using Microsoft.VisualStudio.Threading;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Coree.VisualStudio.DotnetToolbar
 {
@@ -112,12 +114,12 @@ namespace Coree.VisualStudio.DotnetToolbar
 
             List<JoinableTask> _joinableTasks = new List<JoinableTask>();
 
-            if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsGeneral.KillAllDotnetProcessBeforeExectue)
+            if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.KillAllDotnetProcessBeforeExectue)
             {
                 (new System.Diagnostics.Process()).AllDontNetKill("dotnet");
             }
 
-            if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsGeneral.BlockNonSdkExecute)
+            if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.BlockNonSdkExecute)
             {
                 bool found = false;
                 foreach (var item in projectInfos)
@@ -137,10 +139,23 @@ namespace Coree.VisualStudio.DotnetToolbar
                 }
             }
 
-            var nodeResuse = $"--nodeReuse:{CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsGeneral.NodeReuse.ToString().ToLower()}";
+            dynamic TaskStatusCenter = (SVsTaskStatusCenterService)await ServiceProvider.GetServiceAsync(typeof(SVsTaskStatusCenterService));
+
+            int InProgressCount;
+            do
+            {
+                InProgressCount = TaskStatusCenter.InProgressCount;
+                if (InProgressCount != 0)
+                {
+                    await OutputWriteLineAsync("Waiting for TaskStatusCenter to finish.");
+                    await Task.Delay(3000); // Delay for 500 milliseconds before next check
+                }
+            } while (InProgressCount != 0);
+
+            var nodeResuse = $"--nodeReuse:{CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.NodeReuse.ToString().ToLower()}";
 
             bool done = false;
-            if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsPublish.PublishSolutionProject)
+            if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPublish.PublishSolutionProject)
             {
                 done = true;
                 var process = new System.Diagnostics.Process();

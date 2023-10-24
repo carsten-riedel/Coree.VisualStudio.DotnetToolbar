@@ -1,5 +1,7 @@
 ﻿using EnvDTE;
+using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.TaskStatusCenter;
 using Microsoft.VisualStudio.Threading;
 using System;
 using System.Collections.Generic;
@@ -98,7 +100,10 @@ namespace Coree.VisualStudio.DotnetToolbar
 
         private async System.Threading.Tasks.Task StartDotNetProcessAsync()
         {
-            await WindowActivateAsync(Constants.vsWindowKindOutput);
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(Package.DisposalToken);
+            DTE2 dte2 = (DTE2)await ServiceProvider.GetServiceAsync(typeof(DTE)).ConfigureAwait(false);
+
+            await WindowActivateAsync(EnvDTE.Constants.vsWindowKindOutput);
 
             var activeConfiguration = await GetSolutionActiveConfigurationAsync();
 
@@ -109,12 +114,27 @@ namespace Coree.VisualStudio.DotnetToolbar
 
             List<JoinableTask> _joinableTasks = new List<JoinableTask>();
 
-            if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsGeneral.KillAllDotnetProcessBeforeExectue)
+            if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.KillAllDotnetProcessBeforeExectue)
             {
-                (new System.Diagnostics.Process()).AllDontNetKill("dotnet");
+                //(new System.Diagnostics.Process()).AllDontNetKill("dotnet");
+                //(new System.Diagnostics.Process()).AllDontNetKill("MSBuild");
+                //(new System.Diagnostics.Process()).AllDontNetKill("VBCSCompiler");
             }
 
-            if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsGeneral.BlockNonSdkExecute)
+            dynamic TaskStatusCenter = (SVsTaskStatusCenterService)await ServiceProvider.GetServiceAsync(typeof(SVsTaskStatusCenterService));
+
+            int InProgressCount;
+            do
+            {
+                InProgressCount = TaskStatusCenter.InProgressCount;
+                if (InProgressCount != 0)
+                {
+                    await OutputWriteLineAsync("Waiting for TaskStatusCenter to finish.");
+                    await Task.Delay(3000); // Delay for 500 milliseconds before next check
+                }
+            } while (InProgressCount != 0);
+
+            if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.BlockNonSdkExecute)
             {
                 var projectInfos = await GetProjectInfosAsync();
 
@@ -136,7 +156,7 @@ namespace Coree.VisualStudio.DotnetToolbar
                 }
             }
 
-            var nodeResuse = $"--nodeReuse:{CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsGeneral.NodeReuse.ToString().ToLower()}";
+            var nodeResuse = $"--nodeReuse:{CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.NodeReuse.ToString().ToLower()}";
 
             var process = new System.Diagnostics.Process();
             process.StartInfo.UseShellExecute = false;
@@ -146,6 +166,28 @@ namespace Coree.VisualStudio.DotnetToolbar
             process.StartInfo.WorkingDirectory = $@"{slndir}";
             process.StartInfo.RedirectStandardError = true;
             process.StartInfo.RedirectStandardOutput = true;
+
+            /*
+             * 
+            foreach (var item in process.StartInfo.Environment)
+            {
+                await OutputWriteLineAsync($"{item.Key} ------- {item.Value}");
+            }
+
+            
+            List<string> keysToKeep = new List<string> { "PATH", "LOCALAPPDATA", "TEMP", "TMP", "APPDATA", "USERNAME", "USERPROFILE", "Path", "OS" };
+            var filteredEnvironment = process.StartInfo.Environment
+                                              .Where(kvp => keysToKeep.Contains(kvp.Key))
+                                              .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+            process.StartInfo.Environment.Clear();
+
+            foreach (var kvp in filteredEnvironment)
+            {
+                process.StartInfo.Environment.Add(kvp.Key, kvp.Value);
+            }
+            */
+
             await OutputWriteLineAsync("-------------------------------------------------------------------------------");
             await OutputWriteLineAsync(process.StartInfo.GetProcessStartInfoCommandline());
             await OutputWriteLineAsync("-------------------------------------------------------------------------------");
@@ -162,6 +204,13 @@ namespace Coree.VisualStudio.DotnetToolbar
             await Task.WhenAll(_joinableTasks.Select(jt => jt.Task));
 
             await OutputWriteLineAsync("Done");
+
+            if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.KillAllDotnetProcessBeforeExectue)
+            {
+                //(new System.Diagnostics.Process()).AllDontNetKill("dotnet");
+                //(new System.Diagnostics.Process()).AllDontNetKill("MSBuild");
+                //(new System.Diagnostics.Process()).AllDontNetKill("VBCSCompiler");
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.TaskStatusCenter;
 using Microsoft.VisualStudio.Threading;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Coree.VisualStudio.DotnetToolbar
 {
@@ -133,12 +135,12 @@ namespace Coree.VisualStudio.DotnetToolbar
                 return;
             }
 
-            if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsGeneral.KillAllDotnetProcessBeforeExectue)
+            if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.KillAllDotnetProcessBeforeExectue)
             {
                 (new System.Diagnostics.Process()).AllDontNetKill("dotnet");
             }
 
-            if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsGeneral.BlockNonSdkExecute)
+            if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.BlockNonSdkExecute)
             {
                 var projectInfos = await GetProjectInfosAsync();
 
@@ -160,7 +162,20 @@ namespace Coree.VisualStudio.DotnetToolbar
                 }
             }
 
-            var nodeResuse = $"--nodeReuse:{CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsGeneral.NodeReuse.ToString().ToLower()}";
+            dynamic TaskStatusCenter = (SVsTaskStatusCenterService)await ServiceProvider.GetServiceAsync(typeof(SVsTaskStatusCenterService));
+
+            int InProgressCount;
+            do
+            {
+                InProgressCount = TaskStatusCenter.InProgressCount;
+                if (InProgressCount != 0)
+                {
+                    await OutputWriteLineAsync("Waiting for TaskStatusCenter to finish.");
+                    await Task.Delay(3000); // Delay for 500 milliseconds before next check
+                }
+            } while (InProgressCount != 0);
+
+            var nodeResuse = $"--nodeReuse:{CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.NodeReuse.ToString().ToLower()}";
 
             var process = new System.Diagnostics.Process();
             process.StartInfo.UseShellExecute = false;
@@ -179,7 +194,14 @@ namespace Coree.VisualStudio.DotnetToolbar
             process.StartInfo.RedirectStandardError = true;
             process.StartInfo.RedirectStandardOutput = true;
             await OutputWriteLineAsync("-------------------------------------------------------------------------------");
-            await OutputWriteLineAsync(process.StartInfo.GetProcessStartInfoCommandline());
+            if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsNugetPush.HideApiKeyInOutput)
+            {
+                await OutputWriteLineAsync(process.StartInfo.GetProcessStartInfoCommandline().Replace(nugetPushDialog.ApiKey, "**********************************************"));
+            }
+            else
+            {
+                await OutputWriteLineAsync(process.StartInfo.GetProcessStartInfoCommandline());
+            }
             await OutputWriteLineAsync("-------------------------------------------------------------------------------");
             process.Start();
             process.OutputDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await OutputWriteLineAsync(e.Data); } catch (Exception ex) { Debug.WriteLine(ex.Message); } }); _joinableTasks.Add(joinableTask); };

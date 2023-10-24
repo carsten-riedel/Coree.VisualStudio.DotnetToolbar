@@ -1,5 +1,6 @@
 ﻿using EnvDTE;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.TaskStatusCenter;
 using Microsoft.VisualStudio.Threading;
 using System;
 using System.Collections.Generic;
@@ -110,12 +111,12 @@ namespace Coree.VisualStudio.DotnetToolbar
 
             List<JoinableTask> _joinableTasks = new List<JoinableTask>();
 
-            if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsGeneral.KillAllDotnetProcessBeforeExectue)
+            if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.KillAllDotnetProcessBeforeExectue)
             {
                 (new System.Diagnostics.Process()).AllDontNetKill("dotnet");
             }
 
-            if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsGeneral.BlockNonSdkExecute)
+            if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.BlockNonSdkExecute)
             {
                 var projectInfos = await GetProjectInfosAsync();
 
@@ -136,8 +137,9 @@ namespace Coree.VisualStudio.DotnetToolbar
                     return;
                 }
             }
+            await NewMethodAsync();
 
-            var nodeResuse = $"--nodeReuse:{CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsGeneral.NodeReuse.ToString().ToLower()}";
+            var nodeResuse = $"--nodeReuse:{CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.NodeReuse.ToString().ToLower()}";
 
             var process = new System.Diagnostics.Process();
             process.StartInfo.UseShellExecute = false;
@@ -163,6 +165,23 @@ namespace Coree.VisualStudio.DotnetToolbar
             await Task.WhenAll(_joinableTasks.Select(jt => jt.Task));
 
             await OutputWriteLineAsync("Done");
+        }
+
+        private async Task NewMethodAsync()
+        {
+            //Microsoft.VisualStudio.
+            dynamic TaskStatusCenter = (SVsTaskStatusCenterService)await ServiceProvider.GetServiceAsync(typeof(SVsTaskStatusCenterService));
+
+            int InProgressCount;
+            do
+            {
+                InProgressCount = TaskStatusCenter.InProgressCount;
+                if (InProgressCount != 0)
+                {
+                    await OutputWriteLineAsync("Waiting for TaskStatusCenter to finish.");
+                    await Task.Delay(3000);
+                }
+            } while (InProgressCount != 0);
         }
     }
 }

@@ -29,7 +29,6 @@ namespace Coree.VisualStudio.DotnetToolbar
         private string SolutionName { get; set; }
         private string SolutionGuid { get; set; }
 
-
         public NugetPushDialog(string UserDataPath, string SolutionLocation, string SolutionName, string SolutionGuid)
         {
             this.UserDataPath = UserDataPath;
@@ -37,7 +36,6 @@ namespace Coree.VisualStudio.DotnetToolbar
             this.SolutionName = SolutionName;
             this.SolutionGuid = SolutionGuid;
             this.SolutionDir = System.IO.Path.GetDirectoryName(SolutionLocation);
-
 
             var nugets = System.IO.Directory.GetFiles(this.SolutionDir, "*.nupkg", System.IO.SearchOption.AllDirectories).ToList();
             var shortnuget = new List<string>();
