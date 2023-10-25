@@ -58,6 +58,7 @@
     <Compile Include="CommandBase.cs" />
     <Compile Include="CommandDotnetNugetPush.cs" />
     <Compile Include="CommandDropDown.cs" />
+    <Compile Include="ExtensionMethods\AsyncPackageExtensionsRework.cs" />
     <Compile Include="ExtensionMethods\JsonSerializerExtensions.cs" />
     <Compile Include="ExtensionMethods\EnvDTEExtensions.cs" />
     <Compile Include="ExtensionMethods\ProcessExtensions.cs" />
@@ -111,6 +112,7 @@
     </VSCTCompile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="disabled.txt" />
     <Content Include="License.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>

@@ -118,7 +118,7 @@ namespace Coree.VisualStudio.DotnetToolbar
                     {
                         currentDropDownComboChoice = dropDownComboChoices[indexInput];
                         await WindowActivateAsync(Constants.vsWindowKindOutput);
-                        await OutputWriteLineAsync($@"Choice: {currentDropDownComboChoice}");
+                        await PaneWriteLineAsync($@"Choice: {currentDropDownComboChoice}");
                     }
                     else
                     {

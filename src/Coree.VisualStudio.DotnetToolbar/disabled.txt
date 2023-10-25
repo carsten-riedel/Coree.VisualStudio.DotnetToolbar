@@ -1,0 +1,66 @@
+﻿/*
+dynamic TaskStatusCenter = (SVsTaskStatusCenterService)await ServiceProvider.GetServiceAsync(typeof(SVsTaskStatusCenterService));
+
+int InProgressCount;
+do
+{
+    InProgressCount = TaskStatusCenter.InProgressCount;
+    if (InProgressCount != 0)
+    {
+        await PaneWriteLineAsync("Waiting for TaskStatusCenter to finish.");
+        await Task.Delay(3000); // Delay for 500 milliseconds before next check
+    }
+} while (InProgressCount != 0);
+*/
+
+            /*
+            dynamic TaskStatusCenter = (SVsTaskStatusCenterService)await ServiceProvider.GetServiceAsync(typeof(SVsTaskStatusCenterService));
+
+            int InProgressCount;
+            do
+            {
+                InProgressCount = TaskStatusCenter.InProgressCount;
+                if (InProgressCount != 0)
+                {
+                    await PaneWriteLineAsync("Waiting for TaskStatusCenter to finish.");
+                    await Task.Delay(3000); // Delay for 500 milliseconds before next check
+                }
+            } while (InProgressCount != 0);
+            */
+
+                        /*
+            dynamic TaskStatusCenter = (SVsTaskStatusCenterService)await ServiceProvider.GetServiceAsync(typeof(SVsTaskStatusCenterService));
+
+            int InProgressCount;
+            do
+            {
+                InProgressCount = TaskStatusCenter.InProgressCount;
+                if (InProgressCount != 0)
+                {
+                    await PaneWriteLineAsync("Waiting for TaskStatusCenter to finish.");
+                    await Task.Delay(3000); // Delay for 500 milliseconds before next check
+                }
+            } while (InProgressCount != 0);
+            */
+
+
+                    /*
+             * 
+            foreach (var item in process.StartInfo.Environment)
+            {
+                await PaneWriteLineAsync($"{item.Key} ------- {item.Value}");
+            }
+
+            
+            List<string> keysToKeep = new List<string> { "PATH", "LOCALAPPDATA", "TEMP", "TMP", "APPDATA", "USERNAME", "USERPROFILE", "Path", "OS" };
+            var filteredEnvironment = process.StartInfo.Environment
+                                              .Where(kvp => keysToKeep.Contains(kvp.Key))
+                                              .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+            process.StartInfo.Environment.Clear();
+
+            foreach (var kvp in filteredEnvironment)
+            {
+                process.StartInfo.Environment.Add(kvp.Key, kvp.Value);
+            }
+            */

@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 
 namespace Coree.VisualStudio.DotnetToolbar
 {
@@ -88,8 +89,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             CommandDotnetClean.Instance.MenuItem.Enabled = false;
             CommandSettings.Instance.MenuItem.Enabled = false;
 
-            System.Threading.Tasks.Task myTask = System.Threading.Tasks.Task.Run(() => StartDotNetProcessAsync());
-            await myTask;
+            await StartDotNetProcessAsync();
 
             CommandDotnetBuild.Instance.MenuItem.Enabled = true;
             CommandDotnetPack.Instance.MenuItem.Enabled = true;
@@ -106,32 +106,29 @@ namespace Coree.VisualStudio.DotnetToolbar
 
             await WindowActivateAsync(EnvDTE.Constants.vsWindowKindOutput);
 
-            var configuration = await GetSolutionActiveConfigurationAsync();
             var solinfo = await GetSolutionAsync();
             var solutionProperties = await GetSolutionPropertiesAsync();
-
-            await OutputWriteLineAsync(null, true);
-
-            List<JoinableTask> _joinableTasks = new List<JoinableTask>();
+            
+            await PaneClearAsync();
 
             NugetPushDialog nugetPushDialog = new NugetPushDialog(Package.UserLocalDataPath, solinfo.FullName, solutionProperties["Name"], (string)solinfo.Globals["SolutionGuid"]);
             nugetPushDialog.ShowDialog();
 
             if (nugetPushDialog.nugetPushDialogResult == NugetPushDialog.NugetPushDialogResult.Cancel)
             {
-                await OutputWriteLineAsync("dotnet nuget push canceled.");
+                await PaneWriteLineAsync("dotnet nuget push canceled.");
                 return;
             }
 
             if (nugetPushDialog.nugetPushDialogResult == NugetPushDialog.NugetPushDialogResult.Close)
             {
-                await OutputWriteLineAsync("dotnet nuget push closed.");
+                await PaneWriteLineAsync("dotnet nuget push closed.");
                 return;
             }
 
             if (String.IsNullOrEmpty(nugetPushDialog.PackageLocation))
             {
-                await OutputWriteLineAsync("dotnet nuget push canceled. No package specified.");
+                await PaneWriteLineAsync("dotnet nuget push canceled. No package specified.");
                 return;
             }
 
@@ -149,70 +146,38 @@ namespace Coree.VisualStudio.DotnetToolbar
                 {
                     if (item.IsSdkStyle == false)
                     {
-                        await OutputWriteLineAsync("-------------------------------------------------------------------------------");
-                        await OutputWriteLineAsync($"Non SDK style project file {item.File} !");
-                        await OutputWriteLineAsync("-------------------------------------------------------------------------------");
+                        await PaneWriteLineAsync("-------------------------------------------------------------------------------");
+                        await PaneWriteLineAsync($"Non SDK style project file {item.File} !");
+                        await PaneWriteLineAsync("-------------------------------------------------------------------------------");
                         found = true;
                     }
                 }
                 if (found)
                 {
-                    await OutputWriteLineAsync("Done");
+                    await PaneWriteLineAsync("Done");
                     return;
                 }
             }
 
-            dynamic TaskStatusCenter = (SVsTaskStatusCenterService)await ServiceProvider.GetServiceAsync(typeof(SVsTaskStatusCenterService));
-
-            int InProgressCount;
-            do
-            {
-                InProgressCount = TaskStatusCenter.InProgressCount;
-                if (InProgressCount != 0)
-                {
-                    await OutputWriteLineAsync("Waiting for TaskStatusCenter to finish.");
-                    await Task.Delay(3000); // Delay for 500 milliseconds before next check
-                }
-            } while (InProgressCount != 0);
-
             var nodeResuse = $"--nodeReuse:{CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.NodeReuse.ToString().ToLower()}";
 
-            var process = new System.Diagnostics.Process();
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.CreateNoWindow = true;
-            process.StartInfo.FileName = "dotnet.exe";
             if (nugetPushDialog.ApiKey != String.Empty)
             {
-                process.StartInfo.Arguments = $@"nuget push ""{nugetPushDialog.SolutionDir}{Path.DirectorySeparatorChar}{nugetPushDialog.PackageLocation}"" {nodeResuse} --api-key {nugetPushDialog.ApiKey} --source {nugetPushDialog.Source}";
+                if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsNugetPush.HideApiKeyInOutput)
+                {
+                    await ExecuteProcessAsync("dotnet.exe", $@"nuget push ""{nugetPushDialog.SolutionDir}{Path.DirectorySeparatorChar}{nugetPushDialog.PackageLocation}"" {nodeResuse} --api-key {nugetPushDialog.ApiKey} --source {nugetPushDialog.Source}", "", new string[] { nugetPushDialog.ApiKey });
+                }
+                else
+                {
+                    await ExecuteProcessAsync("dotnet.exe", $@"nuget push ""{nugetPushDialog.SolutionDir}{Path.DirectorySeparatorChar}{nugetPushDialog.PackageLocation}"" {nodeResuse} --api-key {nugetPushDialog.ApiKey} --source {nugetPushDialog.Source}",String.Empty);
+                }
             }
             else
             {
-                process.StartInfo.Arguments = $@"nuget push ""{nugetPushDialog.SolutionDir}{Path.DirectorySeparatorChar}{nugetPushDialog.PackageLocation}"" {nodeResuse} --source {nugetPushDialog.Source}";
+                await ExecuteProcessAsync("dotnet.exe", $@"nuget push ""{nugetPushDialog.SolutionDir}{Path.DirectorySeparatorChar}{nugetPushDialog.PackageLocation}"" {nodeResuse} --source {nugetPushDialog.Source}",String.Empty);
             }
 
-            process.StartInfo.WorkingDirectory = $@"{String.Empty}";
-            process.StartInfo.RedirectStandardError = true;
-            process.StartInfo.RedirectStandardOutput = true;
-            await OutputWriteLineAsync("-------------------------------------------------------------------------------");
-            if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsNugetPush.HideApiKeyInOutput)
-            {
-                await OutputWriteLineAsync(process.StartInfo.GetProcessStartInfoCommandline().Replace(nugetPushDialog.ApiKey, "**********************************************"));
-            }
-            else
-            {
-                await OutputWriteLineAsync(process.StartInfo.GetProcessStartInfoCommandline());
-            }
-            await OutputWriteLineAsync("-------------------------------------------------------------------------------");
-            process.OutputDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await OutputWriteLineAsync(e.Data); } catch (Exception ex) { Debug.WriteLine(ex.Message); } }); _joinableTasks.Add(joinableTask); };
-            process.ErrorDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await OutputWriteLineAsync(e.Data); } catch (Exception ex) { Debug.WriteLine(ex.Message); } }); _joinableTasks.Add(joinableTask); };
-            process.Start();
-            process.BeginErrorReadLine();
-            process.BeginOutputReadLine();
-            await process.WaitForExitAsync();
-
-            await System.Threading.Tasks.Task.WhenAll(_joinableTasks.Select(jt => jt.Task));
-
-            await OutputWriteLineAsync("Done");
+            await PaneWriteLineAsync("Done");
         }
     }
 }

@@ -87,8 +87,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             CommandDotnetClean.Instance.MenuItem.Enabled = false;
             CommandSettings.Instance.MenuItem.Enabled = false;
 
-            System.Threading.Tasks.Task myTask = System.Threading.Tasks.Task.Run(() => StartDotNetProcessAsync());
-            await myTask;
+            await StartDotNetProcessAsync();
 
             CommandDotnetBuild.Instance.MenuItem.Enabled = true;
             CommandDotnetPack.Instance.MenuItem.Enabled = true;
@@ -105,12 +104,13 @@ namespace Coree.VisualStudio.DotnetToolbar
 
             await WindowActivateAsync(EnvDTE.Constants.vsWindowKindOutput);
 
-            var configuration = await GetSolutionActiveConfigurationAsync();
+            var activeConfiguration = await GetActiveSolutionConfigurationAsync();
+
             var projectInfos = await GetProjectInfosAsync();
             string slnfile = await GetSolutionFileNameAsync();
             string slndir = System.IO.Path.GetDirectoryName(slnfile);
 
-            await OutputWriteLineAsync(null, true);
+            await PaneClearAsync();
 
             List<JoinableTask> _joinableTasks = new List<JoinableTask>();
 
@@ -126,33 +126,18 @@ namespace Coree.VisualStudio.DotnetToolbar
                 {
                     if (item.IsSdkStyle == false)
                     {
-                        await OutputWriteLineAsync("-------------------------------------------------------------------------------");
-                        await OutputWriteLineAsync($"Non SDK style project file {item.File} !");
-                        await OutputWriteLineAsync("-------------------------------------------------------------------------------");
+                        await PaneWriteLineAsync("-------------------------------------------------------------------------------");
+                        await PaneWriteLineAsync($"Non SDK style project file {item.File} !");
+                        await PaneWriteLineAsync("-------------------------------------------------------------------------------");
                         found = true;
                     }
                 }
                 if (found)
                 {
-                    await OutputWriteLineAsync("Done");
+                    await PaneWriteLineAsync("Done");
                     return;
                 }
             }
-
-            /*
-            dynamic TaskStatusCenter = (SVsTaskStatusCenterService)await ServiceProvider.GetServiceAsync(typeof(SVsTaskStatusCenterService));
-
-            int InProgressCount;
-            do
-            {
-                InProgressCount = TaskStatusCenter.InProgressCount;
-                if (InProgressCount != 0)
-                {
-                    await OutputWriteLineAsync("Waiting for TaskStatusCenter to finish.");
-                    await Task.Delay(3000); // Delay for 500 milliseconds before next check
-                }
-            } while (InProgressCount != 0);
-            */
 
             var nodeResuse = $"--nodeReuse:{CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.NodeReuse.ToString().ToLower()}";
 
@@ -164,15 +149,15 @@ namespace Coree.VisualStudio.DotnetToolbar
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.CreateNoWindow = true;
                 process.StartInfo.FileName = "dotnet.exe";
-                process.StartInfo.Arguments = $@"publish ""{slnfile}"" {nodeResuse} --configuration {configuration.Name} --force";
+                process.StartInfo.Arguments = $@"publish ""{slnfile}"" {nodeResuse} --configuration {activeConfiguration.Configuration} --force";
                 process.StartInfo.WorkingDirectory = $@"{slndir}";
                 process.StartInfo.RedirectStandardError = true;
                 process.StartInfo.RedirectStandardOutput = true;
-                await OutputWriteLineAsync("-------------------------------------------------------------------------------");
-                await OutputWriteLineAsync(process.StartInfo.GetProcessStartInfoCommandline());
-                await OutputWriteLineAsync("-------------------------------------------------------------------------------");
-                process.OutputDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await OutputWriteLineAsync(e.Data); } catch (Exception ex) { Debug.WriteLine(ex.Message); } }); _joinableTasks.Add(joinableTask); };
-                process.ErrorDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await OutputWriteLineAsync(e.Data); } catch (Exception ex) { Debug.WriteLine(ex.Message); } }); _joinableTasks.Add(joinableTask); };
+                await PaneWriteLineAsync("-------------------------------------------------------------------------------");
+                await PaneWriteLineAsync(process.StartInfo.GetProcessStartInfoCommandline());
+                await PaneWriteLineAsync("-------------------------------------------------------------------------------");
+                process.OutputDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await PaneWriteLineAsync(e.Data); } catch (Exception ex) { Debug.WriteLine(ex.Message); } }); _joinableTasks.Add(joinableTask); };
+                process.ErrorDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await PaneWriteLineAsync(e.Data); } catch (Exception ex) { Debug.WriteLine(ex.Message); } }); _joinableTasks.Add(joinableTask); };
                 process.Start();
                 process.BeginErrorReadLine();
                 process.BeginOutputReadLine();
@@ -189,15 +174,15 @@ namespace Coree.VisualStudio.DotnetToolbar
                         process.StartInfo.UseShellExecute = false;
                         process.StartInfo.CreateNoWindow = true;
                         process.StartInfo.FileName = "dotnet.exe";
-                        process.StartInfo.Arguments = $@"publish ""{projectInfo.FullProjectFileName}"" {nodeResuse} --configuration {configuration.Name} --framework {targetFramework}";
+                        process.StartInfo.Arguments = $@"publish ""{projectInfo.FullProjectFileName}"" {nodeResuse} --configuration {activeConfiguration.Configuration} --framework {targetFramework}";
                         process.StartInfo.WorkingDirectory = $@"{projectInfo.FullPath}";
                         process.StartInfo.RedirectStandardError = true;
                         process.StartInfo.RedirectStandardOutput = true;
-                        await OutputWriteLineAsync("-------------------------------------------------------------------------------");
-                        await OutputWriteLineAsync(process.StartInfo.GetProcessStartInfoCommandline());
-                        await OutputWriteLineAsync("-------------------------------------------------------------------------------");
-                        process.OutputDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await OutputWriteLineAsync(e.Data); } catch (Exception ex) { Debug.WriteLine(ex.Message); } }); _joinableTasks.Add(joinableTask); };
-                        process.ErrorDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await OutputWriteLineAsync(e.Data); } catch (Exception ex) { Debug.WriteLine(ex.Message); } }); _joinableTasks.Add(joinableTask); };
+                        await PaneWriteLineAsync("-------------------------------------------------------------------------------");
+                        await PaneWriteLineAsync(process.StartInfo.GetProcessStartInfoCommandline());
+                        await PaneWriteLineAsync("-------------------------------------------------------------------------------");
+                        process.OutputDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await PaneWriteLineAsync(e.Data); } catch (Exception ex) { Debug.WriteLine(ex.Message); } }); _joinableTasks.Add(joinableTask); };
+                        process.ErrorDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await PaneWriteLineAsync(e.Data); } catch (Exception ex) { Debug.WriteLine(ex.Message); } }); _joinableTasks.Add(joinableTask); };
                         process.Start();
                         process.BeginErrorReadLine();
                         process.BeginOutputReadLine();
@@ -210,10 +195,10 @@ namespace Coree.VisualStudio.DotnetToolbar
 
             if (!done)
             {
-                await OutputWriteLineAsync("Non SDK Style project ?");
+                await PaneWriteLineAsync("Non SDK Style project ?");
             }
 
-            await OutputWriteLineAsync("Done");
+            await PaneWriteLineAsync("Done");
         }
     }
 }

@@ -108,9 +108,7 @@ namespace Coree.VisualStudio.DotnetToolbar
         private async Task SolutionEvents_OnBeforeCloseSolutionAsync(object sender, EventArgs e)
         {
             await this.JoinableTaskFactory.SwitchToMainThreadAsync();
-            DTE2 dte2 = (DTE2)await this.GetServiceAsync(typeof(DTE));
-            dte2.WindowActivateEx();
-            dte2.AddText("DotnetToolbar", "DotnetToolbar: Closeing the solution.");
+            await this.PaneWriteLineAsync("DotnetToolbar: Closeing the solution.", "DotnetToolbar");
             CommandSettings.Instance.MenuItem.Enabled = false;
             CommandDotnetBuild.Instance.MenuItem.Enabled = false;
             CommandDotnetPack.Instance.MenuItem.Enabled = false;
@@ -122,14 +120,14 @@ namespace Coree.VisualStudio.DotnetToolbar
         private async Task SolutionEvents_OnAfterOpenSolutionAsync(object sender = null, OpenSolutionEventArgs e = null)
         {
             await this.JoinableTaskFactory.SwitchToMainThreadAsync();
-            DTE2 dte2 = (DTE2)await this.GetServiceAsync(typeof(DTE));
-            dte2.WindowActivateEx();
-            dte2.AddText("DotnetToolbar", "DotnetToolbar: Opening the solution.");
+
+            await this.PaneWriteLineAsync("DotnetToolbar: The settings file will be removed if it is not compatible with newer versions. This applies to versions 0.x.x.", "DotnetToolbar");
+            await this.PaneWriteLineAsync("DotnetToolbar: Opening the solution.", "DotnetToolbar");
 
             Solution solinfo = (Solution)await this.GetSolutionAsync();
             Dictionary<string, string> solutionProperties = await this.GetSolutionPropertiesAsync();
 
-            string SolutionGuid = "";
+            string SolutionGuid;
 
             if (e.IsNewSolution)
             {
@@ -145,12 +143,12 @@ namespace Coree.VisualStudio.DotnetToolbar
             bool Created = JsonHelper.CreateDefault<SolutionSettings>(SettingsFileName);
             if (Created == true)
             {
-                dte2.AddText("DotnetToolbar", $"DotnetToolbar: Default settings file created {SettingsFileName}");
+                await this.PaneWriteLineAsync($"DotnetToolbar: Default settings file created {SettingsFileName}", "DotnetToolbar");
             }
 
-            Settings = JsonHelper.ReadFromFile<SolutionSettings>(SettingsFileName);
+            Settings = JsonHelper.TryReadFromFile<SolutionSettings>(SettingsFileName);
 
-            dte2.AddText("DotnetToolbar", $"DotnetToolbar: Settings file loaded {SettingsFileName}");
+            await this.PaneWriteLineAsync($"DotnetToolbar: Settings file loaded {SettingsFileName}", "DotnetToolbar");
 
             EnableMenuItemIfInstanceNotNull(CommandSettings.Instance);
             EnableMenuItemIfInstanceNotNull(CommandDotnetBuild.Instance);

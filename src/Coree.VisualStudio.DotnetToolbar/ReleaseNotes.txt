@@ -1,5 +1,11 @@
-﻿# DotnetToolbar 0.1.71-0.2.0 Release Notes
-Release Date: 2023-10-26
+﻿# DotnetToolbar 0.2.2 Release Notes
+Release Date: 2023-10-25
+
+## Bug Fixes
+- Code cleanup 0.2.2
+
+# DotnetToolbar 0.1.71-0.2.1 Release Notes
+Release Date: 2023-10-25
 
 ## New
 - Since all major feature works seamlessly upgrade version to 0.2.1

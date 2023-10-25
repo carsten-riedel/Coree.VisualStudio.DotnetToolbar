@@ -11,8 +11,9 @@ using System.Xml.Linq;
 
 namespace Coree.VisualStudio.DotnetToolbar
 {
-    public static class AsyncPackageExtensions
+    public static partial class AsyncPackageExtensions
     {
+        [Obsolete]
         public static async Task WindowActivateAsync(this AsyncPackage package, string constants)
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
@@ -39,49 +40,6 @@ namespace Coree.VisualStudio.DotnetToolbar
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
             return (await package.GetSolutionAsync()).FullName;
-        }
-
-        public static async Task<SolutionConfiguration2> GetSolutionActiveConfigurationAsync(this AsyncPackage package)
-        {
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
-            var solution = await GetSolutionAsync(package);
-            return (SolutionConfiguration2)solution.SolutionBuild.ActiveConfiguration;
-        }
-
-        public static async Task OutputWriteLineAsync(this AsyncPackage package, string message, bool clear = false)
-        {
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
-            DTE2 dte2 = (DTE2)await package.GetServiceAsync(typeof(DTE)).ConfigureAwait(false);
-            if (dte2 != null)
-            {
-                EnvDTE.OutputWindowPanes panes = dte2.ToolWindows.OutputWindow.OutputWindowPanes;
-                foreach (EnvDTE.OutputWindowPane pane in panes)
-                {
-                    if (pane.Name.Contains("Build"))
-                    {
-                        if (message != null)
-                        {
-                            pane.OutputString(message + Environment.NewLine);
-                            pane.Activate();
-                        }
-                        else
-                        {
-                            if (clear == true)
-                            {
-                                pane.Clear();
-                            }
-                        }
-
-                        return;
-                    }
-                }
-            }
-        }
-
-        public static async Task WindowOutputWriteLineAsync(this AsyncPackage package, string message, bool clear = false)
-        {
-            await package.WindowActivateAsync(Constants.vsWindowKindOutput);
-            await package.OutputWriteLineAsync(message, clear);
         }
 
         public static async Task<Dictionary<string, string>> GetSolutionPropertiesAsync(this AsyncPackage package)
@@ -117,10 +75,9 @@ namespace Coree.VisualStudio.DotnetToolbar
             public string FriendlyTargetFramework { get; set; } = String.Empty;
             public bool IsSdkStyle { get; set; } = false;
             public string File { get; set; } = String.Empty;
-
-            
         }
 
+        [Obsolete]
         public static async Task<string> GetProjectItemAsync(this Project item, string name, AsyncPackage Package)
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(Package.DisposalToken);
@@ -139,6 +96,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             }
         }
 
+        [Obsolete]
         public static async Task<List<ProjectInfo>> GetProjectInfosAsync(this AsyncPackage asyncPackage)
         {
             List<ProjectInfo> projectInfos = new List<ProjectInfo>();

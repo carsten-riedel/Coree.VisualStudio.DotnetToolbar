@@ -75,8 +75,7 @@ namespace Coree.VisualStudio.DotnetToolbar
         /// <param name="e">Event args.</param>
         private async System.Threading.Tasks.Task ExecuteAsync(object sender, EventArgs e)
         {
-            System.Threading.Tasks.Task myTask = System.Threading.Tasks.Task.Run(() => StartDotNetProcessAsync());
-            await myTask;
+            await StartDotNetProcessAsync();
         }
 
         private async System.Threading.Tasks.Task StartDotNetProcessAsync()
