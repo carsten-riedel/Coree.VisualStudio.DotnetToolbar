@@ -1,4 +1,20 @@
-﻿# DotnetToolbar 0.1.71 Release Notes
+﻿# DotnetToolbar 0.1.71-0.2.0 Release Notes
+Release Date: 2023-10-26
+
+## New
+- Since all major feature works seamlessly upgrade version to 0.2.0
+
+## Bug Fixes
+- fixed copy past bug started dotnet twice.
+
+## Upcoming Features
+- one method to call external executables
+- project need general cleanup
+- project should use Extensibility Essentials 2022
+- project should use Community.VisualStudio.Toolkit
+- project should use https://www.vsixcookbook.com/recipes/showing-progress.html
+
+# DotnetToolbar 0.1.71 Release Notes
 Release Date: 2023-10-22
 
 ## New Features
@@ -6,7 +22,6 @@ Release Date: 2023-10-22
 
 ## Bug Fixes
 - fix for newly create projects.
-
 
 
 # DotnetToolbar 0.1.70 Release Notes
