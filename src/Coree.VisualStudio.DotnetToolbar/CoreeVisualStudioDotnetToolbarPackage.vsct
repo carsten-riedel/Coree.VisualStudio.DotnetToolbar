@@ -122,6 +122,13 @@
         </Strings>
       </Button>
       
+      <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="cmdidToolWindow1Command" priority="0x0100" type="Button">
+        <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1" />
+        <Icon guid="guidImages1" id="bmpPic1" />
+        <Strings>
+          <ButtonText>ToolWindow1</ButtonText>
+        </Strings>
+      </Button>
     </Buttons>
 
     <!--
@@ -163,9 +170,11 @@
       <IDSymbol name="CommandIdDeleteBinObj" value="4137" />
       <IDSymbol name="CommandIdSettings" value="4135" />
       
+      <!-- 
       <IDSymbol name="cmdidMyDropDownCombo" value="5000" />
       <IDSymbol name="cmdidMyDropDownComboGetList" value="5001" />
-      
+      -->
+      <IDSymbol value="256" name="cmdidToolWindow1Command" />
     </GuidSymbol>
 
     <GuidSymbol name="guidImages" value="{32797b29-ae82-4c7c-ae0e-12eb5435f414}">
@@ -179,6 +188,15 @@
       <IDSymbol name="pngSettings" value="8" />
       <IDSymbol name="pngClean" value="9" />
       <IDSymbol name="pngDelFolder" value="10" />
+    </GuidSymbol>
+  
+    <GuidSymbol value="{6ad48e10-5444-4052-8161-dc35956388f3}" name="guidImages1">
+      <IDSymbol name="bmpPic1" value="1" />
+      <IDSymbol name="bmpPic2" value="2" />
+      <IDSymbol name="bmpPicSearch" value="3" />
+      <IDSymbol name="bmpPicX" value="4" />
+      <IDSymbol name="bmpPicArrows" value="5" />
+      <IDSymbol name="bmpPicStrikethrough" value="6" />
     </GuidSymbol>
   </Symbols>
 </CommandTable>

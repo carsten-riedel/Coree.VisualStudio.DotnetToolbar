@@ -1,8 +1,14 @@
-﻿# DotnetToolbar 0.1.71-0.2.0 Release Notes
-Release Date: 2023-10-26
+﻿# DotnetToolbar 0.2.2 Release Notes
+Release Date: 2023-10-25
+
+## Bug Fixes
+- Code cleanup 0.2.2
+
+# DotnetToolbar 0.1.71-0.2.1 Release Notes
+Release Date: 2023-10-25
 
 ## New
-- Since all major feature works seamlessly upgrade version to 0.2.0
+- Since all major feature works seamlessly upgrade version to 0.2.1
 
 ## Bug Fixes
 - fixed copy past bug started dotnet twice.
@@ -14,6 +20,20 @@ Release Date: 2023-10-26
 - project should use Community.VisualStudio.Toolkit
 - project should use https://www.vsixcookbook.com/recipes/showing-progress.html
 
+# DotnetToolbar 0.1.72 - 0.1.77 Release Notes
+Release Date: 2023-10-22
+
+## New Features
+- NugetPush: Hide api key in commandline output.
+
+## Enhancements
+- Added some taskstatus center wait function. Needs to be investigated further.
+
+## Bug Fixes
+- Serveral attemts to get the solution guid (new project creation). Did behave differently -> Quickstart.
+- minor code cleanup
+
+
 # DotnetToolbar 0.1.71 Release Notes
 Release Date: 2023-10-22
 
@@ -22,7 +42,6 @@ Release Date: 2023-10-22
 
 ## Bug Fixes
 - fix for newly create projects.
-
 
 # DotnetToolbar 0.1.70 Release Notes
 Release Date: 2023-10-22

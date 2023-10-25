@@ -7,7 +7,27 @@ namespace Coree.VisualStudio.DotnetToolbar.ExtensionMethods
         public static T ReadFromFile<T>(string file)
         {
             var contents = System.IO.File.ReadAllText(file);
-            var result = System.Text.Json.JsonSerializer.Deserialize<T>(contents);
+            T result = System.Text.Json.JsonSerializer.Deserialize<T>(contents);
+            return result;
+        }
+
+        public static T TryReadFromFile<T>(string file)
+        {
+            string contents;
+            T result;
+            try
+            {
+                contents = System.IO.File.ReadAllText(file);
+                result = System.Text.Json.JsonSerializer.Deserialize<T>(contents);
+            }
+            catch (Exception)
+            {
+                T instance = (T)Activator.CreateInstance(typeof(T));
+                var JsonString = System.Text.Json.JsonSerializer.Serialize<T>(instance);
+                System.IO.File.WriteAllText(file, JsonString);
+                contents = System.IO.File.ReadAllText(file);
+                result = System.Text.Json.JsonSerializer.Deserialize<T>(contents);
+            }
             return result;
         }
 

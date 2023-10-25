@@ -8,34 +8,37 @@ namespace Coree.VisualStudio.DotnetToolbar
         public CommandSettingsForm()
         {
             InitializeComponent();
-            checkBox1.Checked = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsGeneral.KillAllDotnetProcessBeforeExectue;
-            checkBox2.Checked = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsGeneral.BlockNonSdkExecute;
-            checkBox3.Checked = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsGeneral.NodeReuse;
-            if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsPublish.PublishSolutionProject)
+            checkBox1.Checked = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.KillAllDotnetProcessBeforeExectue;
+            checkBox2.Checked = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.BlockNonSdkExecute;
+            checkBox3.Checked = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.NodeReuse;
+            checkBox4.Checked = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsNugetPush.HideApiKeyInOutput;
+
+            if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPublish.PublishSolutionProject)
             {
-                radioButton1.Checked = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsPublish.PublishSolutionProject;
-                radioButton2.Checked = !CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsPublish.PublishSolutionProject;
+                radioButton1.Checked = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPublish.PublishSolutionProject;
+                radioButton2.Checked = !CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPublish.PublishSolutionProject;
             }
             else
             {
-                radioButton1.Checked = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsPublish.PublishSolutionProject;
-                radioButton2.Checked = !CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsPublish.PublishSolutionProject;
+                radioButton1.Checked = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPublish.PublishSolutionProject;
+                radioButton2.Checked = !CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPublish.PublishSolutionProject;
             }
             
         }
 
         private void CommandSettingsForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsGeneral.KillAllDotnetProcessBeforeExectue = checkBox1.Checked;
-            CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsGeneral.BlockNonSdkExecute = checkBox2.Checked;
-            CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsGeneral.NodeReuse = checkBox3.Checked;
+            CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.KillAllDotnetProcessBeforeExectue = checkBox1.Checked;
+            CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.BlockNonSdkExecute = checkBox2.Checked;
+            CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.NodeReuse = checkBox3.Checked;
+            CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsNugetPush.HideApiKeyInOutput = checkBox4.Checked;
             if (radioButton1.Checked)
             {
-                CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsPublish.PublishSolutionProject = radioButton1.Checked;
+                CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPublish.PublishSolutionProject = radioButton1.Checked;
             }
             if (radioButton2.Checked)
             {
-                CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.solutionSettingsPublish.PublishSolutionProject = radioButton1.Checked;
+                CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPublish.PublishSolutionProject = radioButton1.Checked;
             }
             JsonHelper.WriteToFile(CoreeVisualStudioDotnetToolbarPackage.Instance.Settings, CoreeVisualStudioDotnetToolbarPackage.Instance.SettingsFileName);
         }

@@ -75,14 +75,12 @@ namespace Coree.VisualStudio.DotnetToolbar
         /// <param name="e">Event args.</param>
         private async System.Threading.Tasks.Task ExecuteAsync(object sender, EventArgs e)
         {
-            System.Threading.Tasks.Task myTask = System.Threading.Tasks.Task.Run(() => StartDotNetProcessAsync());
-            await myTask;
+            await StartDotNetProcessAsync();
         }
 
         private async System.Threading.Tasks.Task StartDotNetProcessAsync()
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(Package.DisposalToken);
-            DTE2 dte2 = (DTE2)await ServiceProvider.GetServiceAsync(typeof(DTE)).ConfigureAwait(false);
 
             CommandSettingsForm commandSettingsForm = new CommandSettingsForm();
             commandSettingsForm.ShowDialog();
