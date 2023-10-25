@@ -152,7 +152,6 @@ namespace Coree.VisualStudio.DotnetToolbar
             await OutputWriteLineAsync("-------------------------------------------------------------------------------");
             await OutputWriteLineAsync(process.StartInfo.GetProcessStartInfoCommandline());
             await OutputWriteLineAsync("-------------------------------------------------------------------------------");
-            process.Start();
 
             process.OutputDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await OutputWriteLineAsync(e.Data); } catch (Exception ex) { Debug.WriteLine(ex.Message); } }); _joinableTasks.Add(joinableTask); };
             process.ErrorDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await OutputWriteLineAsync(e.Data); } catch (Exception ex) { Debug.WriteLine(ex.Message); } }); _joinableTasks.Add(joinableTask); };

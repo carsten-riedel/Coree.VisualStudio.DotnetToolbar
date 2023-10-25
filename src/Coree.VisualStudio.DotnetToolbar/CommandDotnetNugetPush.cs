@@ -104,7 +104,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(Package.DisposalToken);
             DTE2 dte2 = (DTE2)await ServiceProvider.GetServiceAsync(typeof(DTE)).ConfigureAwait(false);
 
-            await WindowActivateAsync(Constants.vsWindowKindOutput);
+            await WindowActivateAsync(EnvDTE.Constants.vsWindowKindOutput);
 
             var configuration = await GetSolutionActiveConfigurationAsync();
             var solinfo = await GetSolutionAsync();
@@ -203,7 +203,6 @@ namespace Coree.VisualStudio.DotnetToolbar
                 await OutputWriteLineAsync(process.StartInfo.GetProcessStartInfoCommandline());
             }
             await OutputWriteLineAsync("-------------------------------------------------------------------------------");
-            process.Start();
             process.OutputDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await OutputWriteLineAsync(e.Data); } catch (Exception ex) { Debug.WriteLine(ex.Message); } }); _joinableTasks.Add(joinableTask); };
             process.ErrorDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await OutputWriteLineAsync(e.Data); } catch (Exception ex) { Debug.WriteLine(ex.Message); } }); _joinableTasks.Add(joinableTask); };
             process.Start();

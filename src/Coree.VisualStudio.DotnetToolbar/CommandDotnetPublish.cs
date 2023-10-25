@@ -139,6 +139,7 @@ namespace Coree.VisualStudio.DotnetToolbar
                 }
             }
 
+            /*
             dynamic TaskStatusCenter = (SVsTaskStatusCenterService)await ServiceProvider.GetServiceAsync(typeof(SVsTaskStatusCenterService));
 
             int InProgressCount;
@@ -151,6 +152,7 @@ namespace Coree.VisualStudio.DotnetToolbar
                     await Task.Delay(3000); // Delay for 500 milliseconds before next check
                 }
             } while (InProgressCount != 0);
+            */
 
             var nodeResuse = $"--nodeReuse:{CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.NodeReuse.ToString().ToLower()}";
 
@@ -169,7 +171,6 @@ namespace Coree.VisualStudio.DotnetToolbar
                 await OutputWriteLineAsync("-------------------------------------------------------------------------------");
                 await OutputWriteLineAsync(process.StartInfo.GetProcessStartInfoCommandline());
                 await OutputWriteLineAsync("-------------------------------------------------------------------------------");
-                process.Start();
                 process.OutputDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await OutputWriteLineAsync(e.Data); } catch (Exception ex) { Debug.WriteLine(ex.Message); } }); _joinableTasks.Add(joinableTask); };
                 process.ErrorDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await OutputWriteLineAsync(e.Data); } catch (Exception ex) { Debug.WriteLine(ex.Message); } }); _joinableTasks.Add(joinableTask); };
                 process.Start();
@@ -195,7 +196,6 @@ namespace Coree.VisualStudio.DotnetToolbar
                         await OutputWriteLineAsync("-------------------------------------------------------------------------------");
                         await OutputWriteLineAsync(process.StartInfo.GetProcessStartInfoCommandline());
                         await OutputWriteLineAsync("-------------------------------------------------------------------------------");
-                        process.Start();
                         process.OutputDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await OutputWriteLineAsync(e.Data); } catch (Exception ex) { Debug.WriteLine(ex.Message); } }); _joinableTasks.Add(joinableTask); };
                         process.ErrorDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await OutputWriteLineAsync(e.Data); } catch (Exception ex) { Debug.WriteLine(ex.Message); } }); _joinableTasks.Add(joinableTask); };
                         process.Start();

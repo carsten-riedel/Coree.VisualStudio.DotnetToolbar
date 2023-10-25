@@ -116,11 +116,12 @@ namespace Coree.VisualStudio.DotnetToolbar
 
             if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.KillAllDotnetProcessBeforeExectue)
             {
-                //(new System.Diagnostics.Process()).AllDontNetKill("dotnet");
+                (new System.Diagnostics.Process()).AllDontNetKill("dotnet");
                 //(new System.Diagnostics.Process()).AllDontNetKill("MSBuild");
                 //(new System.Diagnostics.Process()).AllDontNetKill("VBCSCompiler");
             }
 
+            /*
             dynamic TaskStatusCenter = (SVsTaskStatusCenterService)await ServiceProvider.GetServiceAsync(typeof(SVsTaskStatusCenterService));
 
             int InProgressCount;
@@ -133,6 +134,7 @@ namespace Coree.VisualStudio.DotnetToolbar
                     await Task.Delay(3000); // Delay for 500 milliseconds before next check
                 }
             } while (InProgressCount != 0);
+            */
 
             if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.BlockNonSdkExecute)
             {
@@ -191,7 +193,6 @@ namespace Coree.VisualStudio.DotnetToolbar
             await OutputWriteLineAsync("-------------------------------------------------------------------------------");
             await OutputWriteLineAsync(process.StartInfo.GetProcessStartInfoCommandline());
             await OutputWriteLineAsync("-------------------------------------------------------------------------------");
-            process.Start();
 
             process.OutputDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await OutputWriteLineAsync(e.Data); } catch (Exception ex) { Debug.WriteLine(ex.Message); } }); _joinableTasks.Add(joinableTask); };
             process.ErrorDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await OutputWriteLineAsync(e.Data); } catch (Exception ex) { Debug.WriteLine(ex.Message); } }); _joinableTasks.Add(joinableTask); };
@@ -205,12 +206,6 @@ namespace Coree.VisualStudio.DotnetToolbar
 
             await OutputWriteLineAsync("Done");
 
-            if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.KillAllDotnetProcessBeforeExectue)
-            {
-                //(new System.Diagnostics.Process()).AllDontNetKill("dotnet");
-                //(new System.Diagnostics.Process()).AllDontNetKill("MSBuild");
-                //(new System.Diagnostics.Process()).AllDontNetKill("VBCSCompiler");
-            }
         }
     }
 }

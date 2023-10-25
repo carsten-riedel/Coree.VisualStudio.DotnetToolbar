@@ -102,11 +102,6 @@ namespace Coree.VisualStudio.DotnetToolbar
         private async Task StartDotNetProcessAsync()
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(Package.DisposalToken);
-
-      
-
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(Package.DisposalToken);
-
             DTE2 dte2 = (DTE2)await ServiceProvider.GetServiceAsync(typeof(DTE)).ConfigureAwait(false);
 
             await WindowActivateAsync(EnvDTE.Constants.vsWindowKindOutput);
@@ -122,7 +117,7 @@ namespace Coree.VisualStudio.DotnetToolbar
 
             if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.KillAllDotnetProcessBeforeExectue)
             {
-                //(new System.Diagnostics.Process()).AllDontNetKill("dotnet");
+                (new System.Diagnostics.Process()).AllDontNetKill("dotnet");
                 //(new System.Diagnostics.Process()).AllDontNetKill("MSBuild");
                 //(new System.Diagnostics.Process()).AllDontNetKill("VBCSCompiler");
             }
@@ -149,6 +144,7 @@ namespace Coree.VisualStudio.DotnetToolbar
                 }
             }
 
+            /*
             dynamic TaskStatusCenter = (SVsTaskStatusCenterService)await ServiceProvider.GetServiceAsync(typeof(SVsTaskStatusCenterService));
 
             int InProgressCount;
@@ -161,46 +157,44 @@ namespace Coree.VisualStudio.DotnetToolbar
                     await Task.Delay(3000); // Delay for 500 milliseconds before next check
                 }
             } while (InProgressCount != 0);
+            */
 
             var nodeResuse = $"--nodeReuse:{CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.NodeReuse.ToString().ToLower()}";
 
+            /*
             ProcessStartInfoExtensions.quickexec("cmd", "/C dotnet build-server shutdown", $@"{slndir}");
             ProcessStartInfoExtensions.quickexec("cmd", "/C dotnet restore --disable-parallel --force --force-evaluate --use-lock-file", $@"{slndir}");
-
+            */
             
 
             var process = new System.Diagnostics.Process();
-            process.StartInfo.UseShellExecute = true;
-            process.StartInfo.CreateNoWindow = false;
-            process.StartInfo.FileName = "cmd";
-            process.StartInfo.Arguments = $@"/c dotnet pack ""{slnfile}"" /p:DisablePackageAssetsCache=true -maxcpucount:1 {nodeResuse} --configuration {configuration.Name} --force";
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.CreateNoWindow = true;
+            process.StartInfo.FileName = "dotnet.exe";
+            //process.StartInfo.Arguments = $@"/c dotnet pack ""{slnfile}"" /p:DisablePackageAssetsCache=true -maxcpucount:1 {nodeResuse} --configuration {configuration.Name} --force";
+            process.StartInfo.Arguments = $@"pack ""{slnfile}"" {nodeResuse} --configuration {configuration.Name} --force";
             process.StartInfo.WorkingDirectory = $@"{slndir}";
-            //process.StartInfo.RedirectStandardError = true;
-            //process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.RedirectStandardError = true;
+            process.StartInfo.RedirectStandardOutput = true;
 
             await OutputWriteLineAsync("-------------------------------------------------------------------------------");
             await OutputWriteLineAsync(process.StartInfo.GetProcessStartInfoCommandline());
             await OutputWriteLineAsync("-------------------------------------------------------------------------------");
             process.Start();
-            //process.OutputDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await OutputWriteLineAsync(e.Data); } catch (Exception ex) { Debug.WriteLine(ex.Message); } }); _joinableTasks.Add(joinableTask); };
-            //process.ErrorDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await OutputWriteLineAsync(e.Data); } catch (Exception ex) { Debug.WriteLine(ex.Message); } }); _joinableTasks.Add(joinableTask); };
+            process.OutputDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await OutputWriteLineAsync(e.Data); } catch (Exception ex) { Debug.WriteLine(ex.Message); } }); _joinableTasks.Add(joinableTask); };
+            process.ErrorDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await OutputWriteLineAsync(e.Data); } catch (Exception ex) { Debug.WriteLine(ex.Message); } }); _joinableTasks.Add(joinableTask); };
      
-            //process.BeginErrorReadLine();
-            //process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
+            process.BeginOutputReadLine();
 
             // Block until the process exits
-            process.WaitForExit();
+            await process.WaitForExitAsync();
 
             await Task.WhenAll(_joinableTasks.Select(jt => jt.Task));
 
             await OutputWriteLineAsync("Done");
 
-            if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.KillAllDotnetProcessBeforeExectue)
-            {
-                //(new System.Diagnostics.Process()).AllDontNetKill("dotnet");
-                //(new System.Diagnostics.Process()).AllDontNetKill("MSBuild");
-                //(new System.Diagnostics.Process()).AllDontNetKill("VBCSCompiler");
-            }
+
 
         }
 
