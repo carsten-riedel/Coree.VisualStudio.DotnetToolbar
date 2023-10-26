@@ -1,15 +1,10 @@
 ﻿using EnvDTE;
 using EnvDTE80;
-using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.TaskStatusCenter;
 using Microsoft.VisualStudio.Threading;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Coree.VisualStudio.DotnetToolbar
 {
@@ -86,6 +81,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             CommandDotnetNugetPush.Instance.MenuItem.Enabled = false;
             CommandDotnetClean.Instance.MenuItem.Enabled = false;
             CommandSettings.Instance.MenuItem.Enabled = false;
+            CommandDeleteBinObj.Instance.MenuItem.Enabled = false;
 
             await StartDotNetProcessAsync();
 
@@ -95,6 +91,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             CommandDotnetNugetPush.Instance.MenuItem.Enabled = true;
             CommandDotnetClean.Instance.MenuItem.Enabled = true;
             CommandSettings.Instance.MenuItem.Enabled = true;
+            CommandDeleteBinObj.Instance.MenuItem.Enabled = true;
         }
 
         private async System.Threading.Tasks.Task StartDotNetProcessAsync()
@@ -111,8 +108,6 @@ namespace Coree.VisualStudio.DotnetToolbar
             string slndir = System.IO.Path.GetDirectoryName(slnfile);
 
             await PaneClearAsync();
-
-            List<JoinableTask> _joinableTasks = new List<JoinableTask>();
 
             if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.KillAllDotnetProcessBeforeExectue)
             {
@@ -145,23 +140,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPublish.PublishSolutionProject)
             {
                 done = true;
-                var process = new System.Diagnostics.Process();
-                process.StartInfo.UseShellExecute = false;
-                process.StartInfo.CreateNoWindow = true;
-                process.StartInfo.FileName = "dotnet.exe";
-                process.StartInfo.Arguments = $@"publish ""{slnfile}"" {nodeResuse} --configuration {activeConfiguration.Configuration} --force";
-                process.StartInfo.WorkingDirectory = $@"{slndir}";
-                process.StartInfo.RedirectStandardError = true;
-                process.StartInfo.RedirectStandardOutput = true;
-                await PaneWriteLineAsync("-------------------------------------------------------------------------------");
-                await PaneWriteLineAsync(process.StartInfo.GetProcessStartInfoCommandline());
-                await PaneWriteLineAsync("-------------------------------------------------------------------------------");
-                process.OutputDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await PaneWriteLineAsync(e.Data); } catch (Exception ex) { Debug.WriteLine(ex.Message); } }); _joinableTasks.Add(joinableTask); };
-                process.ErrorDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await PaneWriteLineAsync(e.Data); } catch (Exception ex) { Debug.WriteLine(ex.Message); } }); _joinableTasks.Add(joinableTask); };
-                process.Start();
-                process.BeginErrorReadLine();
-                process.BeginOutputReadLine();
-                await process.WaitForExitAsync();
+                await ExecuteProcessAsync("dotnet.exe", $@"publish ""{slnfile}"" {nodeResuse} --configuration {activeConfiguration.Configuration} --force", $@"{slndir}");
             }
             else
             {
@@ -170,28 +149,10 @@ namespace Coree.VisualStudio.DotnetToolbar
                     foreach (var targetFramework in projectInfo.TargetFrameworksList)
                     {
                         done = true;
-                        var process = new System.Diagnostics.Process();
-                        process.StartInfo.UseShellExecute = false;
-                        process.StartInfo.CreateNoWindow = true;
-                        process.StartInfo.FileName = "dotnet.exe";
-                        process.StartInfo.Arguments = $@"publish ""{projectInfo.FullProjectFileName}"" {nodeResuse} --configuration {activeConfiguration.Configuration} --framework {targetFramework}";
-                        process.StartInfo.WorkingDirectory = $@"{projectInfo.FullPath}";
-                        process.StartInfo.RedirectStandardError = true;
-                        process.StartInfo.RedirectStandardOutput = true;
-                        await PaneWriteLineAsync("-------------------------------------------------------------------------------");
-                        await PaneWriteLineAsync(process.StartInfo.GetProcessStartInfoCommandline());
-                        await PaneWriteLineAsync("-------------------------------------------------------------------------------");
-                        process.OutputDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await PaneWriteLineAsync(e.Data); } catch (Exception ex) { Debug.WriteLine(ex.Message); } }); _joinableTasks.Add(joinableTask); };
-                        process.ErrorDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await PaneWriteLineAsync(e.Data); } catch (Exception ex) { Debug.WriteLine(ex.Message); } }); _joinableTasks.Add(joinableTask); };
-                        process.Start();
-                        process.BeginErrorReadLine();
-                        process.BeginOutputReadLine();
-                        await process.WaitForExitAsync();
+                        await ExecuteProcessAsync("dotnet.exe", $@"publish ""{projectInfo.FullProjectFileName}"" {nodeResuse} --configuration {activeConfiguration.Configuration} --framework {targetFramework}", $@"{projectInfo.FullPath}");
                     }
                 }
             }
-
-            await System.Threading.Tasks.Task.WhenAll(_joinableTasks.Select(jt => jt.Task));
 
             if (!done)
             {

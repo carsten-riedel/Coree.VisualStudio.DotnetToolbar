@@ -1,5 +1,4 @@
 ﻿using EnvDTE;
-using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.TaskStatusCenter;
 using Microsoft.VisualStudio.Threading;
@@ -8,7 +7,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using static Coree.VisualStudio.DotnetToolbar.AsyncPackageExtensions;
 
 namespace Coree.VisualStudio.DotnetToolbar
@@ -41,12 +39,10 @@ namespace Coree.VisualStudio.DotnetToolbar
             await Package.WindowActivateAsync(constants);
         }
 
-
         public async Task<ActiveSolutionConfiguration> GetActiveSolutionConfigurationAsync()
         {
             return await Package.GetActiveSolutionConfigurationAsync();
         }
-
 
         public async Task<_Solution> GetSolutionAsync()
         {
@@ -57,6 +53,7 @@ namespace Coree.VisualStudio.DotnetToolbar
         {
             return await Package.GetSolutionFileNameAsync();
         }
+
         public async Task<Dictionary<string, string>> GetSolutionPropertiesAsync()
         {
             return await Package.GetSolutionPropertiesAsync();
@@ -69,7 +66,7 @@ namespace Coree.VisualStudio.DotnetToolbar
 
         public async Task PaneWriteLineAsync(string message, string paneName = "Build", bool addNewLine = true, bool activateAfter = true, string[] maskOutputs = null)
         {
-           await Package.PaneWriteLineAsync(message, paneName, addNewLine, activateAfter, maskOutputs);
+            await Package.PaneWriteLineAsync(message, paneName, addNewLine, activateAfter, maskOutputs);
         }
 
         public async Task PaneClearAsync(string paneName = "Build", bool activateAfter = true)
@@ -93,7 +90,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             } while (InProgressCount != 0);
         }
 
-        public async Task ExecuteProcessAsync(string fileName, string arguments, string workingDirectory,string[] maskOutputs = null)
+        public async Task ExecuteProcessAsync(string fileName, string arguments, string workingDirectory, string[] maskOutputs = null)
         {
             List<JoinableTask> _joinableTasks = new List<JoinableTask>();
 
@@ -120,7 +117,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             await PaneWriteLineAsync(commandline);
             await PaneWriteLineAsync("-------------------------------------------------------------------------------");
 
-            process.OutputDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await PaneWriteLineAsync(e.Data,"Build",true,true,maskOutputs); } catch (Exception ex) { Debug.WriteLine(ex.Message); } }); _joinableTasks.Add(joinableTask); };
+            process.OutputDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await PaneWriteLineAsync(e.Data, "Build", true, true, maskOutputs); } catch (Exception ex) { Debug.WriteLine(ex.Message); } }); _joinableTasks.Add(joinableTask); };
             process.ErrorDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await PaneWriteLineAsync(e.Data, "Build", true, true, maskOutputs); } catch (Exception ex) { Debug.WriteLine(ex.Message); } }); _joinableTasks.Add(joinableTask); };
 
             process.Start();
@@ -130,6 +127,5 @@ namespace Coree.VisualStudio.DotnetToolbar
 
             await Task.WhenAll(_joinableTasks.Select(jt => jt.Task));
         }
-
     }
 }

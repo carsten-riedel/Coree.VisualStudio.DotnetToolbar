@@ -1,14 +1,8 @@
 ﻿using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.TaskStatusCenter;
-using Microsoft.VisualStudio.Threading;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.Design;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Coree.VisualStudio.DotnetToolbar
 {
@@ -86,6 +80,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             CommandDotnetNugetPush.Instance.MenuItem.Enabled = false;
             CommandDotnetClean.Instance.MenuItem.Enabled = false;
             CommandSettings.Instance.MenuItem.Enabled = false;
+            CommandDeleteBinObj.Instance.MenuItem.Enabled = false;
 
             await StartDotNetProcessAsync();
 
@@ -95,6 +90,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             CommandDotnetNugetPush.Instance.MenuItem.Enabled = true;
             CommandDotnetClean.Instance.MenuItem.Enabled = true;
             CommandSettings.Instance.MenuItem.Enabled = true;
+            CommandDeleteBinObj.Instance.MenuItem.Enabled = true;
         }
 
         private async System.Threading.Tasks.Task StartDotNetProcessAsync()
@@ -143,7 +139,6 @@ namespace Coree.VisualStudio.DotnetToolbar
             await ExecuteProcessAsync("dotnet.exe", $@"clean ""{slnfile}"" {nodeResuse} --configuration {activeConfiguration.Configuration}", $@"{slndir}");
 
             await PaneWriteLineAsync("Done");
-
         }
     }
 }

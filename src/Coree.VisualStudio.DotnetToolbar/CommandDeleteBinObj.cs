@@ -1,6 +1,4 @@
-﻿using EnvDTE;
-using EnvDTE80;
-using Microsoft.VisualStudio.Shell;
+﻿using Microsoft.VisualStudio.Shell;
 using System;
 using System.ComponentModel.Design;
 
@@ -36,7 +34,6 @@ namespace Coree.VisualStudio.DotnetToolbar
             MenuItem = new MenuCommand(Execute, menuCommandID);
             MenuItem.Enabled = false;
 
-
             commandService.AddCommand(MenuItem);
         }
 
@@ -65,7 +62,7 @@ namespace Coree.VisualStudio.DotnetToolbar
 
         private void Execute(object sender, EventArgs e)
         {
-           _ = this.Package.JoinableTaskFactory.RunAsync(async delegate  { await ExecuteAsync(sender,e); });
+            _ = this.Package.JoinableTaskFactory.RunAsync(async delegate { await ExecuteAsync(sender, e); });
         }
 
         /// <summary>
@@ -77,12 +74,34 @@ namespace Coree.VisualStudio.DotnetToolbar
         /// <param name="e">Event args.</param>
         private async System.Threading.Tasks.Task ExecuteAsync(object sender, EventArgs e)
         {
+            CommandDotnetBuild.Instance.MenuItem.Enabled = false;
+            CommandDotnetPack.Instance.MenuItem.Enabled = false;
+            CommandDotnetPublish.Instance.MenuItem.Enabled = false;
+            CommandDotnetNugetPush.Instance.MenuItem.Enabled = false;
+            CommandDotnetClean.Instance.MenuItem.Enabled = false;
+            CommandSettings.Instance.MenuItem.Enabled = false;
+            CommandDeleteBinObj.Instance.MenuItem.Enabled = false;
+
             await StartDotNetProcessAsync();
+
+            CommandDotnetBuild.Instance.MenuItem.Enabled = true;
+            CommandDotnetPack.Instance.MenuItem.Enabled = true;
+            CommandDotnetPublish.Instance.MenuItem.Enabled = true;
+            CommandDotnetNugetPush.Instance.MenuItem.Enabled = true;
+            CommandDotnetClean.Instance.MenuItem.Enabled = true;
+            CommandSettings.Instance.MenuItem.Enabled = true;
+            CommandDeleteBinObj.Instance.MenuItem.Enabled = true;
         }
 
         private async System.Threading.Tasks.Task StartDotNetProcessAsync()
         {
+            string slnfile = await GetSolutionFileNameAsync();
+            string slndir = System.IO.Path.GetDirectoryName(slnfile);
+
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(Package.DisposalToken);
+            var path = CoreeVisualStudioDotnetToolbarPackage.Instance.ExtensionVersionDirectory;
+            await ExecuteProcessAsync("cmd", $@"/C powershell -ExecutionPolicy ByPass -file ""{path + System.IO.Path.DirectorySeparatorChar}deletebinobj.ps1"" -test ""{slndir}"" ", String.Empty);
+            await PaneWriteLineAsync("Done");
         }
     }
 }

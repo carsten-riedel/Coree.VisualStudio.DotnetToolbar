@@ -54,6 +54,10 @@ namespace Coree.VisualStudio.DotnetToolbar
         public SolutionSettings Settings { get; set; }
         public string SettingsFileName { get; set; }
 
+        public string ExtensionVersionDirectory { get; set; }
+
+        public string ExtensionDirectory { get; set; }
+
         /// <summary>
         /// Initialization of the package; this method is called right after the package is sited, so this is the place
         /// where you can put all the initialization code that rely on services provided by VisualStudio.
@@ -115,6 +119,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             CommandDotnetPublish.Instance.MenuItem.Enabled = false;
             CommandDotnetNugetPush.Instance.MenuItem.Enabled = false;
             CommandDotnetClean.Instance.MenuItem.Enabled = false;
+            CommandDeleteBinObj.Instance.MenuItem.Enabled = false;
         }
 
         private async Task SolutionEvents_OnAfterOpenSolutionAsync(object sender = null, OpenSolutionEventArgs e = null)
@@ -138,7 +143,11 @@ namespace Coree.VisualStudio.DotnetToolbar
                 SolutionGuid = $"{(string)solinfo.Globals["SolutionGuid"]}";
             }
 
-            SettingsFileName = $@"{UserLocalDataPath}\{solutionProperties["Name"]}_{SolutionGuid}.json";
+            var assemblyLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            ExtensionVersionDirectory = System.IO.Path.GetDirectoryName(assemblyLocation);
+            ExtensionDirectory = System.IO.Path.GetDirectoryName(ExtensionVersionDirectory);
+
+            SettingsFileName = $@"{ExtensionDirectory}\{solutionProperties["Name"]}_{SolutionGuid}.json";
 
             bool Created = JsonHelper.CreateDefault<SolutionSettings>(SettingsFileName);
             if (Created == true)
@@ -156,6 +165,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             EnableMenuItemIfInstanceNotNull(CommandDotnetPublish.Instance);
             EnableMenuItemIfInstanceNotNull(CommandDotnetNugetPush.Instance);
             EnableMenuItemIfInstanceNotNull(CommandDotnetClean.Instance);
+            EnableMenuItemIfInstanceNotNull(CommandDeleteBinObj.Instance);
         }
 
         private static string GetSolutionGuid(string filePath)

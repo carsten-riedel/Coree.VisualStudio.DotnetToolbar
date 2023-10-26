@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Diagnostics;
 
 namespace Coree.VisualStudio.DotnetToolbar
@@ -30,30 +29,5 @@ namespace Coree.VisualStudio.DotnetToolbar
                 }
             }
         }
-
-        internal static void quickexec(string fi, string args, string wdir)
-        {
-            
-            var process = new System.Diagnostics.Process();
-
-            var x = new ProcessStartInfo()
-            {
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                FileName = fi,
-                Arguments = args,
-                WorkingDirectory = wdir,
-                RedirectStandardError = true,
-                RedirectStandardInput = true,
-                RedirectStandardOutput = true,
-            };
-            process.StartInfo = x;
-            process.Start();
-            process.BeginErrorReadLine();
-            process.BeginOutputReadLine();
-            process.WaitForExit();
-        }
-
-        // Get all processes with the name 'dotnet'
     }
 }

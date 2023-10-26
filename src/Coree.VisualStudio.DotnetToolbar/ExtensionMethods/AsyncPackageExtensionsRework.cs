@@ -3,8 +3,8 @@ using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Coree.VisualStudio.DotnetToolbar
 {
@@ -72,7 +72,7 @@ namespace Coree.VisualStudio.DotnetToolbar
                     }
                 }
 
-                dte2.AddPane(paneName);
+                dte2.ToolWindows.OutputWindow.OutputWindowPanes.Add(paneName);
 
                 foreach (EnvDTE.OutputWindowPane pane in dte2.ToolWindows.OutputWindow.OutputWindowPanes)
                 {
@@ -119,6 +119,5 @@ namespace Coree.VisualStudio.DotnetToolbar
             }
             return;
         }
-
     }
 }
