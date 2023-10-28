@@ -71,12 +71,12 @@ namespace Coree.VisualStudio.DotnetToolbar
         /// </summary>
         /// <param name="sender">Event sender.</param>
         /// <param name="e">Event args.</param>
-        private async System.Threading.Tasks.Task ExecuteAsync(object sender, EventArgs e)
+        internal override async System.Threading.Tasks.Task ExecuteAsync(object sender, EventArgs e)
         {
             await StartDotNetProcessAsync();
         }
 
-        private async System.Threading.Tasks.Task StartDotNetProcessAsync()
+        internal override async System.Threading.Tasks.Task StartDotNetProcessAsync()
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(Package.DisposalToken);
 

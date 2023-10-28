@@ -73,7 +73,8 @@ namespace Coree.VisualStudio.DotnetToolbar
         /// </summary>
         /// <param name="sender">Event sender.</param>
         /// <param name="e">Event args.</param>
-        private async Task ExecuteAsync(object sender, EventArgs e)
+        /*
+        internal override async Task ExecuteAsync(object sender, EventArgs e)
         {
             CommandDotnetBuild.Instance.MenuItem.Enabled = false;
             CommandDotnetPack.Instance.MenuItem.Enabled = false;
@@ -93,8 +94,9 @@ namespace Coree.VisualStudio.DotnetToolbar
             CommandSettings.Instance.MenuItem.Enabled = true;
             CommandDeleteBinObj.Instance.MenuItem.Enabled = true;
         }
+        */
 
-        private async Task StartDotNetProcessAsync()
+        internal override async Task StartDotNetProcessAsync()
         {
             await WindowActivateAsync(Constants.vsWindowKindOutput);
 

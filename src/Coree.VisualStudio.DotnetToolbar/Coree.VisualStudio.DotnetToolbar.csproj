@@ -48,10 +48,10 @@
     <Compile Include="CommandDeleteBinObj.cs" />
     <Compile Include="CommandSettings.cs" />
     <Compile Include="CommandDotnetClean.cs" />
-    <Compile Include="CommandSettingsForm.cs">
+    <Compile Include="Froms\CommandSettingsForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CommandSettingsForm.Designer.cs">
+    <Compile Include="Froms\CommandSettingsForm.Designer.cs">
       <DependentUpon>CommandSettingsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="ExtensionMethods\AsyncPackageExtensions.cs" />
@@ -64,10 +64,10 @@
     <Compile Include="CommandDotnetBuild.cs" />
     <Compile Include="CommandDotnetPack.cs" />
     <Compile Include="CommandDotnetPublish.cs" />
-    <Compile Include="NugetPushDialog.cs">
+    <Compile Include="Froms\NugetPushDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="NugetPushDialog.Designer.cs">
+    <Compile Include="Froms\NugetPushDialog.Designer.cs">
       <DependentUpon>NugetPushDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -121,15 +121,15 @@
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Resources\CommandBar.png" />
-    <Content Include="deletebinobj.ps1">
+    <Content Include="PowershellScripts\deletebinobj.ps1">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="CommandSettingsForm.resx">
+    <EmbeddedResource Include="Froms\CommandSettingsForm.resx">
       <DependentUpon>CommandSettingsForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="NugetPushDialog.resx">
+    <EmbeddedResource Include="Froms\NugetPushDialog.resx">
       <DependentUpon>NugetPushDialog.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>

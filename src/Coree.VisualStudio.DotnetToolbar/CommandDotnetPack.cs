@@ -72,7 +72,8 @@ namespace Coree.VisualStudio.DotnetToolbar
         /// </summary>
         /// <param name="sender">Event sender.</param>
         /// <param name="e">Event args.</param>
-        private async Task ExecuteAsync(object sender, EventArgs e)
+        /*
+        internal override async Task ExecuteAsync(object sender, EventArgs e)
         {
             CommandDotnetBuild.Instance.MenuItem.Enabled = false;
             CommandDotnetPack.Instance.MenuItem.Enabled = false;
@@ -91,9 +92,9 @@ namespace Coree.VisualStudio.DotnetToolbar
             CommandDotnetClean.Instance.MenuItem.Enabled = true;
             CommandSettings.Instance.MenuItem.Enabled = true;
             CommandDeleteBinObj.Instance.MenuItem.Enabled = true;
-        }
+        }*/
 
-        private async Task StartDotNetProcessAsync()
+        internal override async Task StartDotNetProcessAsync()
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(Package.DisposalToken);
             DTE2 dte2 = (DTE2)await ServiceProvider.GetServiceAsync(typeof(DTE)).ConfigureAwait(false);
@@ -136,7 +137,7 @@ namespace Coree.VisualStudio.DotnetToolbar
 
             var nodeResuse = $"--nodeReuse:{CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.NodeReuse.ToString().ToLower()}";
 
-            await ExecuteProcessAsync("dotnet.exe", $@"pack ""{slnfile}"" {nodeResuse} --configuration {activeConfig.Configuration} --force", $@"{slndir}");
+            await ExecuteProcessAsync("dotnet.exe", $@"pack ""{slnfile}"" {nodeResuse} --configuration {activeConfig.Configuration}", $@"{slndir}");
 
             await PaneWriteLineAsync("Done");
         }

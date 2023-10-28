@@ -41,7 +41,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             commandService.AddCommand(menuMyDropDownComboGetListCommand);
 
             CommandID menuMyDropDownComboCommandID = new CommandID(CommandSet, cmdidMyDropDownCombo);
-            MenuCommand menuMyDropDownComboCommand = new OleMenuCommand(async (s, e) => OnMenuMyDropDownComboAsync(s, e), menuMyDropDownComboCommandID);
+            MenuCommand menuMyDropDownComboCommand = new OleMenuCommand(async (s, e) => ExecuteAsync(s, e), menuMyDropDownComboCommandID);
             commandService.AddCommand(menuMyDropDownComboCommand);
         }
 
@@ -86,7 +86,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             }
         }
 
-        private async Task OnMenuMyDropDownComboAsync(object sender, EventArgs e)
+        internal override async Task ExecuteAsync(object sender, EventArgs e)
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(Package.DisposalToken);
 

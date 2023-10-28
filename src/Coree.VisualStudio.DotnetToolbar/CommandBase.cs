@@ -127,5 +127,35 @@ namespace Coree.VisualStudio.DotnetToolbar
 
             await Task.WhenAll(_joinableTasks.Select(jt => jt.Task));
         }
+
+        internal virtual async System.Threading.Tasks.Task ExecuteAsync(object sender, EventArgs e)
+        {
+            CommandDotnetBuild.Instance.MenuItem.Enabled = false;
+            CommandDotnetPack.Instance.MenuItem.Enabled = false;
+            CommandDotnetPublish.Instance.MenuItem.Enabled = false;
+            CommandDotnetNugetPush.Instance.MenuItem.Enabled = false;
+            CommandDotnetClean.Instance.MenuItem.Enabled = false;
+            CommandSettings.Instance.MenuItem.Enabled = false;
+            //CommandDeleteBinObj.Instance.MenuItem.Enabled = false;
+
+            await StartDotNetProcessAsync();
+
+            CommandDotnetBuild.Instance.MenuItem.Enabled = true;
+            CommandDotnetPack.Instance.MenuItem.Enabled = true;
+            CommandDotnetPublish.Instance.MenuItem.Enabled = true;
+            CommandDotnetNugetPush.Instance.MenuItem.Enabled = true;
+            CommandDotnetClean.Instance.MenuItem.Enabled = true;
+            CommandSettings.Instance.MenuItem.Enabled = true;
+            //CommandDeleteBinObj.Instance.MenuItem.Enabled = true;
+
+            
+        }
+
+        internal virtual async Task StartDotNetProcessAsync()
+        {
+            await Task.CompletedTask;
+        }
+
+
     }
 }
