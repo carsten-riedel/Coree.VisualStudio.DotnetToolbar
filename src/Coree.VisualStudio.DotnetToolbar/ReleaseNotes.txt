@@ -1,4 +1,11 @@
-﻿# DotnetToolbar 0.2.2 Release Notes
+﻿# DotnetToolbar 0.2.3 Release Notes
+Release Date: 2023-10-28
+
+## Bug Fixes
+- Code cleanup ExecuteAsync
+- First internal availible powershell invoke for del bin/obj
+
+# DotnetToolbar 0.2.2 Release Notes
 Release Date: 2023-10-25
 
 ## Bug Fixes

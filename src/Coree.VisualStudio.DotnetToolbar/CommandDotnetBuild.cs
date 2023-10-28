@@ -98,6 +98,8 @@ namespace Coree.VisualStudio.DotnetToolbar
 
         internal override async Task StartDotNetProcessAsync()
         {
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(Package.DisposalToken);
+
             await WindowActivateAsync(Constants.vsWindowKindOutput);
 
             var activeConfiguration = await GetActiveSolutionConfigurationAsync();

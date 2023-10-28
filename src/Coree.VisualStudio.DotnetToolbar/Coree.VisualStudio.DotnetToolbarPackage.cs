@@ -119,7 +119,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             CommandDotnetPublish.Instance.MenuItem.Enabled = false;
             CommandDotnetNugetPush.Instance.MenuItem.Enabled = false;
             CommandDotnetClean.Instance.MenuItem.Enabled = false;
-            //CommandDeleteBinObj.Instance.MenuItem.Enabled = false;
+            CommandDeleteBinObj.Instance.MenuItem.Enabled = false;
         }
 
         private async Task SolutionEvents_OnAfterOpenSolutionAsync(object sender = null, OpenSolutionEventArgs e = null)

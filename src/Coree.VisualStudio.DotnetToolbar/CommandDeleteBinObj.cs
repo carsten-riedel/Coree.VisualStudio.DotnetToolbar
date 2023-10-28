@@ -98,10 +98,20 @@ namespace Coree.VisualStudio.DotnetToolbar
 
         internal override async System.Threading.Tasks.Task StartDotNetProcessAsync()
         {
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(Package.DisposalToken);
+
+            if (this.MenuItem.Enabled == false)
+            {
+                return;
+            }
+
+            await PaneWriteLineAsync("Not implemented.");
+
+            return;
             string slnfile = await GetSolutionFileNameAsync();
             string slndir = System.IO.Path.GetDirectoryName(slnfile);
 
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(Package.DisposalToken);
+
             var path = CoreeVisualStudioDotnetToolbarPackage.Instance.ExtensionVersionDirectory;
             await ExecuteProcessAsync("cmd", $@"/C powershell -ExecutionPolicy ByPass -file ""{path + System.IO.Path.DirectorySeparatorChar}PowershellScripts\deletebinobj.ps1"" -SolutionDirectory ""{slndir}"" ", String.Empty);
             await PaneWriteLineAsync("Done");
