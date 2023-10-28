@@ -23,7 +23,9 @@ namespace Coree.VisualStudio.DotnetToolbar
                 radioButton1.Checked = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPublish.PublishSolutionProject;
                 radioButton2.Checked = !CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPublish.PublishSolutionProject;
             }
-            
+
+            textBox1.Text = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsBuild.AdditionalCommandlineArguments;
+
         }
 
         private void CommandSettingsForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -40,7 +42,14 @@ namespace Coree.VisualStudio.DotnetToolbar
             {
                 CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPublish.PublishSolutionProject = radioButton1.Checked;
             }
+
+            CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsBuild.AdditionalCommandlineArguments = textBox1.Text;
             JsonHelper.WriteToFile(CoreeVisualStudioDotnetToolbarPackage.Instance.Settings, CoreeVisualStudioDotnetToolbarPackage.Instance.SettingsFileName);
+        }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(linkLabel1.Text);
         }
 
         /*

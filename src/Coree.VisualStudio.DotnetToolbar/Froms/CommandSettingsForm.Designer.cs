@@ -39,19 +39,24 @@
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.checkBox3 = new System.Windows.Forms.CheckBox();
             this.checkBox2 = new System.Windows.Forms.CheckBox();
+            this.tabPageBuild = new System.Windows.Forms.TabPage();
+            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.checkBox4 = new System.Windows.Forms.CheckBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.radioButton2 = new System.Windows.Forms.RadioButton();
             this.radioButton1 = new System.Windows.Forms.RadioButton();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.checkBox4 = new System.Windows.Forms.CheckBox();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
+            this.tabPageBuild.SuspendLayout();
+            this.tabPage3.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.groupBox1.SuspendLayout();
-            this.tabPage3.SuspendLayout();
             this.SuspendLayout();
             // 
             // checkBox1
@@ -116,6 +121,7 @@
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPageBuild);
             this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -157,6 +163,51 @@
             this.checkBox2.TabIndex = 1;
             this.checkBox2.Text = "Block executing on non SDK style projects.";
             this.checkBox2.UseVisualStyleBackColor = true;
+            // 
+            // tabPageBuild
+            // 
+            this.tabPageBuild.Controls.Add(this.label1);
+            this.tabPageBuild.Controls.Add(this.textBox1);
+            this.tabPageBuild.Controls.Add(this.linkLabel1);
+            this.tabPageBuild.Location = new System.Drawing.Point(4, 22);
+            this.tabPageBuild.Name = "tabPageBuild";
+            this.tabPageBuild.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageBuild.Size = new System.Drawing.Size(439, 157);
+            this.tabPageBuild.TabIndex = 3;
+            this.tabPageBuild.Text = "build";
+            this.tabPageBuild.UseVisualStyleBackColor = true;
+            // 
+            // linkLabel1
+            // 
+            this.linkLabel1.AutoSize = true;
+            this.linkLabel1.Location = new System.Drawing.Point(8, 13);
+            this.linkLabel1.Name = "linkLabel1";
+            this.linkLabel1.Size = new System.Drawing.Size(313, 13);
+            this.linkLabel1.TabIndex = 0;
+            this.linkLabel1.TabStop = true;
+            this.linkLabel1.Text = "https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-build";
+            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
+            // 
+            // tabPage3
+            // 
+            this.tabPage3.Controls.Add(this.checkBox4);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage3.Size = new System.Drawing.Size(439, 157);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "nuget push";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // checkBox4
+            // 
+            this.checkBox4.AutoSize = true;
+            this.checkBox4.Location = new System.Drawing.Point(8, 6);
+            this.checkBox4.Name = "checkBox4";
+            this.checkBox4.Size = new System.Drawing.Size(132, 17);
+            this.checkBox4.TabIndex = 0;
+            this.checkBox4.Text = "Hide api-key in output.";
+            this.checkBox4.UseVisualStyleBackColor = true;
             // 
             // tabPage2
             // 
@@ -202,26 +253,22 @@
             this.radioButton1.Text = "Solution";
             this.radioButton1.UseVisualStyleBackColor = true;
             // 
-            // tabPage3
+            // textBox1
             // 
-            this.tabPage3.Controls.Add(this.checkBox4);
-            this.tabPage3.Location = new System.Drawing.Point(4, 22);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(439, 157);
-            this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "nuget push";
-            this.tabPage3.UseVisualStyleBackColor = true;
+            this.textBox1.Location = new System.Drawing.Point(6, 52);
+            this.textBox1.Multiline = true;
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(427, 99);
+            this.textBox1.TabIndex = 1;
             // 
-            // checkBox4
+            // label1
             // 
-            this.checkBox4.AutoSize = true;
-            this.checkBox4.Location = new System.Drawing.Point(8, 6);
-            this.checkBox4.Name = "checkBox4";
-            this.checkBox4.Size = new System.Drawing.Size(132, 17);
-            this.checkBox4.TabIndex = 0;
-            this.checkBox4.Text = "Hide api-key in output.";
-            this.checkBox4.UseVisualStyleBackColor = true;
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(8, 36);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(173, 13);
+            this.label1.TabIndex = 2;
+            this.label1.Text = "Additional command line arguments";
             // 
             // CommandSettingsForm
             // 
@@ -246,11 +293,13 @@
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
+            this.tabPageBuild.ResumeLayout(false);
+            this.tabPageBuild.PerformLayout();
+            this.tabPage3.ResumeLayout(false);
+            this.tabPage3.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            this.tabPage3.ResumeLayout(false);
-            this.tabPage3.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -275,5 +324,9 @@
         private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
         private System.Windows.Forms.TabPage tabPage3;
         private System.Windows.Forms.CheckBox checkBox4;
+        private System.Windows.Forms.TabPage tabPageBuild;
+        private System.Windows.Forms.LinkLabel linkLabel1;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Label label1;
     }
 }
