@@ -163,16 +163,16 @@ namespace Coree.VisualStudio.DotnetToolbar
             {
                 if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsNugetPush.HideApiKeyInOutput)
                 {
-                    await ExecuteProcessAsync("dotnet.exe", $@"nuget push ""{nugetPushDialog.SolutionDir}{Path.DirectorySeparatorChar}{nugetPushDialog.PackageLocation}"" {nodeResuse} --api-key {nugetPushDialog.ApiKey} --source {nugetPushDialog.Source}", "", new string[] { nugetPushDialog.ApiKey });
+                    await ExecuteProcessAsync("dotnet.exe", $@"nuget push ""{nugetPushDialog.SolutionDir}{Path.DirectorySeparatorChar}{nugetPushDialog.PackageLocation}"" --api-key {nugetPushDialog.ApiKey} --source {nugetPushDialog.Source}", "", new string[] { nugetPushDialog.ApiKey });
                 }
                 else
                 {
-                    await ExecuteProcessAsync("dotnet.exe", $@"nuget push ""{nugetPushDialog.SolutionDir}{Path.DirectorySeparatorChar}{nugetPushDialog.PackageLocation}"" {nodeResuse} --api-key {nugetPushDialog.ApiKey} --source {nugetPushDialog.Source}", String.Empty);
+                    await ExecuteProcessAsync("dotnet.exe", $@"nuget push ""{nugetPushDialog.SolutionDir}{Path.DirectorySeparatorChar}{nugetPushDialog.PackageLocation}"" --api-key {nugetPushDialog.ApiKey} --source {nugetPushDialog.Source}", String.Empty);
                 }
             }
             else
             {
-                await ExecuteProcessAsync("dotnet.exe", $@"nuget push ""{nugetPushDialog.SolutionDir}{Path.DirectorySeparatorChar}{nugetPushDialog.PackageLocation}"" {nodeResuse} --source {nugetPushDialog.Source}", String.Empty);
+                await ExecuteProcessAsync("dotnet.exe", $@"nuget push ""{nugetPushDialog.SolutionDir}{Path.DirectorySeparatorChar}{nugetPushDialog.PackageLocation}"" --source {nugetPushDialog.Source}", String.Empty);
             }
 
             await PaneWriteLineAsync("Done");
