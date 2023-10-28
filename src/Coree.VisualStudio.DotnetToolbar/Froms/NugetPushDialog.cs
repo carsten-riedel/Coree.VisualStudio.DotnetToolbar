@@ -45,6 +45,12 @@ namespace Coree.VisualStudio.DotnetToolbar
 
             InitializeComponent();
 
+            if (nugets.Count == 0)
+            {
+                buttonPush.Enabled = false;
+                buttonPush.Text = "No *.nupkg found";
+            }
+
             foreach (var nu in config)
             {
                 if (!listBoxPackageSource.Items.Contains(nu.Value))

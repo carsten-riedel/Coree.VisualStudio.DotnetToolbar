@@ -45,11 +45,11 @@
             // labelPackageSource
             // 
             this.labelPackageSource.AutoSize = true;
-            this.labelPackageSource.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelPackageSource.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelPackageSource.Location = new System.Drawing.Point(4, 0);
             this.labelPackageSource.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelPackageSource.Name = "labelPackageSource";
-            this.labelPackageSource.Size = new System.Drawing.Size(166, 20);
+            this.labelPackageSource.Size = new System.Drawing.Size(148, 17);
             this.labelPackageSource.TabIndex = 0;
             this.labelPackageSource.Text = "Specifies the server URL";
             // 
@@ -61,11 +61,11 @@
             this.listBoxPackageSource.Items.AddRange(new object[] {
             "https://api.nuget.org/v3/index.json",
             "https://apiint.nugettest.org/v3/index.json"});
-            this.listBoxPackageSource.Location = new System.Drawing.Point(4, 24);
+            this.listBoxPackageSource.Location = new System.Drawing.Point(4, 21);
             this.listBoxPackageSource.Margin = new System.Windows.Forms.Padding(4);
             this.listBoxPackageSource.Name = "listBoxPackageSource";
             this.listBoxPackageSource.ScrollAlwaysVisible = true;
-            this.listBoxPackageSource.Size = new System.Drawing.Size(632, 122);
+            this.listBoxPackageSource.Size = new System.Drawing.Size(632, 123);
             this.listBoxPackageSource.TabIndex = 1;
             this.listBoxPackageSource.SelectedIndexChanged += new System.EventHandler(this.listBoxSource_SelectedIndexChanged);
             // 
@@ -74,28 +74,28 @@
             this.listBoxPackages.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listBoxPackages.FormattingEnabled = true;
             this.listBoxPackages.ItemHeight = 17;
-            this.listBoxPackages.Location = new System.Drawing.Point(4, 171);
+            this.listBoxPackages.Location = new System.Drawing.Point(4, 169);
             this.listBoxPackages.Margin = new System.Windows.Forms.Padding(4);
             this.listBoxPackages.Name = "listBoxPackages";
             this.listBoxPackages.ScrollAlwaysVisible = true;
-            this.listBoxPackages.Size = new System.Drawing.Size(632, 122);
+            this.listBoxPackages.Size = new System.Drawing.Size(632, 123);
             this.listBoxPackages.TabIndex = 2;
             this.listBoxPackages.SelectedIndexChanged += new System.EventHandler(this.listBoxNupkg_SelectedIndexChanged);
             // 
             // labelPackages
             // 
             this.labelPackages.AutoSize = true;
-            this.labelPackages.Location = new System.Drawing.Point(4, 150);
+            this.labelPackages.Location = new System.Drawing.Point(4, 148);
             this.labelPackages.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelPackages.Name = "labelPackages";
-            this.labelPackages.Size = new System.Drawing.Size(62, 17);
+            this.labelPackages.Size = new System.Drawing.Size(265, 17);
             this.labelPackages.TabIndex = 3;
-            this.labelPackages.Text = "Packages";
+            this.labelPackages.Text = "Packages (Below the solution root directory)";
             // 
             // textBoxApiKey
             // 
             this.textBoxApiKey.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBoxApiKey.Location = new System.Drawing.Point(4, 318);
+            this.textBoxApiKey.Location = new System.Drawing.Point(4, 317);
             this.textBoxApiKey.Margin = new System.Windows.Forms.Padding(4);
             this.textBoxApiKey.Name = "textBoxApiKey";
             this.textBoxApiKey.Size = new System.Drawing.Size(632, 25);
@@ -104,7 +104,7 @@
             // labelApiKey
             // 
             this.labelApiKey.AutoSize = true;
-            this.labelApiKey.Location = new System.Drawing.Point(4, 297);
+            this.labelApiKey.Location = new System.Drawing.Point(4, 296);
             this.labelApiKey.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelApiKey.Name = "labelApiKey";
             this.labelApiKey.Size = new System.Drawing.Size(375, 17);
@@ -114,10 +114,10 @@
             // buttonPush
             // 
             this.buttonPush.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonPush.Location = new System.Drawing.Point(324, 4);
+            this.buttonPush.Location = new System.Drawing.Point(304, 4);
             this.buttonPush.Margin = new System.Windows.Forms.Padding(4);
             this.buttonPush.Name = "buttonPush";
-            this.buttonPush.Size = new System.Drawing.Size(138, 57);
+            this.buttonPush.Size = new System.Drawing.Size(162, 58);
             this.buttonPush.TabIndex = 6;
             this.buttonPush.Text = "Push";
             this.buttonPush.UseVisualStyleBackColor = true;
@@ -126,10 +126,10 @@
             // buttonCancel
             // 
             this.buttonCancel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonCancel.Location = new System.Drawing.Point(470, 4);
+            this.buttonCancel.Location = new System.Drawing.Point(474, 4);
             this.buttonCancel.Margin = new System.Windows.Forms.Padding(4);
             this.buttonCancel.Name = "buttonCancel";
-            this.buttonCancel.Size = new System.Drawing.Size(166, 57);
+            this.buttonCancel.Size = new System.Drawing.Size(162, 58);
             this.buttonCancel.TabIndex = 7;
             this.buttonCancel.Text = "Cancel";
             this.buttonCancel.UseVisualStyleBackColor = true;
@@ -166,17 +166,17 @@
             // 
             this.tableLayoutPanel2.ColumnCount = 3;
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 146F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 174F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 170F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 170F));
             this.tableLayoutPanel2.Controls.Add(this.buttonPush, 1, 0);
             this.tableLayoutPanel2.Controls.Add(this.buttonCancel, 2, 0);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 347);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 346);
             this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 1;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(640, 65);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(640, 66);
             this.tableLayoutPanel2.TabIndex = 6;
             // 
             // NugetPushDialog

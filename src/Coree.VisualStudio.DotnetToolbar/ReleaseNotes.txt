@@ -1,4 +1,11 @@
-﻿# DotnetToolbar 0.2.23 Release Notes
+﻿# DotnetToolbar 0.2.24 Release Notes
+Release Date: 2023-10-28
+
+## Bug Fixes
+- Removed a bug in "dotnet nuget push". (nodereuse)
+- Push button disable if no *.nupkg found.
+
+# DotnetToolbar 0.2.23 Release Notes
 Release Date: 2023-10-28
 
 ## Bug Fixes
