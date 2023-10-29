@@ -38,7 +38,7 @@
     {
         public bool PublishSolutionProject { get; set; } = true;
 
-        public string AdditionalCommandlineArguments { get; set; } = "--nologo --property:SelfContained=false --property:PublishSingleFile=true --property:RuntimeIdentifier=win-x64 --property:OutputType=Exe --property:DebugType=embedded";
+        public string AdditionalCommandlineArguments { get; set; } = "--nologo --property:SelfContained=false --property:PublishSingleFile=true --property:RuntimeIdentifier=win-x86 --property:DebugType=embedded --verbosity:n";
     }
 
     public class SolutionSettingsClean

@@ -1,4 +1,11 @@
-﻿# DotnetToolbar 0.2.24 Release Notes
+﻿# DotnetToolbar 0.2.30 Release Notes
+Release Date: 2023-10-29
+
+## New
+- dotnet nuget push dialog rework (should detect the latest package => first entry)
+- Settings dialog rework
+
+# DotnetToolbar 0.2.24 Release Notes
 Release Date: 2023-10-28
 
 ## Bug Fixes
