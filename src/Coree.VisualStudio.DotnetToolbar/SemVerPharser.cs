@@ -2,20 +2,17 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Coree.VisualStudio.DotnetToolbar
 {
-
-    internal class SemVerFileInfo
+    public class SemVerFileInfo
     {
-        
         public string Location { get; set; }
 
-        [Display(Order = 0,Name = "Filename")]
+        [Display(Order = 0, Name = "Filename")]
         public string FileName { get; set; }
+
         public string Directory { get; set; }
         public bool IsValid { get; set; }
         public string PackageName { get; set; }
@@ -24,8 +21,8 @@ namespace Coree.VisualStudio.DotnetToolbar
         public string Version
         {
             get { return $@"{Major}.{Minor}.{Patch}"; }
-            
         }
+
         public ulong Major { get; set; }
         public ulong Minor { get; set; }
         public ulong Patch { get; set; }
@@ -33,24 +30,21 @@ namespace Coree.VisualStudio.DotnetToolbar
         public string BuildMetadata { get; set; }
         public string Extension { get; set; }
 
-        [Display(Order = 2,Name ="Date modified")]
+        [Display(Order = 2, Name = "Date modified")]
         public DateTime LastWriteTimeUtc { get; set; }
-
     }
 
-    internal class SemVerPharser
+    public class SemVerPharser
     {
         public List<SemVerFileInfo> semVerFileInfos { get; set; } = new List<SemVerFileInfo>();
 
-        public SemVerFileInfo[] semVerFileInfosArray
+        public SemVerFileInfo[] SemVerFileInfosArray
         {
             get { return semVerFileInfos.ToArray(); }
         }
 
-
         public SemVerPharser()
         {
-                
         }
 
         public SemVerPharser(string location)
@@ -74,7 +68,6 @@ namespace Coree.VisualStudio.DotnetToolbar
             var directory = System.IO.Path.GetDirectoryName(location);
             var fileInfo = new System.IO.FileInfo(location);
 
-            
             string pattern = @"^(?<packagename>[a-zA-Z0-9.]+)\.(?<major>0|[1-9]\d*)\.(?<minor>0|[1-9]\d*)\.(?<patch>0|[1-9]\d*)(?:-(?<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?(?<extension>.nupkg)$";
 
             try
@@ -95,7 +88,6 @@ namespace Coree.VisualStudio.DotnetToolbar
                     BuildMetadata = match.Groups["buildmetadata"].Value,
                     Extension = match.Groups["extension"].Value,
                     LastWriteTimeUtc = fileInfo.LastWriteTimeUtc,
-
                 });
             }
             catch (Exception)
@@ -114,7 +106,37 @@ namespace Coree.VisualStudio.DotnetToolbar
 
         internal void OrderMajorMinorPatchLastWriteTimeUtc()
         {
-            semVerFileInfos = semVerFileInfos.OrderByDescending(e=>e.Major).ThenByDescending(e=>e.Minor).ThenByDescending(e=>e.Patch).OrderByDescending(e=>e.LastWriteTimeUtc).ToList();   
+            semVerFileInfos = semVerFileInfos.OrderByDescending(e => e.Major).ThenByDescending(e => e.Minor).ThenByDescending(e => e.Patch).OrderByDescending(e => e.LastWriteTimeUtc).ToList();
         }
+    }
+
+    public enum PackageSource
+    {
+        none,
+        @virtual,
+        nugetConfig
+
+    }
+
+    public enum PackageTypes
+    {
+        none,
+        remote,
+        local,
+    }
+
+    public class PackageSources
+    {
+        [Display(Order = 0, Name = "Key")]
+        public string Key { get; set; } = string.Empty;
+
+        [Display(Order = 1, Name = "Value")]
+        public string Value { get; set; } = string.Empty;
+
+        [Display(Order = 3, Name = "Type")]
+        public PackageTypes Type { get; set; } =  PackageTypes.none;
+
+        [Display(Order = 2, Name = "Source")]
+        public PackageSource Source { get; set; } = PackageSource.none;
     }
 }

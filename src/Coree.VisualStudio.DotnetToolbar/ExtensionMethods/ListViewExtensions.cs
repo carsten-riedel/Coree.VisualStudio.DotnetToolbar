@@ -78,14 +78,7 @@ namespace Coree.VisualStudio.DotnetToolbar.ExtensionMethods
 
                 listView.Columns[i].Width = Math.Max(contentWidth, headerWidth);
             }
-
-            // After populating items, select the first row
-            if (listView.Items.Count > 0)
-            {
-                listView.Items[0].Selected = true;
-                listView.Items[0].Focused = true;
-            }
-            
+           
         }
     }
 }

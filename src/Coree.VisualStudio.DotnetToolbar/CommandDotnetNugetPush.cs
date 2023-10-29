@@ -124,7 +124,7 @@ namespace Coree.VisualStudio.DotnetToolbar
                 return;
             }
 
-            if (String.IsNullOrEmpty(nugetPushDialog.PackageLocation))
+            if (String.IsNullOrEmpty(nugetPushDialog.SelectedPackageLocation.Location))
             {
                 await PaneWriteLineAsync("dotnet nuget push canceled. No package specified.");
                 return;
@@ -162,16 +162,16 @@ namespace Coree.VisualStudio.DotnetToolbar
             {
                 if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsNugetPush.HideApiKeyInOutput)
                 {
-                    await ExecuteProcessAsync("dotnet.exe", $@"nuget push ""{nugetPushDialog.PackageLocation}"" --api-key {nugetPushDialog.ApiKey} --source {nugetPushDialog.Source}", "", new string[] { nugetPushDialog.ApiKey });
+                    await ExecuteProcessAsync("dotnet.exe", $@"nuget push ""{nugetPushDialog.SelectedPackageLocation.Location}"" --api-key {nugetPushDialog.ApiKey} --source {nugetPushDialog.SelectedPackageSource.Value}", "", new string[] { nugetPushDialog.ApiKey });
                 }
                 else
                 {
-                    await ExecuteProcessAsync("dotnet.exe", $@"nuget push ""{nugetPushDialog.PackageLocation}"" --api-key {nugetPushDialog.ApiKey} --source {nugetPushDialog.Source}", String.Empty);
+                    await ExecuteProcessAsync("dotnet.exe", $@"nuget push ""{nugetPushDialog.SelectedPackageLocation.Location}"" --api-key {nugetPushDialog.ApiKey} --source {nugetPushDialog.SelectedPackageSource.Value}", String.Empty);
                 }
             }
             else
             {
-                await ExecuteProcessAsync("dotnet.exe", $@"nuget push ""{nugetPushDialog.PackageLocation}"" --source {nugetPushDialog.Source}", String.Empty);
+                await ExecuteProcessAsync("dotnet.exe", $@"nuget push ""{nugetPushDialog.SelectedPackageLocation.Location}"" --source {nugetPushDialog.SelectedPackageSource.Value}", String.Empty);
             }
 
             await PaneWriteLineAsync("Done");

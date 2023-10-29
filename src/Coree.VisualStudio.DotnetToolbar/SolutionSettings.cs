@@ -15,20 +15,7 @@
         public bool KillAllDotnetProcessBeforeExectue { get; set; } = false;
         public bool BlockNonSdkExecute { get; set; } = true;
     }
-    /*
-         <UseWindowsForms>true</UseWindowsForms>
-    <DebugType>embedded</DebugType>
-    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
-    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-  </PropertyGroup>
-  
-  <PropertyGroup>
-    <PublishDir>bin\Publish\$(Configuration)\$(TargetFramework)\$(RuntimeIdentifier)</PublishDir>
-    <SelfContained>false</SelfContained>
-	  <PublishSingleFile>true</PublishSingleFile>
-    <IsPackable>false</IsPackable>
-  </PropertyGroup>
-     */
+
     public class SolutionSettingsBuild
     {
         public string AdditionalCommandlineArguments { get; set; } = "--nologo --property:Sample=Value -nodeReuse:true -maxcpucount:1";
@@ -43,6 +30,8 @@
     public class SolutionSettingsNugetPush
     {
         public bool HideApiKeyInOutput { get; set; } = true;
+
+        public int LastPackageSourceIndex { get; set; } = -1;
     }
 
     public class SolutionSettingsPublish

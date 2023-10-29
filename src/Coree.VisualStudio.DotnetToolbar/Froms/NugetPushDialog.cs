@@ -24,8 +24,8 @@ namespace Coree.VisualStudio.DotnetToolbar
 
         public NugetPushDialogResult nugetPushDialogResult { get; set; } = NugetPushDialogResult.Close;
 
-        public string Source { get; set; }
-        public string PackageLocation { get; set; }
+        public PackageSources SelectedPackageSource { get; set; }
+        public SemVerFileInfo SelectedPackageLocation { get; set; }
         public string ApiKey { get; set; }
 
         private string UserDataPath { get; set; }
@@ -43,23 +43,70 @@ namespace Coree.VisualStudio.DotnetToolbar
             this.SolutionDir = System.IO.Path.GetDirectoryName(SolutionLocation);
 
             var nugetFiles = System.IO.Directory.GetFiles(this.SolutionDir, "*.nupkg", System.IO.SearchOption.AllDirectories).ToList();
-
-            /*
-            var nugetFilesShort = new List<string>();
-            var nugetFilesFileName = new List<string>();
-            nugetFiles.ForEach(e => nugetFilesShort.Add(e.Substring(this.SolutionDir.Length + 1)));
-            nugetFiles.ForEach(e => nugetFilesFileName.Add(System.IO.Path.GetFileName(e)));
-            */
-
-            SemVerPharser  ss = new SemVerPharser(nugetFiles);
-            ss.OrderMajorMinorPatchLastWriteTimeUtc();
-
             
+            SemVerPharser  semVerPharser = new SemVerPharser(nugetFiles);
+            semVerPharser.OrderMajorMinorPatchLastWriteTimeUtc();
 
 
             var config = ReadNugetConfig();
+            List<PackageSources> packages = new List<PackageSources>();
+            foreach (var item in config)
+            {
+                try
+                {
+                    Uri outUri;
+
+                    if (Uri.TryCreate(item.Value, UriKind.Absolute, out outUri) && (outUri.Scheme == Uri.UriSchemeHttp || outUri.Scheme == Uri.UriSchemeHttps))
+                    {
+                        packages.Add(new PackageSources() { Key = item.Key, Value = item.Value, Source = PackageSource.nugetConfig, Type = PackageTypes.remote });
+                    }
+                    else if (System.IO.Directory.Exists(item.Value))
+                    {
+                        packages.Add(new PackageSources() { Key = item.Key, Value = item.Value, Source = PackageSource.nugetConfig, Type = PackageTypes.local });
+                    }
+                    else
+                    {
+                        packages.Add(new PackageSources() { Key = item.Key, Value = item.Value, Source = PackageSource.nugetConfig, Type = PackageTypes.none });
+                    }
+                }
+                catch (Exception)
+                {
+                }
+            }
+
+            if (!packages.Any(e=>e.Value == @"https://api.nuget.org/v3/index.json"))
+            {
+                packages.Add(new PackageSources() { Key = "Undefined", Value = @"https://api.nuget.org/v3/index.json", Source = PackageSource.@virtual, Type = PackageTypes.remote });
+            }
+
+            if (!packages.Any(e => e.Value == @"https://apiint.nugettest.org/v3/index.json"))
+            {
+                packages.Add(new PackageSources() { Key = "Undefined", Value = @"https://apiint.nugettest.org/v3/index.json", Source = PackageSource.@virtual, Type = PackageTypes.remote });
+            }
+
+
 
             InitializeComponent();
+            listViewPackageSources.AddClass(packages);
+            listViewNugetPackages.AddClass<SemVerFileInfo>(semVerPharser.semVerFileInfos);
+            
+            if (listViewPackageSources.Items.Count > 0)
+            {
+                listViewPackageSources.Items[0].Selected = true;
+                listViewPackageSources.Items[0].Focused = true;
+                SelectedPackageSource = ((PackageSources)listViewPackageSources.Items[listViewPackageSources.GetSelectedIndex()].Tag);
+            }
+
+            var SettingsIndex = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsNugetPush.LastPackageSourceIndex;
+            if (SettingsIndex != -1)
+            {
+                if (SettingsIndex < listViewPackageSources.Items.Count)
+                {
+                    listViewPackageSources.Items[SettingsIndex].Selected = true;
+                    listViewPackageSources.Items[SettingsIndex].Focused = true;
+                    SelectedPackageSource = ((PackageSources)listViewPackageSources.Items[SettingsIndex].Tag);
+                }
+            }
 
             if (nugetFiles.Count == 0)
             {
@@ -67,35 +114,16 @@ namespace Coree.VisualStudio.DotnetToolbar
                 buttonPush.Text = "No *.nupkg found";
             }
 
-            foreach (var nu in config)
+            
+            if (listViewNugetPackages.Items.Count > 0)
             {
-                if (!listBoxPackageSource.Items.Contains(nu.Value))
-                {
-                    listBoxPackageSource.Items.Add(nu.Value);
-                }
+                listViewNugetPackages.Items[0].Selected = true;
+                listViewNugetPackages.Items[0].Focused = true;
+                SelectedPackageLocation = ((SemVerFileInfo)listViewNugetPackages.Items[listViewNugetPackages.GetSelectedIndex()].Tag);
             }
 
-            //listBoxPackages.DataSource = ss.semVerFileInfosArray;
-            //listBoxPackages.Items.AddRange(ss.semVerFileInfosArray);
-            //listBoxPackages.DisplayMember = "FileName";
-
-
-            listView1.AddClass<SemVerFileInfo>(ss.semVerFileInfos);
-            if (listView1.Items.Count > 0)
-            {
-                listView1.Items[0].Selected = true;
-                listView1.Items[0].Focused = true;
-                PackageLocation = ((SemVerFileInfo)listView1.Items[listView1.GetSelectedIndex()].Tag).Location;
-                
-            }
-
-
-            if (listBoxPackageSource.Items.Count > 0)
-            {
-                listBoxPackageSource.SelectedIndex = 0;
-                Source = listBoxPackageSource.Items[listBoxPackageSource.SelectedIndex].ToString();
-            }
-
+            this.listViewPackageSources.SelectedIndexChanged += new System.EventHandler(this.listViewPackageSources_SelectedIndexChanged);
+            this.listViewNugetPackages.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
             LoadDotnetToolbarCredential();
         }
 
@@ -121,7 +149,7 @@ namespace Coree.VisualStudio.DotnetToolbar
 
         private void LoadDotnetToolbarCredential()
         {
-            var CredManagerTarget = $"DotnetToolbar/{SolutionName}/{SolutionGuid}/{Source}";
+            var CredManagerTarget = $"DotnetToolbar/{SolutionName}/{SolutionGuid}/{SelectedPackageSource.Value}";
             Credential credential = new Credential
             {
                 Target = CredManagerTarget,
@@ -142,17 +170,20 @@ namespace Coree.VisualStudio.DotnetToolbar
 
         private void SaveUpdateCredential(string password)
         {
-            var CredManagerTarget = $"DotnetToolbar/{SolutionName}/{SolutionGuid}/{Source}";
-            Credential credential = new Credential
+            if (password != string.Empty)
             {
-                Username = $"{SolutionName}",
-                Password = password,
-                Target = CredManagerTarget,
-                Type = CredentialType.Generic,
-                Description = "",
-                PersistanceType = PersistanceType.LocalComputer,
-            };
-            credential.Save();
+                var CredManagerTarget = $"DotnetToolbar/{SolutionName}/{SolutionGuid}/{SelectedPackageSource.Value}";
+                Credential credential = new Credential
+                {
+                    Username = $"{SolutionName}",
+                    Password = password,
+                    Target = CredManagerTarget,
+                    Type = CredentialType.Generic,
+                    Description = "",
+                    PersistanceType = PersistanceType.LocalComputer,
+                };
+                credential.Save();
+            }
         }
 
         private void FormNugetPush_FormClosing(object sender, FormClosingEventArgs e)
@@ -162,6 +193,8 @@ namespace Coree.VisualStudio.DotnetToolbar
                 SaveUpdateCredential(textBoxApiKey.Text);
                 ApiKey = textBoxApiKey.Text;
             }
+            CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsNugetPush.LastPackageSourceIndex = listViewPackageSources.GetSelectedIndex();
+            JsonHelper.WriteToFile(CoreeVisualStudioDotnetToolbarPackage.Instance.Settings, CoreeVisualStudioDotnetToolbarPackage.Instance.SettingsFileName);
         }
 
         private void buttonCancel_Click(object sender, System.EventArgs e)
@@ -176,21 +209,36 @@ namespace Coree.VisualStudio.DotnetToolbar
             this.Close();
         }
 
-        private void listBoxSource_SelectedIndexChanged(object sender, System.EventArgs e)
+        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (listViewNugetPackages.GetSelectedIndex() != -1)
+            {
+                SelectedPackageLocation = ((SemVerFileInfo)listViewNugetPackages.Items[listViewNugetPackages.GetSelectedIndex()].Tag);
+            }
+        }
+
+        private void listViewPackageSources_SelectedIndexChanged(object sender, EventArgs e)
         {
             SaveUpdateCredential(textBoxApiKey.Text);
-            if (listBoxPackageSource.SelectedIndex >= 0)
+            if (listViewPackageSources.GetSelectedIndex() >= 0)
             {
-                Source = listBoxPackageSource.Items[listBoxPackageSource.SelectedIndex].ToString();
+                SelectedPackageSource = ((PackageSources)listViewPackageSources.Items[listViewPackageSources.GetSelectedIndex()].Tag);
             }
+
             LoadDotnetToolbarCredential();
         }
 
-        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
+        private void NugetPushDialog_Shown(object sender, EventArgs e)
         {
-            if (listView1.GetSelectedIndex() != -1)
+            listViewNugetPackages.Focus();
+        }
+
+        private void textBoxApiKey_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control && e.KeyCode == Keys.C)
             {
-                PackageLocation = ((SemVerFileInfo)listView1.Items[listView1.GetSelectedIndex()].Tag).Location;
+                Clipboard.SetText(textBoxApiKey.SelectedText);
+                e.SuppressKeyPress = true;
             }
         }
     }
