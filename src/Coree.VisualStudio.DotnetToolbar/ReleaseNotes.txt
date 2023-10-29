@@ -1,4 +1,10 @@
-﻿# DotnetToolbar 0.2.31 Release Notes
+﻿# DotnetToolbar 0.2.33 Release Notes
+Release Date: 2023-10-29
+
+## New
+- Reupload picture change.
+
+# DotnetToolbar 0.2.31 Release Notes
 Release Date: 2023-10-29
 
 ## New

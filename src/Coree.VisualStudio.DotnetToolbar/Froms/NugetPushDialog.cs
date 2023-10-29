@@ -4,12 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text.RegularExpressions;
-using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Coree.VisualStudio.DotnetToolbar
 {
@@ -43,10 +39,9 @@ namespace Coree.VisualStudio.DotnetToolbar
             this.SolutionDir = System.IO.Path.GetDirectoryName(SolutionLocation);
 
             var nugetFiles = System.IO.Directory.GetFiles(this.SolutionDir, "*.nupkg", System.IO.SearchOption.AllDirectories).ToList();
-            
-            SemVerPharser  semVerPharser = new SemVerPharser(nugetFiles);
-            semVerPharser.OrderMajorMinorPatchLastWriteTimeUtc();
 
+            SemVerPharser semVerPharser = new SemVerPharser(nugetFiles);
+            semVerPharser.OrderMajorMinorPatchLastWriteTimeUtc();
 
             var config = ReadNugetConfig();
             List<PackageSources> packages = new List<PackageSources>();
@@ -74,7 +69,7 @@ namespace Coree.VisualStudio.DotnetToolbar
                 }
             }
 
-            if (!packages.Any(e=>e.Value == @"https://api.nuget.org/v3/index.json"))
+            if (!packages.Any(e => e.Value == @"https://api.nuget.org/v3/index.json"))
             {
                 packages.Add(new PackageSources() { Key = "Undefined", Value = @"https://api.nuget.org/v3/index.json", Source = PackageSource.@virtual, Type = PackageTypes.remote });
             }
@@ -84,12 +79,10 @@ namespace Coree.VisualStudio.DotnetToolbar
                 packages.Add(new PackageSources() { Key = "Undefined", Value = @"https://apiint.nugettest.org/v3/index.json", Source = PackageSource.@virtual, Type = PackageTypes.remote });
             }
 
-
-
             InitializeComponent();
             listViewPackageSources.AddClass(packages);
             listViewNugetPackages.AddClass<SemVerFileInfo>(semVerPharser.semVerFileInfos);
-            
+
             if (listViewPackageSources.Items.Count > 0)
             {
                 listViewPackageSources.Items[0].Selected = true;
@@ -114,7 +107,6 @@ namespace Coree.VisualStudio.DotnetToolbar
                 buttonPush.Text = "No *.nupkg found";
             }
 
-            
             if (listViewNugetPackages.Items.Count > 0)
             {
                 listViewNugetPackages.Items[0].Selected = true;

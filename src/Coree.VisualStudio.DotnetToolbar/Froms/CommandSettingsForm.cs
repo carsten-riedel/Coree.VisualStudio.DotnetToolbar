@@ -27,8 +27,6 @@ namespace Coree.VisualStudio.DotnetToolbar
             textBoxAdditionalPackCommandLineArguments.Text = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPack.AdditionalCommandlineArguments;
             textBoxAdditionalPublishCommandLineArguments.Text = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPublish.AdditionalCommandlineArguments;
             textBoxAdditionalCleanCommandLineArguments.Text = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsClean.AdditionalCommandlineArguments;
-
-
         }
 
         private void CommandSettingsForm_FormClosing(object sender, FormClosingEventArgs e)

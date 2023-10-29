@@ -1,8 +1,6 @@
 ﻿using Coree.VisualStudio.DotnetToolbar.ExtensionMethods;
 using EnvDTE;
-using EnvDTE80;
 using Microsoft.CSharp.RuntimeBinder;
-using Microsoft.IO;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Events;
@@ -10,7 +8,6 @@ using Microsoft.VisualStudio.Shell.Interop;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -91,9 +88,7 @@ namespace Coree.VisualStudio.DotnetToolbar
 
             Microsoft.VisualStudio.Shell.Events.SolutionEvents.OnAfterOpenSolution += (sender, e) => { _ = Task.Run(() => SolutionEvents_OnAfterOpenSolutionAsync(sender, e)); };
 
-            
             Instance = this;
-          
         }
 
         public CoreeVisualStudioDotnetToolbarPackage()
@@ -116,7 +111,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             await this.JoinableTaskFactory.SwitchToMainThreadAsync();
             await this.PaneClearAsync("DotnetToolbar");
             await this.PaneWriteLineAsync("Solution is now closed.", "DotnetToolbar");
-            
+
             CommandSettings.Instance.MenuItem.Enabled = false;
             CommandDotnetBuild.Instance.MenuItem.Enabled = false;
             CommandDotnetPack.Instance.MenuItem.Enabled = false;

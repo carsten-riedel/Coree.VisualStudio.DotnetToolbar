@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 
 namespace Coree.VisualStudio.DotnetToolbar.ExtensionMethods
@@ -19,7 +18,6 @@ namespace Coree.VisualStudio.DotnetToolbar.ExtensionMethods
             listView.View = View.Details;
             listView.FullRowSelect = true;
             listView.MultiSelect = false;
-            
 
             // Clear existing columns
             listView.Columns.Clear();
@@ -78,7 +76,6 @@ namespace Coree.VisualStudio.DotnetToolbar.ExtensionMethods
 
                 listView.Columns[i].Width = Math.Max(contentWidth, headerWidth);
             }
-           
         }
     }
 }
