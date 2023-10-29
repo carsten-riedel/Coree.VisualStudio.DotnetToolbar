@@ -124,7 +124,6 @@ namespace Coree.VisualStudio.DotnetToolbar
                     if (item.IsSdkStyle == false)
                     {
                         await PaneWriteLineAsync("-------------------------------------------------------------------------------");
-                        await PaneWriteLineAsync("-------------------------------------------------------------------------------");
                         await PaneWriteLineAsync($"Non SDK style project file {item.File} !");
                         await PaneWriteLineAsync("-------------------------------------------------------------------------------");
                         found = true;

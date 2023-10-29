@@ -1,4 +1,10 @@
-﻿# DotnetToolbar 0.2.30 Release Notes
+﻿# DotnetToolbar 0.2.31 Release Notes
+Release Date: 2023-10-29
+
+## New
+- Minor wording change.
+
+# DotnetToolbar 0.2.30 Release Notes
 Release Date: 2023-10-29
 
 ## New

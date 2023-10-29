@@ -2,6 +2,7 @@
 using EnvDTE;
 using EnvDTE80;
 using Microsoft.CSharp.RuntimeBinder;
+using Microsoft.IO;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Events;
@@ -9,6 +10,7 @@ using Microsoft.VisualStudio.Shell.Interop;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -112,7 +114,9 @@ namespace Coree.VisualStudio.DotnetToolbar
         private async Task SolutionEvents_OnBeforeCloseSolutionAsync(object sender, EventArgs e)
         {
             await this.JoinableTaskFactory.SwitchToMainThreadAsync();
-            await this.PaneWriteLineAsync("DotnetToolbar: Closeing the solution.", "DotnetToolbar");
+            await this.PaneClearAsync("DotnetToolbar");
+            await this.PaneWriteLineAsync("Solution is now closed.", "DotnetToolbar");
+            
             CommandSettings.Instance.MenuItem.Enabled = false;
             CommandDotnetBuild.Instance.MenuItem.Enabled = false;
             CommandDotnetPack.Instance.MenuItem.Enabled = false;
@@ -126,8 +130,12 @@ namespace Coree.VisualStudio.DotnetToolbar
         {
             await this.JoinableTaskFactory.SwitchToMainThreadAsync();
 
-            await this.PaneWriteLineAsync("DotnetToolbar: The settings file will be removed if it is not compatible with newer versions. This applies to versions 0.x.x.", "DotnetToolbar");
-            await this.PaneWriteLineAsync("DotnetToolbar: Opening the solution.", "DotnetToolbar");
+            await this.PaneClearAsync("DotnetToolbar");
+            await this.PaneWriteLineAsync("Solution is now open.", "DotnetToolbar");
+            //Warning! Incompatible settings files in 0.x.x Versions will be overwritten with defaults.
+            await this.PaneWriteLineAsync("Notice! Setting files in 0.x.x are work in progess and subject of changes.", "DotnetToolbar");
+            //await this.PaneWriteLineAsync("DotnetToolbar: The publish command is configured to create a singleFile framework dependent executable!", "DotnetToolbar");
+            //await this.PaneWriteLineAsync("DotnetToolbar: Adjust you settings as needed.", "DotnetToolbar");
 
             Solution solinfo = (Solution)await this.GetSolutionAsync();
             Dictionary<string, string> solutionProperties = await this.GetSolutionPropertiesAsync();
@@ -147,17 +155,24 @@ namespace Coree.VisualStudio.DotnetToolbar
             ExtensionVersionDirectory = System.IO.Path.GetDirectoryName(assemblyLocation);
             ExtensionDirectory = System.IO.Path.GetDirectoryName(ExtensionVersionDirectory);
 
-            SettingsFileName = $@"{ExtensionDirectory}\{solutionProperties["Name"]}_{SolutionGuid}.json";
+            SettingsFileName = $@"{ExtensionVersionDirectory}\{solutionProperties["Name"]}_{SolutionGuid}.json";
+
+            //
+            await this.PaneWriteLineAsync($@"You can locate all settings in the version-specific *.json file inside the ""{ExtensionDirectory}"" directory.{Environment.NewLine}Feel free to manually manage the version-specific *.json file if needed.", "DotnetToolbar");
 
             bool Created = JsonHelper.CreateDefault<SolutionSettings>(SettingsFileName);
+            /*
             if (Created == true)
             {
                 await this.PaneWriteLineAsync($"DotnetToolbar: Default settings file created {SettingsFileName}", "DotnetToolbar");
             }
+            */
 
             Settings = JsonHelper.TryReadFromFile<SolutionSettings>(SettingsFileName);
 
+            /*
             await this.PaneWriteLineAsync($"DotnetToolbar: Settings file loaded {SettingsFileName}", "DotnetToolbar");
+            */
 
             EnableMenuItemIfInstanceNotNull(CommandSettings.Instance);
             EnableMenuItemIfInstanceNotNull(CommandDotnetBuild.Instance);
