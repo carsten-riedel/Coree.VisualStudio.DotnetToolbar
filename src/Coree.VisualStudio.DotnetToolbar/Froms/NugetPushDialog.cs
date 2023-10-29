@@ -1,10 +1,15 @@
-﻿using CredentialManagement;
+﻿using Coree.VisualStudio.DotnetToolbar.ExtensionMethods;
+using CredentialManagement;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Text.RegularExpressions;
+using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Coree.VisualStudio.DotnetToolbar
 {
@@ -37,15 +42,26 @@ namespace Coree.VisualStudio.DotnetToolbar
             this.SolutionGuid = SolutionGuid;
             this.SolutionDir = System.IO.Path.GetDirectoryName(SolutionLocation);
 
-            var nugets = System.IO.Directory.GetFiles(this.SolutionDir, "*.nupkg", System.IO.SearchOption.AllDirectories).ToList();
-            var shortnuget = new List<string>();
-            nugets.ForEach(e => shortnuget.Add(e.Substring(this.SolutionDir.Length + 1)));
+            var nugetFiles = System.IO.Directory.GetFiles(this.SolutionDir, "*.nupkg", System.IO.SearchOption.AllDirectories).ToList();
+
+            /*
+            var nugetFilesShort = new List<string>();
+            var nugetFilesFileName = new List<string>();
+            nugetFiles.ForEach(e => nugetFilesShort.Add(e.Substring(this.SolutionDir.Length + 1)));
+            nugetFiles.ForEach(e => nugetFilesFileName.Add(System.IO.Path.GetFileName(e)));
+            */
+
+            SemVerPharser  ss = new SemVerPharser(nugetFiles);
+            ss.OrderMajorMinorPatchLastWriteTimeUtc();
+
+            
+
 
             var config = ReadNugetConfig();
 
             InitializeComponent();
 
-            if (nugets.Count == 0)
+            if (nugetFiles.Count == 0)
             {
                 buttonPush.Enabled = false;
                 buttonPush.Text = "No *.nupkg found";
@@ -59,13 +75,20 @@ namespace Coree.VisualStudio.DotnetToolbar
                 }
             }
 
-            listBoxPackages.Items.AddRange(shortnuget.ToArray());
+            //listBoxPackages.DataSource = ss.semVerFileInfosArray;
+            //listBoxPackages.Items.AddRange(ss.semVerFileInfosArray);
+            //listBoxPackages.DisplayMember = "FileName";
 
-            if (listBoxPackages.Items.Count > 0)
+
+            listView1.AddClass<SemVerFileInfo>(ss.semVerFileInfos);
+            if (listView1.Items.Count > 0)
             {
-                listBoxPackages.SelectedIndex = 0;
-                PackageLocation = listBoxPackages.Items[listBoxPackages.SelectedIndex].ToString();
+                listView1.Items[0].Selected = true;
+                listView1.Items[0].Focused = true;
+                PackageLocation = ((SemVerFileInfo)listView1.Items[listView1.GetSelectedIndex()].Tag).Location;
+                
             }
+
 
             if (listBoxPackageSource.Items.Count > 0)
             {
@@ -153,14 +176,6 @@ namespace Coree.VisualStudio.DotnetToolbar
             this.Close();
         }
 
-        private void listBoxNupkg_SelectedIndexChanged(object sender, System.EventArgs e)
-        {
-            if (listBoxPackages.SelectedIndex >= 0)
-            {
-                PackageLocation = listBoxPackages.Items[listBoxPackages.SelectedIndex].ToString();
-            }
-        }
-
         private void listBoxSource_SelectedIndexChanged(object sender, System.EventArgs e)
         {
             SaveUpdateCredential(textBoxApiKey.Text);
@@ -169,6 +184,14 @@ namespace Coree.VisualStudio.DotnetToolbar
                 Source = listBoxPackageSource.Items[listBoxPackageSource.SelectedIndex].ToString();
             }
             LoadDotnetToolbarCredential();
+        }
+
+        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (listView1.GetSelectedIndex() != -1)
+            {
+                PackageLocation = ((SemVerFileInfo)listView1.Items[listView1.GetSelectedIndex()].Tag).Location;
+            }
         }
     }
 }

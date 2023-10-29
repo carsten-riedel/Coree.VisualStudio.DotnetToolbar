@@ -30,13 +30,13 @@
         {
             this.labelPackageSource = new System.Windows.Forms.Label();
             this.listBoxPackageSource = new System.Windows.Forms.ListBox();
-            this.listBoxPackages = new System.Windows.Forms.ListBox();
             this.labelPackages = new System.Windows.Forms.Label();
             this.textBoxApiKey = new System.Windows.Forms.TextBox();
             this.labelApiKey = new System.Windows.Forms.Label();
             this.buttonPush = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.listView1 = new System.Windows.Forms.ListView();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
@@ -49,9 +49,9 @@
             this.labelPackageSource.Location = new System.Drawing.Point(4, 0);
             this.labelPackageSource.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelPackageSource.Name = "labelPackageSource";
-            this.labelPackageSource.Size = new System.Drawing.Size(148, 17);
+            this.labelPackageSource.Size = new System.Drawing.Size(187, 17);
             this.labelPackageSource.TabIndex = 0;
-            this.labelPackageSource.Text = "Specifies the server URL";
+            this.labelPackageSource.Text = "Specifies the server URL target";
             // 
             // listBoxPackageSource
             // 
@@ -68,19 +68,6 @@
             this.listBoxPackageSource.Size = new System.Drawing.Size(632, 123);
             this.listBoxPackageSource.TabIndex = 1;
             this.listBoxPackageSource.SelectedIndexChanged += new System.EventHandler(this.listBoxSource_SelectedIndexChanged);
-            // 
-            // listBoxPackages
-            // 
-            this.listBoxPackages.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listBoxPackages.FormattingEnabled = true;
-            this.listBoxPackages.ItemHeight = 17;
-            this.listBoxPackages.Location = new System.Drawing.Point(4, 169);
-            this.listBoxPackages.Margin = new System.Windows.Forms.Padding(4);
-            this.listBoxPackages.Name = "listBoxPackages";
-            this.listBoxPackages.ScrollAlwaysVisible = true;
-            this.listBoxPackages.Size = new System.Drawing.Size(632, 123);
-            this.listBoxPackages.TabIndex = 2;
-            this.listBoxPackages.SelectedIndexChanged += new System.EventHandler(this.listBoxNupkg_SelectedIndexChanged);
             // 
             // labelPackages
             // 
@@ -107,9 +94,9 @@
             this.labelApiKey.Location = new System.Drawing.Point(4, 296);
             this.labelApiKey.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelApiKey.Name = "labelApiKey";
-            this.labelApiKey.Size = new System.Drawing.Size(375, 17);
+            this.labelApiKey.Size = new System.Drawing.Size(439, 17);
             this.labelApiKey.TabIndex = 5;
-            this.labelApiKey.Text = "API Key (Per-Solution Storage in Windows Credential Manager)";
+            this.labelApiKey.Text = "API Key (Per-Solution and target storage in Windows Credential Manager)";
             // 
             // buttonPush
             // 
@@ -139,11 +126,11 @@
             // 
             this.tableLayoutPanel1.ColumnCount = 1;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.Controls.Add(this.listView1, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this.labelPackageSource, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.listBoxPackageSource, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.labelPackages, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.labelApiKey, 0, 4);
-            this.tableLayoutPanel1.Controls.Add(this.listBoxPackages, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this.textBoxApiKey, 0, 5);
             this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel2, 0, 7);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -161,6 +148,18 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(640, 412);
             this.tableLayoutPanel1.TabIndex = 8;
+            // 
+            // listView1
+            // 
+            this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listView1.HideSelection = false;
+            this.listView1.Location = new System.Drawing.Point(3, 168);
+            this.listView1.Name = "listView1";
+            this.listView1.Size = new System.Drawing.Size(634, 125);
+            this.listView1.TabIndex = 3;
+            this.listView1.UseCompatibleStateImageBehavior = false;
+            this.listView1.View = System.Windows.Forms.View.Details;
+            this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
             // 
             // tableLayoutPanel2
             // 
@@ -186,6 +185,7 @@
             this.ClientSize = new System.Drawing.Size(640, 412);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -206,7 +206,6 @@
 
         private System.Windows.Forms.Label labelPackageSource;
         private System.Windows.Forms.ListBox listBoxPackageSource;
-        private System.Windows.Forms.ListBox listBoxPackages;
         private System.Windows.Forms.Label labelPackages;
         private System.Windows.Forms.TextBox textBoxApiKey;
         private System.Windows.Forms.Label labelApiKey;
@@ -214,5 +213,6 @@
         private System.Windows.Forms.Button buttonCancel;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
+        private System.Windows.Forms.ListView listView1;
     }
 }

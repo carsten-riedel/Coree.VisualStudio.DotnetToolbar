@@ -10,7 +10,6 @@ namespace Coree.VisualStudio.DotnetToolbar
             InitializeComponent();
             checkBox1.Checked = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.KillAllDotnetProcessBeforeExectue;
             checkBox2.Checked = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.BlockNonSdkExecute;
-            checkBox3.Checked = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.NodeReuse;
             checkBox4.Checked = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsNugetPush.HideApiKeyInOutput;
 
             if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPublish.PublishSolutionProject)
@@ -24,7 +23,11 @@ namespace Coree.VisualStudio.DotnetToolbar
                 radioButton2.Checked = !CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPublish.PublishSolutionProject;
             }
 
-            textBox1.Text = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsBuild.AdditionalCommandlineArguments;
+            textBoxAdditionalBuildCommandLineArguments.Text = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsBuild.AdditionalCommandlineArguments;
+            textBoxAdditionalPackCommandLineArguments.Text = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPack.AdditionalCommandlineArguments;
+            textBoxAdditionalPublishCommandLineArguments.Text = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPublish.AdditionalCommandlineArguments;
+            textBoxAdditionalCleanCommandLineArguments.Text = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsClean.AdditionalCommandlineArguments;
+
 
         }
 
@@ -32,7 +35,6 @@ namespace Coree.VisualStudio.DotnetToolbar
         {
             CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.KillAllDotnetProcessBeforeExectue = checkBox1.Checked;
             CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.BlockNonSdkExecute = checkBox2.Checked;
-            CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.NodeReuse = checkBox3.Checked;
             CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsNugetPush.HideApiKeyInOutput = checkBox4.Checked;
             if (radioButton1.Checked)
             {
@@ -43,7 +45,11 @@ namespace Coree.VisualStudio.DotnetToolbar
                 CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPublish.PublishSolutionProject = radioButton1.Checked;
             }
 
-            CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsBuild.AdditionalCommandlineArguments = textBox1.Text;
+            CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsBuild.AdditionalCommandlineArguments = textBoxAdditionalBuildCommandLineArguments.Text;
+            CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPack.AdditionalCommandlineArguments = textBoxAdditionalPackCommandLineArguments.Text;
+            CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPublish.AdditionalCommandlineArguments = textBoxAdditionalPublishCommandLineArguments.Text;
+            CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsClean.AdditionalCommandlineArguments = textBoxAdditionalCleanCommandLineArguments.Text;
+
             JsonHelper.WriteToFile(CoreeVisualStudioDotnetToolbarPackage.Instance.Settings, CoreeVisualStudioDotnetToolbarPackage.Instance.SettingsFileName);
         }
 
@@ -52,21 +58,39 @@ namespace Coree.VisualStudio.DotnetToolbar
             System.Diagnostics.Process.Start(linkLabel1.Text);
         }
 
-        /*
-                     foreach (Project item in dte2.Solution.Projects)
-            {
-                string fileContents = File.ReadAllText(item.FullName);
-                XDocument doc = XDocument.Parse(fileContents);
+        private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(linkLabel2.Text);
+        }
 
-                ProjectType projectType;
-                if (doc.Root.Attribute("Sdk") != null)
-                {
-                    projectType = ProjectType.SDKStyle;
-                }
-                else
-                {
-                    projectType = ProjectType.NonSDKStyle;
-                }
-         */
+        private void linkLabel3_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(linkLabel3.Text);
+        }
+
+        private void linkLabel4_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(linkLabel4.Text);
+        }
+
+        private void linkLabel5_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(linkLabel5.Text);
+        }
+
+        private void linkLabel6_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(linkLabel6.Text);
+        }
+
+        private void linkLabel7_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(linkLabel7.Text);
+        }
+
+        private void linkLabel8_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(linkLabel8.Text);
+        }
     }
 }

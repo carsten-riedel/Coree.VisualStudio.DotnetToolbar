@@ -157,22 +157,21 @@ namespace Coree.VisualStudio.DotnetToolbar
                 }
             }
 
-            var nodeResuse = $"--nodeReuse:{CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.NodeReuse.ToString().ToLower()}";
 
             if (nugetPushDialog.ApiKey != String.Empty)
             {
                 if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsNugetPush.HideApiKeyInOutput)
                 {
-                    await ExecuteProcessAsync("dotnet.exe", $@"nuget push ""{nugetPushDialog.SolutionDir}{Path.DirectorySeparatorChar}{nugetPushDialog.PackageLocation}"" --api-key {nugetPushDialog.ApiKey} --source {nugetPushDialog.Source}", "", new string[] { nugetPushDialog.ApiKey });
+                    await ExecuteProcessAsync("dotnet.exe", $@"nuget push ""{nugetPushDialog.PackageLocation}"" --api-key {nugetPushDialog.ApiKey} --source {nugetPushDialog.Source}", "", new string[] { nugetPushDialog.ApiKey });
                 }
                 else
                 {
-                    await ExecuteProcessAsync("dotnet.exe", $@"nuget push ""{nugetPushDialog.SolutionDir}{Path.DirectorySeparatorChar}{nugetPushDialog.PackageLocation}"" --api-key {nugetPushDialog.ApiKey} --source {nugetPushDialog.Source}", String.Empty);
+                    await ExecuteProcessAsync("dotnet.exe", $@"nuget push ""{nugetPushDialog.PackageLocation}"" --api-key {nugetPushDialog.ApiKey} --source {nugetPushDialog.Source}", String.Empty);
                 }
             }
             else
             {
-                await ExecuteProcessAsync("dotnet.exe", $@"nuget push ""{nugetPushDialog.SolutionDir}{Path.DirectorySeparatorChar}{nugetPushDialog.PackageLocation}"" --source {nugetPushDialog.Source}", String.Empty);
+                await ExecuteProcessAsync("dotnet.exe", $@"nuget push ""{nugetPushDialog.PackageLocation}"" --source {nugetPushDialog.Source}", String.Empty);
             }
 
             await PaneWriteLineAsync("Done");

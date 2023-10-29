@@ -136,13 +136,12 @@ namespace Coree.VisualStudio.DotnetToolbar
                 }
             }
 
-            var nodeResuse = $"--nodeReuse:{CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.NodeReuse.ToString().ToLower()}";
 
             bool done = false;
             if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPublish.PublishSolutionProject)
             {
                 done = true;
-                await ExecuteProcessAsync("dotnet.exe", $@"publish ""{slnfile}"" {nodeResuse} --configuration {activeConfiguration.Configuration}", $@"{slndir}");
+                await ExecuteProcessAsync("dotnet.exe", $@"publish ""{slnfile}"" --configuration {activeConfiguration.Configuration} {CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPublish.AdditionalCommandlineArguments}", $@"{slndir}");
             }
             else
             {
@@ -151,7 +150,7 @@ namespace Coree.VisualStudio.DotnetToolbar
                     foreach (var targetFramework in projectInfo.TargetFrameworksList)
                     {
                         done = true;
-                        await ExecuteProcessAsync("dotnet.exe", $@"publish ""{projectInfo.FullProjectFileName}"" {nodeResuse} --configuration {activeConfiguration.Configuration} --framework {targetFramework}", $@"{projectInfo.FullPath}");
+                        await ExecuteProcessAsync("dotnet.exe", $@"publish ""{projectInfo.FullProjectFileName}"" --configuration {activeConfiguration.Configuration} --framework {targetFramework} {CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPublish.AdditionalCommandlineArguments}", $@"{projectInfo.FullPath}");
                     }
                 }
             }

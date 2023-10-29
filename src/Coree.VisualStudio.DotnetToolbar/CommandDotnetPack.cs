@@ -135,9 +135,9 @@ namespace Coree.VisualStudio.DotnetToolbar
                 }
             }
 
-            var nodeResuse = $"--nodeReuse:{CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.NodeReuse.ToString().ToLower()}";
+           
 
-            await ExecuteProcessAsync("dotnet.exe", $@"pack ""{slnfile}"" {nodeResuse} --configuration {activeConfig.Configuration}", $@"{slndir}");
+            await ExecuteProcessAsync("dotnet.exe", $@"pack ""{slnfile}"" --configuration {activeConfig.Configuration} {CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPack.AdditionalCommandlineArguments}", $@"{slndir}");
 
             await PaneWriteLineAsync("Done");
         }
