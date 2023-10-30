@@ -22,6 +22,10 @@ namespace Coree.VisualStudio.DotnetToolbar.ExtensionMethods
             }
             catch (Exception)
             {
+                if (System.IO.File.Exists(file))
+                {
+                    System.IO.File.Move(file, $@"{file}.backup");
+                }
                 T instance = (T)Activator.CreateInstance(typeof(T));
                 var JsonString = System.Text.Json.JsonSerializer.Serialize<T>(instance);
                 System.IO.File.WriteAllText(file, JsonString);

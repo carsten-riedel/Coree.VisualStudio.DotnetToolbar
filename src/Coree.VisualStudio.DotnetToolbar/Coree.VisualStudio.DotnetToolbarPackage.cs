@@ -54,9 +54,9 @@ namespace Coree.VisualStudio.DotnetToolbar
 
         public string SettingsFileName { get; set; }
 
-        public string ExtensionVersionDirectory { get; set; }
-
         public string ExtensionDirectory { get; set; }
+
+        public string ExtensionRootDirectory { get; set; }
 
         public string SolutionGuid { get; set; }
 
@@ -130,10 +130,7 @@ namespace Coree.VisualStudio.DotnetToolbar
 
             await this.PaneClearAsync("DotnetToolbar");
             await this.PaneWriteLineAsync("Solution is now open.", "DotnetToolbar");
-            //Warning! Incompatible settings files in 0.x.x Versions will be overwritten with defaults.
-            await this.PaneWriteLineAsync("Notice! Setting files in 0.x.x are work in progess and subject of changes.", "DotnetToolbar");
-            //await this.PaneWriteLineAsync("DotnetToolbar: The publish command is configured to create a singleFile framework dependent executable!", "DotnetToolbar");
-            //await this.PaneWriteLineAsync("DotnetToolbar: Adjust you settings as needed.", "DotnetToolbar");
+            await this.PaneWriteLineAsync("Notice! Setting files in 0.x.x are work-in-progress and subject of changes and may reset to defaults.", "DotnetToolbar");
 
             Solution solinfo = (Solution)await this.GetSolutionAsync();
             Dictionary<string, string> solutionProperties = await this.GetSolutionPropertiesAsync();
@@ -148,10 +145,10 @@ namespace Coree.VisualStudio.DotnetToolbar
             }
 
             var assemblyLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
-            ExtensionVersionDirectory = System.IO.Path.GetDirectoryName(assemblyLocation);
-            ExtensionDirectory = System.IO.Path.GetDirectoryName(ExtensionVersionDirectory);
+            ExtensionDirectory = System.IO.Path.GetDirectoryName(assemblyLocation);
+            ExtensionRootDirectory = System.IO.Path.GetDirectoryName(ExtensionDirectory);
 
-            SettingsFileName = $@"{ExtensionVersionDirectory}\{solutionProperties["Name"]}_{SolutionGuid}.json";
+            SettingsFileName = $@"{ExtensionDirectory}\{solutionProperties["Name"]}_{SolutionGuid}.json";
 
             //
             await this.PaneWriteLineAsync($@"You can locate all settings in the version-specific *.json file inside the ""{ExtensionDirectory}"" directory.{Environment.NewLine}Feel free to manually manage the version-specific *.json file if needed.", "DotnetToolbar");

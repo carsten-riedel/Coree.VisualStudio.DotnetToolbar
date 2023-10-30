@@ -112,7 +112,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             string slndir = System.IO.Path.GetDirectoryName(slnfile);
 
 
-            var path = CoreeVisualStudioDotnetToolbarPackage.Instance.ExtensionVersionDirectory;
+            var path = CoreeVisualStudioDotnetToolbarPackage.Instance.ExtensionDirectory;
             await ExecuteProcessAsync("cmd", $@"/C powershell -ExecutionPolicy ByPass -file ""{path + System.IO.Path.DirectorySeparatorChar}PowershellScripts\deletebinobj.ps1"" -SolutionDirectory ""{slndir}"" ", String.Empty);
             await PaneWriteLineAsync("Done");
         }
