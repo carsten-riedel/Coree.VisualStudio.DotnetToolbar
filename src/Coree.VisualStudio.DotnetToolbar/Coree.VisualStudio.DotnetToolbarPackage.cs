@@ -56,7 +56,7 @@ namespace Coree.VisualStudio.DotnetToolbar
 
         public string ExtensionDirectory { get; set; }
 
-        public string ExtensionRootDirectory { get; set; }
+        public string ExtensionsRootDirectory { get; set; }
 
         public string SolutionGuid { get; set; }
 
@@ -146,12 +146,12 @@ namespace Coree.VisualStudio.DotnetToolbar
 
             var assemblyLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
             ExtensionDirectory = System.IO.Path.GetDirectoryName(assemblyLocation);
-            ExtensionRootDirectory = System.IO.Path.GetDirectoryName(ExtensionDirectory);
+            ExtensionsRootDirectory = System.IO.Path.GetDirectoryName(ExtensionDirectory);
 
             SettingsFileName = $@"{ExtensionDirectory}\{solutionProperties["Name"]}_{SolutionGuid}.json";
 
             //
-            await this.PaneWriteLineAsync($@"You can locate all settings in the version-specific *.json file inside the ""{ExtensionDirectory}"" directory.{Environment.NewLine}Feel free to manually manage the version-specific *.json file if needed.", "DotnetToolbar");
+            await this.PaneWriteLineAsync($@"You can locate all settings in the *.json *.json.backup files inside the ""{ExtensionDirectory}"" directory.{Environment.NewLine}Feel free to manually manage the version-specific *.json file if needed.", "DotnetToolbar");
 
             bool Created = JsonHelper.CreateDefault<SolutionSettings>(SettingsFileName);
             /*
