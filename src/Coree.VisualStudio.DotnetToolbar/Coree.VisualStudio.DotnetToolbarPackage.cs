@@ -51,11 +51,14 @@ namespace Coree.VisualStudio.DotnetToolbar
         }
 
         public SolutionSettings Settings { get; set; }
+
         public string SettingsFileName { get; set; }
 
         public string ExtensionVersionDirectory { get; set; }
 
         public string ExtensionDirectory { get; set; }
+
+        public string SolutionGuid { get; set; }
 
         /// <summary>
         /// Initialization of the package; this method is called right after the package is sited, so this is the place
@@ -134,8 +137,6 @@ namespace Coree.VisualStudio.DotnetToolbar
 
             Solution solinfo = (Solution)await this.GetSolutionAsync();
             Dictionary<string, string> solutionProperties = await this.GetSolutionPropertiesAsync();
-
-            string SolutionGuid;
 
             if (e.IsNewSolution)
             {

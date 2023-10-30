@@ -1,4 +1,10 @@
-﻿# DotnetToolbar 0.2.33 Release Notes
+﻿# DotnetToolbar 0.2.35 Release Notes
+Release Date: 2023-10-29
+
+## Bug Fixes
+- Missing GUID in DTE properties in newly created projects.
+
+# DotnetToolbar 0.2.33-0.2.34 Release Notes
 Release Date: 2023-10-29
 
 ## New

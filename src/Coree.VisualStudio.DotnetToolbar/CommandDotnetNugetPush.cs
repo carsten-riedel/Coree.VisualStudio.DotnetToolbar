@@ -108,8 +108,8 @@ namespace Coree.VisualStudio.DotnetToolbar
             var solutionProperties = await GetSolutionPropertiesAsync();
 
             await PaneClearAsync();
-
-            NugetPushDialog nugetPushDialog = new NugetPushDialog(Package.UserLocalDataPath, solinfo.FullName, solutionProperties["Name"], (string)solinfo.Globals["SolutionGuid"]);
+            
+            NugetPushDialog nugetPushDialog = new NugetPushDialog(Package.UserLocalDataPath, solinfo.FullName, solutionProperties["Name"], CoreeVisualStudioDotnetToolbarPackage.Instance.SolutionGuid);
             nugetPushDialog.ShowDialog();
 
             if (nugetPushDialog.nugetPushDialogResult == NugetPushDialog.NugetPushDialogResult.Cancel)
