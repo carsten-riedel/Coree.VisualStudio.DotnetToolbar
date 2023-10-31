@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using static Coree.VisualStudio.DotnetToolbar.AsyncPackageExtensions;
+using Coree.VisualStudio.DotnetToolbar.ExtensionMethods;
 
 namespace Coree.VisualStudio.DotnetToolbar
 {
@@ -113,9 +114,7 @@ namespace Coree.VisualStudio.DotnetToolbar
                 }
             }
 
-            await PaneWriteLineAsync("-------------------------------------------------------------------------------");
             await PaneWriteLineAsync(commandline);
-            await PaneWriteLineAsync("-------------------------------------------------------------------------------");
 
             process.OutputDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await PaneWriteLineAsync(e.Data, "Build", true, true, maskOutputs); } catch (Exception ex) { Debug.WriteLine(ex.Message); } }); _joinableTasks.Add(joinableTask); };
             process.ErrorDataReceived += (sender, e) => { var joinableTask = ThreadHelper.JoinableTaskFactory.RunAsync(async () => { try { await PaneWriteLineAsync(e.Data, "Build", true, true, maskOutputs); } catch (Exception ex) { Debug.WriteLine(ex.Message); } }); _joinableTasks.Add(joinableTask); };

@@ -14,16 +14,17 @@
     {
         public bool KillAllDotnetProcessBeforeExectue { get; set; } = false;
         public bool BlockNonSdkExecute { get; set; } = true;
+        public bool WriteDotnetGlobalJson { get; set; } = false;
     }
 
     public class SolutionSettingsBuild
     {
-        public string AdditionalCommandlineArguments { get; set; } = "--nologo --property:Sample=Value -nodeReuse:true -maxcpucount:1";
+        public string AdditionalCommandlineArguments { get; set; } = "--nologo -nodeReuse:true --property:Sample=Value";
     }
 
     public class SolutionSettingsPack
     {
-        public string AdditionalCommandlineArguments { get; set; } = "--nologo --force";
+        public string AdditionalCommandlineArguments { get; set; } = "--nologo --verbosity:n";
     }
 
 
@@ -38,7 +39,7 @@
     {
         public bool PublishSolutionProject { get; set; } = true;
 
-        public string AdditionalCommandlineArguments { get; set; } = "--nologo --property:SelfContained=false --property:PublishSingleFile=true --property:RuntimeIdentifier=win-x86 --property:DebugType=embedded --verbosity:n";
+        public string AdditionalCommandlineArguments { get; set; } = "--nologo --verbosity:n";
     }
 
     public class SolutionSettingsClean

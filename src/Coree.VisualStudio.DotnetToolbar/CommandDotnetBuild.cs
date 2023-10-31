@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.Shell;
 using System;
 using System.ComponentModel.Design;
 using Task = System.Threading.Tasks.Task;
+using Coree.VisualStudio.DotnetToolbar.ExtensionMethods;
 
 namespace Coree.VisualStudio.DotnetToolbar
 {
@@ -136,6 +137,10 @@ namespace Coree.VisualStudio.DotnetToolbar
                 }
             }
 
+
+            //dotnet --list-sdks
+            //dotnet new globaljson --sdk-version 7.0.0 --roll-forward latestFeature --force
+            await ExecuteProcessAsync("dotnet.exe", $@"--version", $@"{slndir}");
             await ExecuteProcessAsync("dotnet.exe", $@"build ""{slnfile}"" --configuration {activeConfiguration.Configuration} {CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsBuild.AdditionalCommandlineArguments}", $@"{slndir}");
 
             await PaneWriteLineAsync("Done");

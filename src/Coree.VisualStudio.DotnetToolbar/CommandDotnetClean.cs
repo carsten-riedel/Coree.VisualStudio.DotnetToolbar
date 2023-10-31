@@ -3,6 +3,7 @@ using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
 using System;
 using System.ComponentModel.Design;
+using Coree.VisualStudio.DotnetToolbar.ExtensionMethods;
 
 namespace Coree.VisualStudio.DotnetToolbar
 {
@@ -136,7 +137,7 @@ namespace Coree.VisualStudio.DotnetToolbar
                 }
             }
 
-
+            await ExecuteProcessAsync("dotnet.exe", $@"--version", $@"{slndir}");
             await ExecuteProcessAsync("dotnet.exe", $@"clean ""{slnfile}"" --configuration {activeConfiguration.Configuration} {CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsClean.AdditionalCommandlineArguments}", $@"{slndir}");
 
             await PaneWriteLineAsync("Done");

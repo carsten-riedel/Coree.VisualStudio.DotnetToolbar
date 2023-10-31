@@ -151,7 +151,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             SettingsFileName = $@"{ExtensionDirectory}\{solutionProperties["Name"]}_{SolutionGuid}.json";
 
             //
-            await this.PaneWriteLineAsync($@"You can locate all settings in the *.json *.json.backup files inside the ""{ExtensionDirectory}"" directory.{Environment.NewLine}Feel free to manually manage the version-specific *.json file if needed.", "DotnetToolbar");
+            await this.PaneWriteLineAsync($@"You can locate all settings in the *.json *.json.backup files inside the ""{ExtensionDirectory}"" directory.", "DotnetToolbar");
 
             bool Created = JsonHelper.CreateDefault<SolutionSettings>(SettingsFileName);
             /*

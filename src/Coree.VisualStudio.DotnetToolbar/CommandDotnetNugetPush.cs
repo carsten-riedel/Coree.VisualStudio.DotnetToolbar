@@ -5,6 +5,8 @@ using Microsoft.VisualStudio.Threading;
 using System;
 using System.ComponentModel.Design;
 using System.IO;
+using System.Windows.Controls;
+using Coree.VisualStudio.DotnetToolbar.ExtensionMethods;
 
 namespace Coree.VisualStudio.DotnetToolbar
 {
@@ -162,15 +164,18 @@ namespace Coree.VisualStudio.DotnetToolbar
             {
                 if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsNugetPush.HideApiKeyInOutput)
                 {
+                    await ExecuteProcessAsync("dotnet.exe", $@"--version", $@"{System.IO.Path.GetDirectoryName(nugetPushDialog.SelectedPackageLocation.Location)}");
                     await ExecuteProcessAsync("dotnet.exe", $@"nuget push ""{nugetPushDialog.SelectedPackageLocation.Location}"" --api-key {nugetPushDialog.ApiKey} --source {nugetPushDialog.SelectedPackageSource.Value}", "", new string[] { nugetPushDialog.ApiKey });
                 }
                 else
                 {
+                    await ExecuteProcessAsync("dotnet.exe", $@"--version", $@"{System.IO.Path.GetDirectoryName(nugetPushDialog.SelectedPackageLocation.Location)}");
                     await ExecuteProcessAsync("dotnet.exe", $@"nuget push ""{nugetPushDialog.SelectedPackageLocation.Location}"" --api-key {nugetPushDialog.ApiKey} --source {nugetPushDialog.SelectedPackageSource.Value}", String.Empty);
                 }
             }
             else
             {
+                await ExecuteProcessAsync("dotnet.exe", $@"--version", $@"{System.IO.Path.GetDirectoryName(nugetPushDialog.SelectedPackageLocation.Location)}");
                 await ExecuteProcessAsync("dotnet.exe", $@"nuget push ""{nugetPushDialog.SelectedPackageLocation.Location}"" --source {nugetPushDialog.SelectedPackageSource.Value}", String.Empty);
             }
 

@@ -1,4 +1,10 @@
-﻿# DotnetToolbar 0.2.36 Release Notes
+﻿# DotnetToolbar 0.2.37 Release Notes
+Release Date: 2023-10-31
+
+## Bug Fixes
+- Changed settings defaults.
+
+# DotnetToolbar 0.2.36 Release Notes
 Release Date: 2023-10-30
 
 ## Bug Fixes

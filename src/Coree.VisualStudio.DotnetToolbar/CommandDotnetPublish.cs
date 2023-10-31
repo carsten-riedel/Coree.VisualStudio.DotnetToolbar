@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.Threading;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
+using Coree.VisualStudio.DotnetToolbar.ExtensionMethods;
 
 namespace Coree.VisualStudio.DotnetToolbar
 {
@@ -141,6 +142,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPublish.PublishSolutionProject)
             {
                 done = true;
+                await ExecuteProcessAsync("dotnet.exe", $@"--version", $@"{slndir}");
                 await ExecuteProcessAsync("dotnet.exe", $@"publish ""{slnfile}"" --configuration {activeConfiguration.Configuration} {CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPublish.AdditionalCommandlineArguments}", $@"{slndir}");
             }
             else
@@ -150,6 +152,7 @@ namespace Coree.VisualStudio.DotnetToolbar
                     foreach (var targetFramework in projectInfo.TargetFrameworksList)
                     {
                         done = true;
+                        await ExecuteProcessAsync("dotnet.exe", $@"--version", $@"{slndir}");
                         await ExecuteProcessAsync("dotnet.exe", $@"publish ""{projectInfo.FullProjectFileName}"" --configuration {activeConfiguration.Configuration} --framework {targetFramework} {CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPublish.AdditionalCommandlineArguments}", $@"{projectInfo.FullPath}");
                     }
                 }

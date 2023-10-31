@@ -1,4 +1,5 @@
 ﻿using Coree.VisualStudio.DotnetToolbar.ExtensionMethods;
+
 using System.Windows.Forms;
 
 namespace Coree.VisualStudio.DotnetToolbar
@@ -10,7 +11,12 @@ namespace Coree.VisualStudio.DotnetToolbar
             InitializeComponent();
             checkBox1.Checked = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.KillAllDotnetProcessBeforeExectue;
             checkBox2.Checked = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.BlockNonSdkExecute;
+            checkBox3.Checked = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.WriteDotnetGlobalJson;
             checkBox4.Checked = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsNugetPush.HideApiKeyInOutput;
+
+            var xx = new System.Diagnostics.Process().StartDotNetVersionSync("dotnet.exe", "--list-sdks", string.Empty);
+            xx.Reverse();
+            comboBox1.Items.AddRange(xx.ToArray());
 
             if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPublish.PublishSolutionProject)
             {
@@ -33,6 +39,8 @@ namespace Coree.VisualStudio.DotnetToolbar
         {
             CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.KillAllDotnetProcessBeforeExectue = checkBox1.Checked;
             CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.BlockNonSdkExecute = checkBox2.Checked;
+            CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.WriteDotnetGlobalJson = checkBox3.Checked;
+
             CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsNugetPush.HideApiKeyInOutput = checkBox4.Checked;
             if (radioButton1.Checked)
             {
