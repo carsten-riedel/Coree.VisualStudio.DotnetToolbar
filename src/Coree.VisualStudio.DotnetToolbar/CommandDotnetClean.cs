@@ -104,6 +104,11 @@ namespace Coree.VisualStudio.DotnetToolbar
             await WindowActivateAsync(EnvDTE.Constants.vsWindowKindOutput);
 
             var activeConfiguration = await GetActiveSolutionConfigurationAsync();
+            if (activeConfiguration == null)
+            {
+                await PaneWriteLineAsync("Can't not determinate a active solution configuration.");
+                return;
+            }
 
             string slnfile = await GetSolutionFileNameAsync();
             string slndir = System.IO.Path.GetDirectoryName(slnfile);
@@ -122,12 +127,22 @@ namespace Coree.VisualStudio.DotnetToolbar
                 bool found = false;
                 foreach (var item in projectInfos)
                 {
-                    if (item.IsSdkStyle == false)
+                    if (item.Unknown)
                     {
                         await PaneWriteLineAsync("-------------------------------------------------------------------------------");
-                        await PaneWriteLineAsync($"Non SDK style project file {item.File} !");
+                        await PaneWriteLineAsync($"{item.Unknown} state could not be determinated. !");
                         await PaneWriteLineAsync("-------------------------------------------------------------------------------");
                         found = true;
+                    }
+                    else
+                    {
+                        if (item.IsSdkStyle == false)
+                        {
+                            await PaneWriteLineAsync("-------------------------------------------------------------------------------");
+                            await PaneWriteLineAsync($"Non SDK style project file {item.File} !");
+                            await PaneWriteLineAsync("-------------------------------------------------------------------------------");
+                            found = true;
+                        }
                     }
                 }
                 if (found)

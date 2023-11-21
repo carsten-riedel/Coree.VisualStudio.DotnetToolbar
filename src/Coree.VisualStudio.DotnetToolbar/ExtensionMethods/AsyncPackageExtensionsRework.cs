@@ -31,8 +31,13 @@ namespace Coree.VisualStudio.DotnetToolbar
             }
             else
             {
-                var configuration = ((SolutionConfiguration2)dte2Solution.SolutionBuild.ActiveConfiguration).Name;
-                var platform = ((SolutionConfiguration2)dte2Solution.SolutionBuild.ActiveConfiguration).PlatformName;
+                SolutionConfiguration2 activeConfiguration = ((SolutionConfiguration2)dte2Solution.SolutionBuild.ActiveConfiguration);
+                if (activeConfiguration == null)
+                {
+                    return null;
+                }
+                string configuration = ((SolutionConfiguration2)dte2Solution.SolutionBuild.ActiveConfiguration).Name;
+                string platform = ((SolutionConfiguration2)dte2Solution.SolutionBuild.ActiveConfiguration).PlatformName;
                 return new ActiveSolutionConfiguration() { Configuration = configuration, Platform = platform };
             }
         }

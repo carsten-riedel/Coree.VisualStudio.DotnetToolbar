@@ -105,8 +105,13 @@ namespace Coree.VisualStudio.DotnetToolbar
             await WindowActivateAsync(EnvDTE.Constants.vsWindowKindOutput);
 
             var activeConfiguration = await GetActiveSolutionConfigurationAsync();
+            if (activeConfiguration == null)
+            {
+                await PaneWriteLineAsync("Can't not determinate a active solution configuration.");
+                return;
+            }
 
-            var projectInfos = await GetProjectInfosAsync();
+
             string slnfile = await GetSolutionFileNameAsync();
             string slndir = System.IO.Path.GetDirectoryName(slnfile);
 
@@ -119,15 +124,27 @@ namespace Coree.VisualStudio.DotnetToolbar
 
             if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.BlockNonSdkExecute)
             {
+                var projectInfosx = await GetProjectInfosAsync();
+
                 bool found = false;
-                foreach (var item in projectInfos)
+                foreach (var item in projectInfosx)
                 {
-                    if (item.IsSdkStyle == false)
+                    if (item.Unknown)
                     {
                         await PaneWriteLineAsync("-------------------------------------------------------------------------------");
-                        await PaneWriteLineAsync($"Non SDK style project file {item.File} !");
+                        await PaneWriteLineAsync($"{item.Unknown} state could not be determinated. !");
                         await PaneWriteLineAsync("-------------------------------------------------------------------------------");
                         found = true;
+                    }
+                    else
+                    {
+                        if (item.IsSdkStyle == false)
+                        {
+                            await PaneWriteLineAsync("-------------------------------------------------------------------------------");
+                            await PaneWriteLineAsync($"Non SDK style project file {item.File} !");
+                            await PaneWriteLineAsync("-------------------------------------------------------------------------------");
+                            found = true;
+                        }
                     }
                 }
                 if (found)
@@ -138,7 +155,10 @@ namespace Coree.VisualStudio.DotnetToolbar
             }
 
 
+            var projectInfos = await GetProjectInfosAsync();
+
             bool done = false;
+
             if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPublish.PublishSolutionProject)
             {
                 done = true;
@@ -149,11 +169,14 @@ namespace Coree.VisualStudio.DotnetToolbar
             {
                 foreach (var projectInfo in projectInfos)
                 {
-                    foreach (var targetFramework in projectInfo.TargetFrameworksList)
+                    if (projectInfo.Unknown == false)
                     {
-                        done = true;
-                        await ExecuteProcessAsync("dotnet.exe", $@"--version", $@"{slndir}");
-                        await ExecuteProcessAsync("dotnet.exe", $@"publish ""{projectInfo.FullProjectFileName}"" --configuration {activeConfiguration.Configuration} --framework {targetFramework} {CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPublish.AdditionalCommandlineArguments}", $@"{projectInfo.FullPath}");
+                        foreach (var targetFramework in projectInfo.TargetFrameworksList)
+                        {
+                            done = true;
+                            await ExecuteProcessAsync("dotnet.exe", $@"--version", $@"{slndir}");
+                            await ExecuteProcessAsync("dotnet.exe", $@"publish ""{projectInfo.FullProjectFileName}"" --configuration {activeConfiguration.Configuration} --framework {targetFramework} {CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPublish.AdditionalCommandlineArguments}", $@"{projectInfo.FullPath}");
+                        }
                     }
                 }
             }
