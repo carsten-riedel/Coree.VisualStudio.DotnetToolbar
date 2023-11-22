@@ -32,7 +32,7 @@ namespace Coree.VisualStudio.DotnetToolbar.Froms
         private void InitializeComponent()
         {
             this.checkBoxDisableConfirmDialog = new System.Windows.Forms.CheckBox();
-            this.listBox1 = new ReadOnlyListBox();
+            this.listBox1 = new Coree.VisualStudio.DotnetToolbar.Forms.ReadOnlyListBox();
             this.buttonDelete = new System.Windows.Forms.Button();
             this.buttonAbort = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
@@ -45,7 +45,7 @@ namespace Coree.VisualStudio.DotnetToolbar.Froms
             this.checkBoxDisableConfirmDialog.Location = new System.Drawing.Point(12, 197);
             this.checkBoxDisableConfirmDialog.Name = "checkBoxDisableConfirmDialog";
             this.checkBoxDisableConfirmDialog.Size = new System.Drawing.Size(351, 19);
-            this.checkBoxDisableConfirmDialog.TabIndex = 0;
+            this.checkBoxDisableConfirmDialog.TabIndex = 1;
             this.checkBoxDisableConfirmDialog.Text = "Disable warning and confirmation prompts for folder deletion";
             this.checkBoxDisableConfirmDialog.UseVisualStyleBackColor = true;
             // 
@@ -56,10 +56,12 @@ namespace Coree.VisualStudio.DotnetToolbar.Froms
             this.listBox1.ItemHeight = 15;
             this.listBox1.Location = new System.Drawing.Point(12, 29);
             this.listBox1.Name = "listBox1";
+            this.listBox1.ReadOnly = false;
             this.listBox1.ScrollAlwaysVisible = true;
             this.listBox1.SelectionMode = System.Windows.Forms.SelectionMode.None;
             this.listBox1.Size = new System.Drawing.Size(567, 154);
-            this.listBox1.TabIndex = 1;
+            this.listBox1.TabIndex = 0;
+            this.listBox1.TabStop = false;
             // 
             // buttonDelete
             // 
@@ -111,6 +113,7 @@ namespace Coree.VisualStudio.DotnetToolbar.Froms
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Confirm";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ConfirmDelete_FormClosing);
+            this.Shown += new System.EventHandler(this.ConfirmDelete_Shown);
             this.ResumeLayout(false);
             this.PerformLayout();
 

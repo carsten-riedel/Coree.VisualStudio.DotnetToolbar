@@ -28,7 +28,6 @@ namespace Coree.VisualStudio.DotnetToolbar.Froms
         {
             InitializeComponent();
             folderPaths.ForEach(path => { listBox1.Items.Add(path); });
-            buttonAbort.Focus();
             checkBoxDisableConfirmDialog.Checked = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsConfirmDialog.DisableConfirmDialog;
         }
 
@@ -48,6 +47,11 @@ namespace Coree.VisualStudio.DotnetToolbar.Froms
         {
             CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsConfirmDialog.DisableConfirmDialog = checkBoxDisableConfirmDialog.Checked;
             JsonHelper.WriteToFile(CoreeVisualStudioDotnetToolbarPackage.Instance.Settings, CoreeVisualStudioDotnetToolbarPackage.Instance.SettingsFileName);
+        }
+
+        private void ConfirmDelete_Shown(object sender, EventArgs e)
+        {
+            buttonAbort.Focus();
         }
     }
 }
