@@ -1,4 +1,11 @@
-﻿# DotnetToolbar 0.2.38 Release Notes
+﻿# DotnetToolbar 0.2.39 Release Notes
+Release Date: 2023-11-23
+
+## New
+- Implemented "del bin/obj restore".
+- Changed default folder for saving the settings.
+
+# DotnetToolbar 0.2.38 Release Notes
 Release Date: 2023-11-22
 
 ## Bug Fixes
