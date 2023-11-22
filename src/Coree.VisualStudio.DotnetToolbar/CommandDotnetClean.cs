@@ -127,10 +127,10 @@ namespace Coree.VisualStudio.DotnetToolbar
                 bool found = false;
                 foreach (var item in projectInfos)
                 {
-                    if (item.Unknown)
+                    if (item.UnknownUnloaded)
                     {
                         await PaneWriteLineAsync("-------------------------------------------------------------------------------");
-                        await PaneWriteLineAsync($"{item.Unknown} state could not be determinated. !");
+                        await PaneWriteLineAsync($"{item.UnknownUnloaded} state could not be determinated. !");
                         await PaneWriteLineAsync("-------------------------------------------------------------------------------");
                         found = true;
                     }

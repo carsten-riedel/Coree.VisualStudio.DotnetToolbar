@@ -80,7 +80,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             public string FriendlyTargetFramework { get; set; } = String.Empty;
             public bool IsSdkStyle { get; set; } = false;
             public string File { get; set; } = String.Empty;
-            public bool Unknown { get; set; } = true;
+            public bool UnknownUnloaded { get; set; } = true;
         }
 
         [Obsolete]
@@ -211,7 +211,7 @@ namespace Coree.VisualStudio.DotnetToolbar
                 var isProject = (item.Object is VSProject);
                 if (isProject == false)
                 {
-                    projectInfos.Add(new ProjectInfo() { Name = item.Name, UniqueName = item.UniqueName, Unknown = true });
+                    projectInfos.Add(new ProjectInfo() { Name = item.Name, UniqueName = item.UniqueName, UnknownUnloaded = true });
                 }
                 else
                 {
@@ -224,7 +224,7 @@ namespace Coree.VisualStudio.DotnetToolbar
                         TargetFrameworks = await GetProjectItemAsync(item, "TargetFrameworks", asyncPackage),
                         FriendlyTargetFramework = await GetProjectItemAsync(item, "FriendlyTargetFramework", asyncPackage),
                         FullPath = await GetProjectItemAsync(item, "FullPath", asyncPackage),
-                        Unknown = false
+                        UnknownUnloaded = false
                     };
 
                     if (ProjectInfoItem.File != String.Empty)
