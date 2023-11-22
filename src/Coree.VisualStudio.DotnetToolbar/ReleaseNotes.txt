@@ -1,4 +1,11 @@
-﻿# DotnetToolbar 0.2.37 Release Notes
+﻿# DotnetToolbar 0.2.38 Release Notes
+Release Date: 2023-11-22
+
+## Bug Fixes
+- Implemented enhanced validation for empty solutions to prevent issues during processing.
+- Refined the parsing mechanism for projects within solutions, ensuring more accurate and efficient handling
+
+# DotnetToolbar 0.2.37 Release Notes
 Release Date: 2023-10-31
 
 ## Bug Fixes
