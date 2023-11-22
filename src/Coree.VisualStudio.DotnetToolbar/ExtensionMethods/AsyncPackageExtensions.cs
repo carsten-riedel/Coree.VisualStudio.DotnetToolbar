@@ -81,6 +81,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             public bool SolutionDirectoryItemNameLocationExists { get; set; } = false;
             public string SolutionDirectoryItemNameLocation { get; set; } = String.Empty;
             public string SolutionDirectoryItemNameDirectory { get; set; } = String.Empty;
+            public string SolutionDirectory { get; set; } = String.Empty;
             public bool IsVSProjectType { get; set; } = false;
             public bool IsSdkStyle { get; set; } = false;
         }
@@ -129,6 +130,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             foreach (Project item in solProjects)
             {
                 var projectInfoItem = new ProjectInfo();
+                projectInfoItem.SolutionDirectory = solutionDirectory;  
                 var SolutionDirectoryItemNameLocation = $@"{solutionDirectory}\{item.UniqueName}";
                 
                 if (System.IO.File.Exists(SolutionDirectoryItemNameLocation))

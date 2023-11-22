@@ -1,5 +1,7 @@
-﻿using Microsoft.VisualStudio.Shell;
+﻿using Coree.VisualStudio.DotnetToolbar.Froms;
+using Microsoft.VisualStudio.Shell;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Linq;
 using System.Threading.Tasks;
@@ -75,6 +77,28 @@ namespace Coree.VisualStudio.DotnetToolbar
 
             var VSProjects = (await GetProjectInfosAsync()).Where(e => e.IsVSProjectType == true).ToList();
 
+            if (!CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsConfirmDialog.DisableConfirmDialog)
+            {
+                List<string> folderPaths = new List<string>();
+
+                foreach (var item in VSProjects)
+                {
+                    string binFolderPath = System.IO.Path.Combine(item.VSProjectPath.Replace(item.SolutionDirectory, "").TrimStart('\\'), "bin");
+                    string objFolderPath = System.IO.Path.Combine(item.VSProjectPath.Replace(item.SolutionDirectory, "").TrimStart('\\'), "obj");
+                    folderPaths.Add(binFolderPath);
+                    folderPaths.Add(objFolderPath);
+                }
+
+                ConfirmDelete confirmDeleteDialog = new ConfirmDelete(folderPaths);
+                confirmDeleteDialog.ShowDialog();
+
+                if (confirmDeleteDialog.FormDialogResult == ConfirmDelete.DialogResultEnum.Close || confirmDeleteDialog.FormDialogResult == ConfirmDelete.DialogResultEnum.Abort)
+                {
+                    await PaneWriteLineAsync($@"Delete confirmation aborted.");
+                    return;
+                }
+            }
+
             foreach (var item in VSProjects)
             {
                 var binfolder = new System.IO.DirectoryInfo($@"{System.IO.Path.Combine(item.VSProjectPath, "bin")}");
@@ -139,7 +163,6 @@ namespace Coree.VisualStudio.DotnetToolbar
             string slndir = System.IO.Path.GetDirectoryName(slnfile);
             
             await ExecuteProcessAsync("dotnet.exe", $@"--version", $@"{slndir}");
-
             await ExecuteProcessAsync("dotnet.exe", $@"restore ""{slnfile}""", $@"{slndir}");
             await PaneWriteLineAsync("Done");
         }

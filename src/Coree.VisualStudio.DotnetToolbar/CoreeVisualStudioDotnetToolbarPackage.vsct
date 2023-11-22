@@ -109,7 +109,7 @@
         <Icon guid="guidImages" id="pngDelFolder" />
         <CommandFlag>IconAndText</CommandFlag>
         <Strings>
-          <ButtonText>del bin/obj</ButtonText>
+          <ButtonText>del bin/obj restore</ButtonText>
         </Strings>
       </Button>
 
