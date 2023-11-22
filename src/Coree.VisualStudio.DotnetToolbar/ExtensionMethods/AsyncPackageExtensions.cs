@@ -78,10 +78,11 @@ namespace Coree.VisualStudio.DotnetToolbar
             public string TargetFrameworks { get; set; } = String.Empty;
             public List<string> TargetFrameworksList { get; set; } = new List<string>();
             public string FriendlyTargetFramework { get; set; } = String.Empty;
-            public bool IsSdkStyle { get; set; } = false;
+            
             public string File { get; set; } = String.Empty;
-            public bool IsVSProject { get; set; } = false;
-            public bool FoundCsProjFile { get; set; } = false;
+            public bool IsVSProjectType { get; set; } = false;
+            public bool HasProjectFile { get; set; } = false;
+            public bool IsSdkStyle { get; set; } = false;
         }
 
         [Obsolete]
@@ -236,7 +237,7 @@ namespace Coree.VisualStudio.DotnetToolbar
                         }
                     }
 
-                    projectInfos.Add(new ProjectInfo() { Name = item.Name, UniqueName = item.UniqueName, IsVSProject = false,IsSdkStyle = sdkcheck, FoundCsProjFile= hasProjectFile });
+                    projectInfos.Add(new ProjectInfo() { Name = item.Name, UniqueName = item.UniqueName, IsVSProjectType = false,IsSdkStyle = sdkcheck, HasProjectFile= hasProjectFile });
 
                 }
                 else
@@ -250,8 +251,8 @@ namespace Coree.VisualStudio.DotnetToolbar
                         TargetFrameworks = await GetProjectItemAsync(item, "TargetFrameworks", asyncPackage),
                         FriendlyTargetFramework = await GetProjectItemAsync(item, "FriendlyTargetFramework", asyncPackage),
                         FullPath = await GetProjectItemAsync(item, "FullPath", asyncPackage),
-                        IsVSProject = true,
-                        FoundCsProjFile = hasProjectFile
+                        IsVSProjectType = true,
+                        HasProjectFile = hasProjectFile
                     };
 
                     if (ProjectInfoItem.File != String.Empty)

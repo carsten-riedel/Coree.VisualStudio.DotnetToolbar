@@ -123,28 +123,17 @@ namespace Coree.VisualStudio.DotnetToolbar
 
             if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.BlockNonSdkExecute)
             {
-                var projectInfos = (await GetProjectInfosAsync()).Where(e=>e.FoundCsProjFile ==true).ToList();
-
+                var projectInfos = (await GetProjectInfosAsync()).Where(e => e.HasProjectFile == true).ToList();
 
                 bool found = false;
                 foreach (var item in projectInfos)
                 {
-                    if (!item.IsVSProject)
+                    if (item.IsSdkStyle == false)
                     {
                         await PaneWriteLineAsync("-------------------------------------------------------------------------------");
-                        await PaneWriteLineAsync($"{item.Name} state could not be determinated. !");
+                        await PaneWriteLineAsync($"Non SDK style project file {item.File} !");
                         await PaneWriteLineAsync("-------------------------------------------------------------------------------");
                         found = true;
-                    }
-                    else
-                    {
-                        if (item.IsSdkStyle == false)
-                        {
-                            await PaneWriteLineAsync("-------------------------------------------------------------------------------");
-                            await PaneWriteLineAsync($"Non SDK style project file {item.File} !");
-                            await PaneWriteLineAsync("-------------------------------------------------------------------------------");
-                            found = true;
-                        }
                     }
                 }
                 if (found)
@@ -153,7 +142,6 @@ namespace Coree.VisualStudio.DotnetToolbar
                     return;
                 }
             }
-
 
             //dotnet --list-sdks
             //dotnet new globaljson --sdk-version 7.0.0 --roll-forward latestFeature --force
