@@ -1,7 +1,6 @@
 ﻿using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.VCProjectEngine;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,7 +9,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using VSLangProj;
-using static Coree.VisualStudio.DotnetToolbar.AsyncPackageExtensions;
 
 namespace Coree.VisualStudio.DotnetToolbar
 {
@@ -73,15 +71,17 @@ namespace Coree.VisualStudio.DotnetToolbar
         {
             public string Name { get; set; } = String.Empty;
             public string UniqueName { get; set; } = String.Empty;
-            public string FullProjectFileName { get; set; } = String.Empty;
-            public string FullPath { get; set; } = String.Empty;
-            public string TargetFrameworks { get; set; } = String.Empty;
-            public List<string> TargetFrameworksList { get; set; } = new List<string>();
-            public string FriendlyTargetFramework { get; set; } = String.Empty;
-            
-            public string File { get; set; } = String.Empty;
+            public string VSProjectLocation { get; set; } = String.Empty;
+            public string VSProjectPath { get; set; } = String.Empty;
+            public string VSProjectPropertyLocation { get; set; } = String.Empty;
+            public string VSProjectPropertyPath { get; set; } = String.Empty;
+            public string VSProjectPropertyTargetFrameworks { get; set; } = String.Empty;
+            public List<string> VSProjectPropertyTargetFrameworksList { get; set; } = new List<string>();
+            public string VSProjectPropertyFriendlyTargetFramework { get; set; } = String.Empty;
+            public bool SolutionDirectoryItemNameLocationExists { get; set; } = false;
+            public string SolutionDirectoryItemNameLocation { get; set; } = String.Empty;
+            public string SolutionDirectoryItemNameDirectory { get; set; } = String.Empty;
             public bool IsVSProjectType { get; set; } = false;
-            public bool HasProjectFile { get; set; } = false;
             public bool IsSdkStyle { get; set; } = false;
         }
 
@@ -104,91 +104,6 @@ namespace Coree.VisualStudio.DotnetToolbar
             }
         }
 
-        [Obsolete]
-        public static async Task<List<ProjectInfo>> GetProjectInfosAsync(this AsyncPackage asyncPackage)
-        {
-            List<ProjectInfo> projectInfos = new List<ProjectInfo>();
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(asyncPackage.DisposalToken);
-            var dte2 = await asyncPackage.GetServiceAsync(typeof(DTE)).ConfigureAwait(false) as DTE2;
-
-            if (dte2 != null)
-            {
-                Projects solProjects = dte2.Solution.Projects;
-                //string solutionDir = System.IO.Path.GetDirectoryName(dte2.Solution.FullName);
-
-                foreach (Project item in solProjects)
-                {
-                    try
-                    {
-                        var fullname = item.FullName;
-
-                        var ProjectInfoItem = new ProjectInfo()
-                        {
-                            File = item.FullName,
-                            FullProjectFileName = await GetProjectItemAsync(item, "FullProjectFileName", asyncPackage),
-                            TargetFrameworks = await GetProjectItemAsync(item, "TargetFrameworks", asyncPackage),
-                            FriendlyTargetFramework = await GetProjectItemAsync(item, "FriendlyTargetFramework", asyncPackage),
-                            FullPath = await GetProjectItemAsync(item, "FullPath", asyncPackage)
-                        };
-
-                        if (ProjectInfoItem.File != String.Empty)
-                        {
-                            string fileContents = File.ReadAllText(ProjectInfoItem.File);
-                            XDocument doc = XDocument.Parse(fileContents);
-                            if (doc.Root.Attribute("Sdk") != null)
-                            {
-                                ProjectInfoItem.IsSdkStyle = true;
-                            }
-                            else
-                            {
-                                ProjectInfoItem.IsSdkStyle = false;
-                            }
-                        }
-
-                        if (ProjectInfoItem.TargetFrameworks != String.Empty)
-                        {
-                            ProjectInfoItem.TargetFrameworksList.AddRange(ProjectInfoItem.TargetFrameworks.Split(';'));
-                        }
-
-                        if (ProjectInfoItem.TargetFrameworksList.Count == 0)
-                        {
-                            ProjectInfoItem.TargetFrameworksList.Add(ProjectInfoItem.FriendlyTargetFramework.Trim(';'));
-                        }
-
-                        projectInfos.Add(ProjectInfoItem);
-
-                        for (int i = 0; i < projectInfos.Count; i++)
-                        {
-                            projectInfos[i].TargetFrameworksList = projectInfos[i].TargetFrameworksList.Where(e => e != "").ToList();
-                        }
-
-                        projectInfos = projectInfos.Where(e => e.File != String.Empty).ToList();
-
-                        if (item.Properties != null)
-                        {
-                            foreach (Property items in item.Properties)
-                            {
-                                try
-                                {
-                                    Debug.WriteLine($@"{items.Name},{items.Value}");
-                                }
-                                catch (Exception)
-                                {
-                                    Debug.WriteLine($@"{items.Name}");
-                                }
-                            }
-                        }
-                    }
-                    catch (Exception)
-                    {
-                    }
-                }
-
-                return projectInfos;
-            }
-
-            return projectInfos;
-        }
 
         public static async Task<List<ProjectInfo>> GetProjectInfosNewAsync(this AsyncPackage asyncPackage)
         {
@@ -199,91 +114,93 @@ namespace Coree.VisualStudio.DotnetToolbar
             if (dte2 != null)
             {
                 _Solution test = (_Solution)dte2.Solution;
-                var soldir = System.IO.Path.GetDirectoryName(test.FullName);
-                return await asyncPackage.GetxAsync(soldir,dte2.Solution.Projects);
+                var solutionDirectory = System.IO.Path.GetDirectoryName(test.FullName);
+                return await asyncPackage.GenerateProjectInfo(solutionDirectory,dte2.Solution.Projects);
             }
 
             return projectInfos;
         }
 
-        public static async Task<List<ProjectInfo>> GetxAsync(this AsyncPackage asyncPackage,string soldir, Projects solProjects)
+        public static async Task<List<ProjectInfo>> GenerateProjectInfo(this AsyncPackage asyncPackage,string solutionDirectory, Projects solProjects)
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(asyncPackage.DisposalToken);
             List<ProjectInfo> projectInfos = new List<ProjectInfo>();
+
             foreach (Project item in solProjects)
             {
-                bool hasProjectFile = false;
-                string projectfilelocation = $@"{soldir}\{item.UniqueName}";
-                if (System.IO.File.Exists(projectfilelocation))
+                var projectInfoItem = new ProjectInfo();
+                var SolutionDirectoryItemNameLocation = $@"{solutionDirectory}\{item.UniqueName}";
+                
+                if (System.IO.File.Exists(SolutionDirectoryItemNameLocation))
                 {
-                    hasProjectFile = true;  
+                    projectInfoItem.SolutionDirectoryItemNameLocationExists = true;
+                    projectInfoItem.SolutionDirectoryItemNameLocation = SolutionDirectoryItemNameLocation;
+                    projectInfoItem.SolutionDirectoryItemNameDirectory = System.IO.Path.GetDirectoryName(SolutionDirectoryItemNameLocation);
                 }
                 
-                var isProject = (item.Object is VSProject);
-                if (isProject == false)
+                var IsVSProjectType = (item.Object is VSProject);
+
+                projectInfoItem.IsVSProjectType = IsVSProjectType;
+                projectInfoItem.Name = item.Name;
+                projectInfoItem.UniqueName = item.UniqueName;
+
+                if (IsVSProjectType == false)
                 {
-                    bool sdkcheck = false;
-                    if (hasProjectFile)
+                    if (projectInfoItem.SolutionDirectoryItemNameLocationExists)
                     {
-                        string fileContents = File.ReadAllText(projectfilelocation);
+                        string fileContents = File.ReadAllText(projectInfoItem.SolutionDirectoryItemNameLocation);
                         XDocument doc = XDocument.Parse(fileContents);
                         if (doc.Root.Attribute("Sdk") != null)
                         {
-                            sdkcheck = true;
+                            projectInfoItem.IsSdkStyle = true;
+                            projectInfoItem.SolutionDirectoryItemNameLocation = SolutionDirectoryItemNameLocation;
                         }
                         else
                         {
-                            sdkcheck = false;
+                            projectInfoItem.IsSdkStyle = false;
                         }
                     }
 
-                    projectInfos.Add(new ProjectInfo() { Name = item.Name, UniqueName = item.UniqueName, IsVSProjectType = false,IsSdkStyle = sdkcheck, HasProjectFile= hasProjectFile });
-
+                    projectInfos.Add(projectInfoItem);
                 }
                 else
                 {
-                    var ProjectInfoItem = new ProjectInfo()
-                    {
-                        Name = item.Name,
-                        UniqueName = item.UniqueName,
-                        File = item.FullName,
-                        FullProjectFileName = await GetProjectItemAsync(item, "FullProjectFileName", asyncPackage),
-                        TargetFrameworks = await GetProjectItemAsync(item, "TargetFrameworks", asyncPackage),
-                        FriendlyTargetFramework = await GetProjectItemAsync(item, "FriendlyTargetFramework", asyncPackage),
-                        FullPath = await GetProjectItemAsync(item, "FullPath", asyncPackage),
-                        IsVSProjectType = true,
-                        HasProjectFile = hasProjectFile
-                    };
+                    projectInfoItem.VSProjectLocation = item.FullName;
+                    projectInfoItem.VSProjectPath = System.IO.Path.GetDirectoryName(projectInfoItem.VSProjectLocation);
+                    projectInfoItem.VSProjectPropertyLocation = await GetProjectItemAsync(item, "FullProjectFileName", asyncPackage);
+                    projectInfoItem.VSProjectPropertyTargetFrameworks = await GetProjectItemAsync(item, "TargetFrameworks", asyncPackage);
+                    projectInfoItem.VSProjectPropertyFriendlyTargetFramework = await GetProjectItemAsync(item, "FriendlyTargetFramework", asyncPackage);
+                    projectInfoItem.VSProjectPropertyPath = await GetProjectItemAsync(item, "FullPath", asyncPackage);
 
-                    if (ProjectInfoItem.File != String.Empty)
+                    if (projectInfoItem.VSProjectLocation != String.Empty)
                     {
-                        string fileContents = File.ReadAllText(ProjectInfoItem.File);
+                        string fileContents = File.ReadAllText(projectInfoItem.VSProjectLocation);
                         XDocument doc = XDocument.Parse(fileContents);
                         if (doc.Root.Attribute("Sdk") != null)
                         {
-                            ProjectInfoItem.IsSdkStyle = true;
+                            projectInfoItem.IsSdkStyle = true;
                         }
                         else
                         {
-                            ProjectInfoItem.IsSdkStyle = false;
+                            projectInfoItem.IsSdkStyle = false;
                         }
                     }
 
-                    if (ProjectInfoItem.TargetFrameworks != String.Empty)
+                    if (projectInfoItem.VSProjectPropertyTargetFrameworks != String.Empty)
                     {
-                        ProjectInfoItem.TargetFrameworksList.AddRange(ProjectInfoItem.TargetFrameworks.Split(';'));
+                        projectInfoItem.VSProjectPropertyTargetFrameworksList.AddRange(projectInfoItem.VSProjectPropertyTargetFrameworks.Split(';'));
                     }
 
-                    if (ProjectInfoItem.TargetFrameworksList.Count == 0)
+                    if (projectInfoItem.VSProjectPropertyTargetFrameworksList.Count == 0)
                     {
-                        ProjectInfoItem.TargetFrameworksList.Add(ProjectInfoItem.FriendlyTargetFramework.Trim(';'));
+                        projectInfoItem.VSProjectPropertyTargetFrameworksList.Add(projectInfoItem.VSProjectPropertyFriendlyTargetFramework.Trim(';'));
                     }
 
-                    projectInfos.Add(ProjectInfoItem);
+                    projectInfos.Add(projectInfoItem);
 
                     for (int i = 0; i < projectInfos.Count; i++)
                     {
-                        projectInfos[i].TargetFrameworksList = projectInfos[i].TargetFrameworksList.Where(e => e != "").ToList();
+                        projectInfos[i].VSProjectPropertyTargetFrameworksList = projectInfos[i].VSProjectPropertyTargetFrameworksList.Where(e => e != "").ToList();
                     }
                 }
             }

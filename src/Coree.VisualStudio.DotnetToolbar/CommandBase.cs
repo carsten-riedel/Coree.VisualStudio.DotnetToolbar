@@ -135,7 +135,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             CommandDotnetNugetPush.Instance.MenuItem.Enabled = false;
             CommandDotnetClean.Instance.MenuItem.Enabled = false;
             CommandSettings.Instance.MenuItem.Enabled = false;
-            //CommandDeleteBinObj.Instance.MenuItem.Enabled = false;
+            CommandDeleteBinObj.Instance.MenuItem.Enabled = false;
 
             await StartDotNetProcessAsync();
 
@@ -145,7 +145,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             CommandDotnetNugetPush.Instance.MenuItem.Enabled = true;
             CommandDotnetClean.Instance.MenuItem.Enabled = true;
             CommandSettings.Instance.MenuItem.Enabled = true;
-            //CommandDeleteBinObj.Instance.MenuItem.Enabled = true;
+            CommandDeleteBinObj.Instance.MenuItem.Enabled = true;
 
             
         }

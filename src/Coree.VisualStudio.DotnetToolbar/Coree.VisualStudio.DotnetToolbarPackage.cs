@@ -173,7 +173,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             EnableMenuItemIfInstanceNotNull(CommandDotnetPublish.Instance);
             EnableMenuItemIfInstanceNotNull(CommandDotnetNugetPush.Instance);
             EnableMenuItemIfInstanceNotNull(CommandDotnetClean.Instance);
-            //EnableMenuItemIfInstanceNotNull(CommandDeleteBinObj.Instance);
+            EnableMenuItemIfInstanceNotNull(CommandDeleteBinObj.Instance);
         }
 
         private static string GetSolutionGuid(string filePath)
