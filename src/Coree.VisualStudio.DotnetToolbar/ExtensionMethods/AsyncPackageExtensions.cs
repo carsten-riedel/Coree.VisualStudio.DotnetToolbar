@@ -1,6 +1,7 @@
 ﻿using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.VCProjectEngine;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,6 +9,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using VSLangProj;
+using static Coree.VisualStudio.DotnetToolbar.AsyncPackageExtensions;
 
 namespace Coree.VisualStudio.DotnetToolbar
 {
@@ -68,13 +71,18 @@ namespace Coree.VisualStudio.DotnetToolbar
 
         public class ProjectInfo
         {
+            public string Name { get; set; } = String.Empty;
+            public string UniqueName { get; set; } = String.Empty;
             public string FullProjectFileName { get; set; } = String.Empty;
             public string FullPath { get; set; } = String.Empty;
             public string TargetFrameworks { get; set; } = String.Empty;
             public List<string> TargetFrameworksList { get; set; } = new List<string>();
             public string FriendlyTargetFramework { get; set; } = String.Empty;
-            public bool IsSdkStyle { get; set; } = false;
+            
             public string File { get; set; } = String.Empty;
+            public bool IsVSProjectType { get; set; } = false;
+            public bool HasProjectFile { get; set; } = false;
+            public bool IsSdkStyle { get; set; } = false;
         }
 
         [Obsolete]
@@ -110,13 +118,141 @@ namespace Coree.VisualStudio.DotnetToolbar
 
                 foreach (Project item in solProjects)
                 {
+                    try
+                    {
+                        var fullname = item.FullName;
+
+                        var ProjectInfoItem = new ProjectInfo()
+                        {
+                            File = item.FullName,
+                            FullProjectFileName = await GetProjectItemAsync(item, "FullProjectFileName", asyncPackage),
+                            TargetFrameworks = await GetProjectItemAsync(item, "TargetFrameworks", asyncPackage),
+                            FriendlyTargetFramework = await GetProjectItemAsync(item, "FriendlyTargetFramework", asyncPackage),
+                            FullPath = await GetProjectItemAsync(item, "FullPath", asyncPackage)
+                        };
+
+                        if (ProjectInfoItem.File != String.Empty)
+                        {
+                            string fileContents = File.ReadAllText(ProjectInfoItem.File);
+                            XDocument doc = XDocument.Parse(fileContents);
+                            if (doc.Root.Attribute("Sdk") != null)
+                            {
+                                ProjectInfoItem.IsSdkStyle = true;
+                            }
+                            else
+                            {
+                                ProjectInfoItem.IsSdkStyle = false;
+                            }
+                        }
+
+                        if (ProjectInfoItem.TargetFrameworks != String.Empty)
+                        {
+                            ProjectInfoItem.TargetFrameworksList.AddRange(ProjectInfoItem.TargetFrameworks.Split(';'));
+                        }
+
+                        if (ProjectInfoItem.TargetFrameworksList.Count == 0)
+                        {
+                            ProjectInfoItem.TargetFrameworksList.Add(ProjectInfoItem.FriendlyTargetFramework.Trim(';'));
+                        }
+
+                        projectInfos.Add(ProjectInfoItem);
+
+                        for (int i = 0; i < projectInfos.Count; i++)
+                        {
+                            projectInfos[i].TargetFrameworksList = projectInfos[i].TargetFrameworksList.Where(e => e != "").ToList();
+                        }
+
+                        projectInfos = projectInfos.Where(e => e.File != String.Empty).ToList();
+
+                        if (item.Properties != null)
+                        {
+                            foreach (Property items in item.Properties)
+                            {
+                                try
+                                {
+                                    Debug.WriteLine($@"{items.Name},{items.Value}");
+                                }
+                                catch (Exception)
+                                {
+                                    Debug.WriteLine($@"{items.Name}");
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+                    }
+                }
+
+                return projectInfos;
+            }
+
+            return projectInfos;
+        }
+
+        public static async Task<List<ProjectInfo>> GetProjectInfosNewAsync(this AsyncPackage asyncPackage)
+        {
+            List<ProjectInfo> projectInfos = new List<ProjectInfo>();
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(asyncPackage.DisposalToken);
+            var dte2 = await asyncPackage.GetServiceAsync(typeof(DTE)).ConfigureAwait(false) as DTE2;
+
+            if (dte2 != null)
+            {
+                _Solution test = (_Solution)dte2.Solution;
+                var soldir = System.IO.Path.GetDirectoryName(test.FullName);
+                return await asyncPackage.GetxAsync(soldir,dte2.Solution.Projects);
+            }
+
+            return projectInfos;
+        }
+
+        public static async Task<List<ProjectInfo>> GetxAsync(this AsyncPackage asyncPackage,string soldir, Projects solProjects)
+        {
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(asyncPackage.DisposalToken);
+            List<ProjectInfo> projectInfos = new List<ProjectInfo>();
+            foreach (Project item in solProjects)
+            {
+                bool hasProjectFile = false;
+                string projectfilelocation = $@"{soldir}\{item.UniqueName}";
+                if (System.IO.File.Exists(projectfilelocation))
+                {
+                    hasProjectFile = true;  
+                }
+                
+                var isProject = (item.Object is VSProject);
+                if (isProject == false)
+                {
+                    bool sdkcheck = false;
+                    if (hasProjectFile)
+                    {
+                        string fileContents = File.ReadAllText(projectfilelocation);
+                        XDocument doc = XDocument.Parse(fileContents);
+                        if (doc.Root.Attribute("Sdk") != null)
+                        {
+                            sdkcheck = true;
+                        }
+                        else
+                        {
+                            sdkcheck = false;
+                        }
+                    }
+
+                    projectInfos.Add(new ProjectInfo() { Name = item.Name, UniqueName = item.UniqueName, IsVSProjectType = false,IsSdkStyle = sdkcheck, HasProjectFile= hasProjectFile });
+
+                }
+                else
+                {
                     var ProjectInfoItem = new ProjectInfo()
                     {
+                        Name = item.Name,
+                        UniqueName = item.UniqueName,
                         File = item.FullName,
                         FullProjectFileName = await GetProjectItemAsync(item, "FullProjectFileName", asyncPackage),
                         TargetFrameworks = await GetProjectItemAsync(item, "TargetFrameworks", asyncPackage),
                         FriendlyTargetFramework = await GetProjectItemAsync(item, "FriendlyTargetFramework", asyncPackage),
-                        FullPath = await GetProjectItemAsync(item, "FullPath", asyncPackage)
+                        FullPath = await GetProjectItemAsync(item, "FullPath", asyncPackage),
+                        IsVSProjectType = true,
+                        HasProjectFile = hasProjectFile
                     };
 
                     if (ProjectInfoItem.File != String.Empty)
@@ -149,26 +285,7 @@ namespace Coree.VisualStudio.DotnetToolbar
                     {
                         projectInfos[i].TargetFrameworksList = projectInfos[i].TargetFrameworksList.Where(e => e != "").ToList();
                     }
-
-                    projectInfos = projectInfos.Where(e => e.File != String.Empty).ToList();
-
-                    if (item.Properties != null)
-                    {
-                        foreach (Property items in item.Properties)
-                        {
-                            try
-                            {
-                                Debug.WriteLine($@"{items.Name},{items.Value}");
-                            }
-                            catch (Exception)
-                            {
-                                Debug.WriteLine($@"{items.Name}");
-                            }
-                        }
-                    }
                 }
-
-                return projectInfos;
             }
 
             return projectInfos;

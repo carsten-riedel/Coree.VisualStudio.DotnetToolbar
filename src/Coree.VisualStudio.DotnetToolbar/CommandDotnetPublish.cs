@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
 using Coree.VisualStudio.DotnetToolbar.ExtensionMethods;
+using System.Linq;
 
 namespace Coree.VisualStudio.DotnetToolbar
 {
@@ -105,8 +106,13 @@ namespace Coree.VisualStudio.DotnetToolbar
             await WindowActivateAsync(EnvDTE.Constants.vsWindowKindOutput);
 
             var activeConfiguration = await GetActiveSolutionConfigurationAsync();
+            if (activeConfiguration == null)
+            {
+                await PaneWriteLineAsync("Can't not determinate a active solution configuration.");
+                return;
+            }
 
-            var projectInfos = await GetProjectInfosAsync();
+
             string slnfile = await GetSolutionFileNameAsync();
             string slndir = System.IO.Path.GetDirectoryName(slnfile);
 
@@ -116,6 +122,8 @@ namespace Coree.VisualStudio.DotnetToolbar
             {
                 (new System.Diagnostics.Process()).AllDontNetKill("dotnet");
             }
+
+            var projectInfos = (await GetProjectInfosAsync()).Where(e => e.HasProjectFile == true).ToList();
 
             if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.BlockNonSdkExecute)
             {
@@ -138,7 +146,9 @@ namespace Coree.VisualStudio.DotnetToolbar
             }
 
 
+
             bool done = false;
+
             if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPublish.PublishSolutionProject)
             {
                 done = true;
@@ -149,11 +159,14 @@ namespace Coree.VisualStudio.DotnetToolbar
             {
                 foreach (var projectInfo in projectInfos)
                 {
-                    foreach (var targetFramework in projectInfo.TargetFrameworksList)
+                    if (projectInfo.IsSdkStyle == true)
                     {
-                        done = true;
-                        await ExecuteProcessAsync("dotnet.exe", $@"--version", $@"{slndir}");
-                        await ExecuteProcessAsync("dotnet.exe", $@"publish ""{projectInfo.FullProjectFileName}"" --configuration {activeConfiguration.Configuration} --framework {targetFramework} {CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPublish.AdditionalCommandlineArguments}", $@"{projectInfo.FullPath}");
+                        foreach (var targetFramework in projectInfo.TargetFrameworksList)
+                        {
+                            done = true;
+                            await ExecuteProcessAsync("dotnet.exe", $@"--version", $@"{slndir}");
+                            await ExecuteProcessAsync("dotnet.exe", $@"publish ""{projectInfo.FullProjectFileName}"" --configuration {activeConfiguration.Configuration} --framework {targetFramework} {CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPublish.AdditionalCommandlineArguments}", $@"{projectInfo.FullPath}");
+                        }
                     }
                 }
             }

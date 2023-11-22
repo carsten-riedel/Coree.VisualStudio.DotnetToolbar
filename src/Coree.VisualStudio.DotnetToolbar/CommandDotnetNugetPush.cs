@@ -7,6 +7,7 @@ using System.ComponentModel.Design;
 using System.IO;
 using System.Windows.Controls;
 using Coree.VisualStudio.DotnetToolbar.ExtensionMethods;
+using System.Linq;
 
 namespace Coree.VisualStudio.DotnetToolbar
 {
@@ -139,7 +140,7 @@ namespace Coree.VisualStudio.DotnetToolbar
 
             if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.BlockNonSdkExecute)
             {
-                var projectInfos = await GetProjectInfosAsync();
+                var projectInfos = (await GetProjectInfosAsync()).Where(e => e.HasProjectFile == true).ToList();
 
                 bool found = false;
                 foreach (var item in projectInfos)

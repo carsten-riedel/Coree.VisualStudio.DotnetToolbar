@@ -4,6 +4,7 @@ using Microsoft.VisualStudio.Shell;
 using System;
 using System.ComponentModel.Design;
 using Coree.VisualStudio.DotnetToolbar.ExtensionMethods;
+using System.Linq;
 
 namespace Coree.VisualStudio.DotnetToolbar
 {
@@ -104,6 +105,11 @@ namespace Coree.VisualStudio.DotnetToolbar
             await WindowActivateAsync(EnvDTE.Constants.vsWindowKindOutput);
 
             var activeConfiguration = await GetActiveSolutionConfigurationAsync();
+            if (activeConfiguration == null)
+            {
+                await PaneWriteLineAsync("Can't not determinate a active solution configuration.");
+                return;
+            }
 
             string slnfile = await GetSolutionFileNameAsync();
             string slndir = System.IO.Path.GetDirectoryName(slnfile);
@@ -117,7 +123,7 @@ namespace Coree.VisualStudio.DotnetToolbar
 
             if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.BlockNonSdkExecute)
             {
-                var projectInfos = await GetProjectInfosAsync();
+                var projectInfos = (await GetProjectInfosAsync()).Where(e => e.HasProjectFile == true).ToList();
 
                 bool found = false;
                 foreach (var item in projectInfos)

@@ -5,6 +5,7 @@ using System;
 using System.ComponentModel.Design;
 using Task = System.Threading.Tasks.Task;
 using Coree.VisualStudio.DotnetToolbar.ExtensionMethods;
+using System.Linq;
 
 namespace Coree.VisualStudio.DotnetToolbar
 {
@@ -102,7 +103,12 @@ namespace Coree.VisualStudio.DotnetToolbar
 
             await WindowActivateAsync(EnvDTE.Constants.vsWindowKindOutput);
 
-            var activeConfig = await this.GetActiveSolutionConfigurationAsync();
+            var activeConfiguration = await this.GetActiveSolutionConfigurationAsync();
+            if (activeConfiguration == null)
+            {
+                await PaneWriteLineAsync("Can't not determinate a active solution configuration.");
+                return;
+            }
 
             string slnfile = await GetSolutionFileNameAsync();
             string slndir = System.IO.Path.GetDirectoryName(slnfile);
@@ -116,7 +122,7 @@ namespace Coree.VisualStudio.DotnetToolbar
 
             if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.BlockNonSdkExecute)
             {
-                var projectInfos = await GetProjectInfosAsync();
+                var projectInfos = (await GetProjectInfosAsync()).Where(e => e.HasProjectFile == true).ToList();
 
                 bool found = false;
                 foreach (var item in projectInfos)
@@ -138,7 +144,7 @@ namespace Coree.VisualStudio.DotnetToolbar
 
 
             await ExecuteProcessAsync("dotnet.exe", $@"--version", $@"{slndir}");
-            await ExecuteProcessAsync("dotnet.exe", $@"pack ""{slnfile}"" --configuration {activeConfig.Configuration} {CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPack.AdditionalCommandlineArguments}", $@"{slndir}");
+            await ExecuteProcessAsync("dotnet.exe", $@"pack ""{slnfile}"" --configuration {activeConfiguration.Configuration} {CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPack.AdditionalCommandlineArguments}", $@"{slndir}");
 
             await PaneWriteLineAsync("Done");
         }

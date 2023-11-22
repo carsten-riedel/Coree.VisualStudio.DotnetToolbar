@@ -4,6 +4,7 @@ using System;
 using System.ComponentModel.Design;
 using Task = System.Threading.Tasks.Task;
 using Coree.VisualStudio.DotnetToolbar.ExtensionMethods;
+using System.Linq;
 
 namespace Coree.VisualStudio.DotnetToolbar
 {
@@ -104,6 +105,11 @@ namespace Coree.VisualStudio.DotnetToolbar
             await WindowActivateAsync(Constants.vsWindowKindOutput);
 
             var activeConfiguration = await GetActiveSolutionConfigurationAsync();
+            if (activeConfiguration == null)
+            {
+                await PaneWriteLineAsync("Can't not determinate a active solution configuration.");
+                return;
+            }
 
             string slnfile = await GetSolutionFileNameAsync();
             string slndir = System.IO.Path.GetDirectoryName(slnfile);
@@ -117,7 +123,7 @@ namespace Coree.VisualStudio.DotnetToolbar
 
             if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.BlockNonSdkExecute)
             {
-                var projectInfos = await GetProjectInfosAsync();
+                var projectInfos = (await GetProjectInfosAsync()).Where(e => e.HasProjectFile == true).ToList();
 
                 bool found = false;
                 foreach (var item in projectInfos)
@@ -136,7 +142,6 @@ namespace Coree.VisualStudio.DotnetToolbar
                     return;
                 }
             }
-
 
             //dotnet --list-sdks
             //dotnet new globaljson --sdk-version 7.0.0 --roll-forward latestFeature --force

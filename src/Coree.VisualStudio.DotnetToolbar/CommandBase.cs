@@ -62,7 +62,7 @@ namespace Coree.VisualStudio.DotnetToolbar
 
         public async Task<List<ProjectInfo>> GetProjectInfosAsync()
         {
-            return await Package.GetProjectInfosAsync();
+            return await Package.GetProjectInfosNewAsync();
         }
 
         public async Task PaneWriteLineAsync(string message, string paneName = "Build", bool addNewLine = true, bool activateAfter = true, string[] maskOutputs = null)
