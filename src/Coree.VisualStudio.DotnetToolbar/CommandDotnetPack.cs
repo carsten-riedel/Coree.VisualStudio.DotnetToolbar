@@ -5,6 +5,7 @@ using System;
 using System.ComponentModel.Design;
 using Task = System.Threading.Tasks.Task;
 using Coree.VisualStudio.DotnetToolbar.ExtensionMethods;
+using System.Linq;
 
 namespace Coree.VisualStudio.DotnetToolbar
 {
@@ -121,15 +122,15 @@ namespace Coree.VisualStudio.DotnetToolbar
 
             if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.BlockNonSdkExecute)
             {
-                var projectInfos = await GetProjectInfosAsync();
+                var projectInfos = (await GetProjectInfosAsync()).Where(e => e.FoundCsProjFile == true).ToList();
 
                 bool found = false;
                 foreach (var item in projectInfos)
                 {
-                    if (item.UnknownUnloaded)
+                    if (!item.IsVSProject)
                     {
                         await PaneWriteLineAsync("-------------------------------------------------------------------------------");
-                        await PaneWriteLineAsync($"{item.UnknownUnloaded} state could not be determinated. !");
+                        await PaneWriteLineAsync($"{item.IsVSProject} state could not be determinated. !");
                         await PaneWriteLineAsync("-------------------------------------------------------------------------------");
                         found = true;
                     }

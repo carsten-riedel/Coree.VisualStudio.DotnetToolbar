@@ -80,7 +80,8 @@ namespace Coree.VisualStudio.DotnetToolbar
             public string FriendlyTargetFramework { get; set; } = String.Empty;
             public bool IsSdkStyle { get; set; } = false;
             public string File { get; set; } = String.Empty;
-            public bool UnknownUnloaded { get; set; } = true;
+            public bool IsVSProject { get; set; } = false;
+            public bool FoundCsProjFile { get; set; } = false;
         }
 
         [Obsolete]
@@ -196,22 +197,47 @@ namespace Coree.VisualStudio.DotnetToolbar
 
             if (dte2 != null)
             {
-                return await asyncPackage.GetxAsync(dte2.Solution.Projects);
+                _Solution test = (_Solution)dte2.Solution;
+                var soldir = System.IO.Path.GetDirectoryName(test.FullName);
+                return await asyncPackage.GetxAsync(soldir,dte2.Solution.Projects);
             }
 
             return projectInfos;
         }
 
-        public static async Task<List<ProjectInfo>> GetxAsync(this AsyncPackage asyncPackage, Projects solProjects)
+        public static async Task<List<ProjectInfo>> GetxAsync(this AsyncPackage asyncPackage,string soldir, Projects solProjects)
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(asyncPackage.DisposalToken);
             List<ProjectInfo> projectInfos = new List<ProjectInfo>();
             foreach (Project item in solProjects)
             {
+                bool hasProjectFile = false;
+                string projectfilelocation = $@"{soldir}\{item.UniqueName}";
+                if (System.IO.File.Exists(projectfilelocation))
+                {
+                    hasProjectFile = true;  
+                }
+                
                 var isProject = (item.Object is VSProject);
                 if (isProject == false)
                 {
-                    projectInfos.Add(new ProjectInfo() { Name = item.Name, UniqueName = item.UniqueName, UnknownUnloaded = true });
+                    bool sdkcheck = false;
+                    if (hasProjectFile)
+                    {
+                        string fileContents = File.ReadAllText(projectfilelocation);
+                        XDocument doc = XDocument.Parse(fileContents);
+                        if (doc.Root.Attribute("Sdk") != null)
+                        {
+                            sdkcheck = true;
+                        }
+                        else
+                        {
+                            sdkcheck = false;
+                        }
+                    }
+
+                    projectInfos.Add(new ProjectInfo() { Name = item.Name, UniqueName = item.UniqueName, IsVSProject = false,IsSdkStyle = sdkcheck, FoundCsProjFile= hasProjectFile });
+
                 }
                 else
                 {
@@ -224,7 +250,8 @@ namespace Coree.VisualStudio.DotnetToolbar
                         TargetFrameworks = await GetProjectItemAsync(item, "TargetFrameworks", asyncPackage),
                         FriendlyTargetFramework = await GetProjectItemAsync(item, "FriendlyTargetFramework", asyncPackage),
                         FullPath = await GetProjectItemAsync(item, "FullPath", asyncPackage),
-                        UnknownUnloaded = false
+                        IsVSProject = true,
+                        FoundCsProjFile = hasProjectFile
                     };
 
                     if (ProjectInfoItem.File != String.Empty)
