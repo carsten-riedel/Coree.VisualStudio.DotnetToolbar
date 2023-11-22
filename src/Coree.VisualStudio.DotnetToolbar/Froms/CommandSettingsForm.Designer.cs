@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.checkBoxKillDotNet = new System.Windows.Forms.CheckBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -37,9 +37,10 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPageGeneral = new System.Windows.Forms.TabPage();
+            this.checkBoxDisableConfirmDialog = new System.Windows.Forms.CheckBox();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.checkBox3 = new System.Windows.Forms.CheckBox();
-            this.checkBox2 = new System.Windows.Forms.CheckBox();
+            this.checkBoxBlockNonSdk = new System.Windows.Forms.CheckBox();
             this.tabPageBuild = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
@@ -89,16 +90,16 @@
             this.tableLayoutPanel6.SuspendLayout();
             this.SuspendLayout();
             // 
-            // checkBox1
+            // checkBoxKillDotNet
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(9, 8);
-            this.checkBox1.Margin = new System.Windows.Forms.Padding(4);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(276, 21);
-            this.checkBox1.TabIndex = 0;
-            this.checkBox1.Text = "Kill all Dotnet processes before exectution.";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBoxKillDotNet.AutoSize = true;
+            this.checkBoxKillDotNet.Location = new System.Drawing.Point(9, 8);
+            this.checkBoxKillDotNet.Margin = new System.Windows.Forms.Padding(4);
+            this.checkBoxKillDotNet.Name = "checkBoxKillDotNet";
+            this.checkBoxKillDotNet.Size = new System.Drawing.Size(276, 21);
+            this.checkBoxKillDotNet.TabIndex = 0;
+            this.checkBoxKillDotNet.Text = "Kill all Dotnet processes before exectution.";
+            this.checkBoxKillDotNet.UseVisualStyleBackColor = true;
             // 
             // statusStrip1
             // 
@@ -173,10 +174,11 @@
             // 
             // tabPageGeneral
             // 
+            this.tabPageGeneral.Controls.Add(this.checkBoxDisableConfirmDialog);
             this.tabPageGeneral.Controls.Add(this.comboBox1);
             this.tabPageGeneral.Controls.Add(this.checkBox3);
-            this.tabPageGeneral.Controls.Add(this.checkBox2);
-            this.tabPageGeneral.Controls.Add(this.checkBox1);
+            this.tabPageGeneral.Controls.Add(this.checkBoxBlockNonSdk);
+            this.tabPageGeneral.Controls.Add(this.checkBoxKillDotNet);
             this.tabPageGeneral.Location = new System.Drawing.Point(4, 26);
             this.tabPageGeneral.Margin = new System.Windows.Forms.Padding(4);
             this.tabPageGeneral.Name = "tabPageGeneral";
@@ -185,6 +187,17 @@
             this.tabPageGeneral.TabIndex = 0;
             this.tabPageGeneral.Text = "General";
             this.tabPageGeneral.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxDisableConfirmDialog
+            // 
+            this.checkBoxDisableConfirmDialog.AutoSize = true;
+            this.checkBoxDisableConfirmDialog.Location = new System.Drawing.Point(9, 96);
+            this.checkBoxDisableConfirmDialog.Margin = new System.Windows.Forms.Padding(4);
+            this.checkBoxDisableConfirmDialog.Name = "checkBoxDisableConfirmDialog";
+            this.checkBoxDisableConfirmDialog.Size = new System.Drawing.Size(388, 21);
+            this.checkBoxDisableConfirmDialog.TabIndex = 5;
+            this.checkBoxDisableConfirmDialog.Text = "Disable warning and confirmation prompts for folder deletion";
+            this.checkBoxDisableConfirmDialog.UseVisualStyleBackColor = true;
             // 
             // comboBox1
             // 
@@ -208,16 +221,16 @@
             this.checkBox3.Text = "Write dotnet global.json to solution directory if not exists";
             this.checkBox3.UseVisualStyleBackColor = true;
             // 
-            // checkBox2
+            // checkBoxBlockNonSdk
             // 
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.Location = new System.Drawing.Point(9, 38);
-            this.checkBox2.Margin = new System.Windows.Forms.Padding(4);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(273, 21);
-            this.checkBox2.TabIndex = 1;
-            this.checkBox2.Text = "Block executing on non SDK style projects.";
-            this.checkBox2.UseVisualStyleBackColor = true;
+            this.checkBoxBlockNonSdk.AutoSize = true;
+            this.checkBoxBlockNonSdk.Location = new System.Drawing.Point(9, 38);
+            this.checkBoxBlockNonSdk.Margin = new System.Windows.Forms.Padding(4);
+            this.checkBoxBlockNonSdk.Name = "checkBoxBlockNonSdk";
+            this.checkBoxBlockNonSdk.Size = new System.Drawing.Size(273, 21);
+            this.checkBoxBlockNonSdk.TabIndex = 1;
+            this.checkBoxBlockNonSdk.Text = "Block executing on non SDK style projects.";
+            this.checkBoxBlockNonSdk.UseVisualStyleBackColor = true;
             // 
             // tabPageBuild
             // 
@@ -682,13 +695,13 @@
 
         #endregion
 
-        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.CheckBox checkBoxKillDotNet;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPageGeneral;
-        private System.Windows.Forms.CheckBox checkBox2;
+        private System.Windows.Forms.CheckBox checkBoxBlockNonSdk;
         private System.Windows.Forms.TabPage tabPagePublish;
         private System.Windows.Forms.RadioButton radioButton2;
         private System.Windows.Forms.RadioButton radioButton1;
@@ -725,5 +738,6 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel6;
         private System.Windows.Forms.CheckBox checkBox3;
         private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.CheckBox checkBoxDisableConfirmDialog;
     }
 }

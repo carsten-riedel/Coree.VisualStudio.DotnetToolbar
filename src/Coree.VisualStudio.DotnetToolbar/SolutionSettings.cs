@@ -8,6 +8,7 @@
         public SolutionSettingsNugetPush SolutionSettingsNugetPush { get; set; } = new SolutionSettingsNugetPush();
         public SolutionSettingsPublish SolutionSettingsPublish { get; set; } = new SolutionSettingsPublish();
         public SolutionSettingsClean SolutionSettingsClean { get; set; } = new SolutionSettingsClean();
+        public SolutionSettingsConfirmDialog SolutionSettingsConfirmDialog { get; set; } = new SolutionSettingsConfirmDialog();
     }
 
     public class SolutionSettingsGeneral
@@ -45,5 +46,10 @@
     public class SolutionSettingsClean
     {
         public string AdditionalCommandlineArguments { get; set; } = "--nologo --verbosity:n";
+    }
+
+    public class SolutionSettingsConfirmDialog
+    {
+        public bool DisableConfirmDialog { get; set; } = false;
     }
 }

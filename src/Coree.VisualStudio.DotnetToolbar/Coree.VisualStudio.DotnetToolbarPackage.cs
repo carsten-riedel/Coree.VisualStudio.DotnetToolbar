@@ -128,7 +128,8 @@ namespace Coree.VisualStudio.DotnetToolbar
         {
             await this.JoinableTaskFactory.SwitchToMainThreadAsync();
 
-            await this.PaneClearAsync("DotnetToolbar");
+            await this.PaneClearAsync($@"DotnetToolbar");
+            await this.PaneWriteLineAsync($@"DotnetToolbar {await this.GetVsixVersionAsync()}", "DotnetToolbar");
             await this.PaneWriteLineAsync("Solution is now open.", "DotnetToolbar");
             await this.PaneWriteLineAsync("Notice! Setting files in 0.x.x are work-in-progress and subject of changes and may reset to defaults.", "DotnetToolbar");
 
@@ -143,15 +144,24 @@ namespace Coree.VisualStudio.DotnetToolbar
             {
                 SolutionGuid = $"{(string)solinfo.Globals["SolutionGuid"]}";
             }
+  
+            var obsoleteAssemblyLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            var obsoleteExtensionDirectory = System.IO.Path.GetDirectoryName(obsoleteAssemblyLocation);
+            var obsoleteExtensionsRootDirectory = System.IO.Path.GetDirectoryName(obsoleteExtensionDirectory);
 
-            var assemblyLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
-            ExtensionDirectory = System.IO.Path.GetDirectoryName(assemblyLocation);
-            ExtensionsRootDirectory = System.IO.Path.GetDirectoryName(ExtensionDirectory);
+            var thisName = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
+            var ExtensionDirectory = System.IO.Path.Combine(this.UserLocalDataPath, "VSIXSettings" , thisName);
+            if (!System.IO.Directory.Exists(ExtensionDirectory))
+            {
+                System.IO.Directory.CreateDirectory(ExtensionDirectory);
+            }
 
             SettingsFileName = $@"{ExtensionDirectory}\{solutionProperties["Name"]}_{SolutionGuid}.json";
 
-            //
-            await this.PaneWriteLineAsync($@"You can locate all settings in the *.json *.json.backup files inside the ""{ExtensionDirectory}"" directory.", "DotnetToolbar");
+            await this.PaneWriteLineAsync($@"", "DotnetToolbar");
+            await this.PaneWriteLineAsync($@"Migration Notice: Your previous settings are backed up in the *.json and *.json.backup files located in the ""{obsoleteExtensionsRootDirectory}"" directory. Please review them if necessary.", "DotnetToolbar");
+            await this.PaneWriteLineAsync($@"All current settings are now stored in the *.json and *.json.backup files within the ""{ExtensionDirectory}"" directory. Refer to these for your latest configurations.", "DotnetToolbar");
+
 
             bool Created = JsonHelper.CreateDefault<SolutionSettings>(SettingsFileName);
             /*
@@ -173,7 +183,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             EnableMenuItemIfInstanceNotNull(CommandDotnetPublish.Instance);
             EnableMenuItemIfInstanceNotNull(CommandDotnetNugetPush.Instance);
             EnableMenuItemIfInstanceNotNull(CommandDotnetClean.Instance);
-            //EnableMenuItemIfInstanceNotNull(CommandDeleteBinObj.Instance);
+            EnableMenuItemIfInstanceNotNull(CommandDeleteBinObj.Instance);
         }
 
         private static string GetSolutionGuid(string filePath)

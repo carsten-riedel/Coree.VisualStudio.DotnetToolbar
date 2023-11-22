@@ -140,7 +140,7 @@ namespace Coree.VisualStudio.DotnetToolbar
 
             if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.BlockNonSdkExecute)
             {
-                var projectInfos = (await GetProjectInfosAsync()).Where(e => e.HasProjectFile == true).ToList();
+                var projectInfos = (await GetProjectInfosAsync()).Where(e => e.SolutionDirectoryItemNameLocationExists == true).ToList();
 
                 bool found = false;
                 foreach (var item in projectInfos)
@@ -148,7 +148,7 @@ namespace Coree.VisualStudio.DotnetToolbar
                     if (item.IsSdkStyle == false)
                     {
                         await PaneWriteLineAsync("-------------------------------------------------------------------------------");
-                        await PaneWriteLineAsync($"Non SDK style project file {item.File} !");
+                        await PaneWriteLineAsync($"Non SDK style project file {item.VSProjectLocation} !");
                         await PaneWriteLineAsync("-------------------------------------------------------------------------------");
                         found = true;
                     }

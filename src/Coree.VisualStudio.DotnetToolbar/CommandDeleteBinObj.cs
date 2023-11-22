@@ -1,7 +1,11 @@
-﻿using Microsoft.VisualStudio.Shell;
+﻿using Coree.VisualStudio.DotnetToolbar.Froms;
+using Microsoft.VisualStudio.Shell;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Design;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 
 namespace Coree.VisualStudio.DotnetToolbar
 {
@@ -34,7 +38,6 @@ namespace Coree.VisualStudio.DotnetToolbar
 
             MenuItem = new MenuCommand(Execute, menuCommandID);
             MenuItem.Enabled = false;
-
             commandService.AddCommand(MenuItem);
         }
 
@@ -66,54 +69,101 @@ namespace Coree.VisualStudio.DotnetToolbar
             _ = this.Package.JoinableTaskFactory.RunAsync(async delegate { await ExecuteAsync(sender, e); });
         }
 
-        /// <summary>
-        /// This function is the callback used to execute the command when the menu item is clicked.
-        /// See the constructor to see how the menu item is associated with this function using
-        /// OleMenuCommandService service and MenuCommand class.
-        /// </summary>
-        /// <param name="sender">Event sender.</param>
-        /// <param name="e">Event args.</param>
-        /*
-        internal override async System.Threading.Tasks.Task ExecuteAsync(object sender, EventArgs e)
-        {
-            CommandDotnetBuild.Instance.MenuItem.Enabled = false;
-            CommandDotnetPack.Instance.MenuItem.Enabled = false;
-            CommandDotnetPublish.Instance.MenuItem.Enabled = false;
-            CommandDotnetNugetPush.Instance.MenuItem.Enabled = false;
-            CommandDotnetClean.Instance.MenuItem.Enabled = false;
-            CommandSettings.Instance.MenuItem.Enabled = false;
-            CommandDeleteBinObj.Instance.MenuItem.Enabled = false;
-
-            await StartDotNetProcessAsync();
-
-            CommandDotnetBuild.Instance.MenuItem.Enabled = true;
-            CommandDotnetPack.Instance.MenuItem.Enabled = true;
-            CommandDotnetPublish.Instance.MenuItem.Enabled = true;
-            CommandDotnetNugetPush.Instance.MenuItem.Enabled = true;
-            CommandDotnetClean.Instance.MenuItem.Enabled = true;
-            CommandSettings.Instance.MenuItem.Enabled = true;
-            CommandDeleteBinObj.Instance.MenuItem.Enabled = true;
-        }
-        */
-
         internal override async System.Threading.Tasks.Task StartDotNetProcessAsync()
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(Package.DisposalToken);
 
-            if (this.MenuItem.Enabled == false)
+            await PaneClearAsync();
+
+            var VSProjects = (await GetProjectInfosAsync()).Where(e => e.IsVSProjectType == true).ToList();
+
+            if (!CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsConfirmDialog.DisableConfirmDialog)
             {
-                return;
+                List<string> folderPaths = new List<string>();
+
+                foreach (var item in VSProjects)
+                {
+                    string binFolderPath = System.IO.Path.Combine(item.VSProjectPath.Replace(item.SolutionDirectory, "").TrimStart('\\'), "bin");
+                    string objFolderPath = System.IO.Path.Combine(item.VSProjectPath.Replace(item.SolutionDirectory, "").TrimStart('\\'), "obj");
+                    folderPaths.Add(binFolderPath);
+                    folderPaths.Add(objFolderPath);
+                }
+
+                ConfirmDelete confirmDeleteDialog = new ConfirmDelete(folderPaths);
+                confirmDeleteDialog.ShowDialog();
+
+                if (confirmDeleteDialog.FormDialogResult == ConfirmDelete.DialogResultEnum.Close || confirmDeleteDialog.FormDialogResult == ConfirmDelete.DialogResultEnum.Abort)
+                {
+                    await PaneWriteLineAsync($@"Delete confirmation aborted.");
+                    return;
+                }
             }
 
-            await PaneWriteLineAsync("Not implemented.");
+            foreach (var item in VSProjects)
+            {
+                var binfolder = new System.IO.DirectoryInfo($@"{System.IO.Path.Combine(item.VSProjectPath, "bin")}");
+                var objfolder = new System.IO.DirectoryInfo($@"{System.IO.Path.Combine(item.VSProjectPath, "obj")}");
 
-            return;
+                if (binfolder.Exists)
+                {
+                    var files = System.IO.Directory.GetFiles(binfolder.FullName, "*", System.IO.SearchOption.AllDirectories);
+                    foreach (var file in files)
+                    {
+                        try
+                        {
+                            System.IO.File.Delete(file);
+                            await PaneWriteLineAsync($@"Deleted file: {file}.");
+                        }
+                        catch (Exception)
+                        {
+                            await PaneWriteLineAsync($@"Could not delete file: {file}.");
+                        }
+                    }
+
+                    try
+                    {
+                        System.IO.Directory.Delete(binfolder.FullName, true);
+                        await PaneWriteLineAsync($@"Deleted directory: {binfolder.FullName}.");
+                    }
+                    catch (Exception)
+                    {
+                        await PaneWriteLineAsync($@"Could not delete directory: {binfolder.FullName}.");
+                    }
+                }
+
+                if (objfolder.Exists)
+                {
+                    var files = System.IO.Directory.GetFiles(objfolder.FullName, "*", System.IO.SearchOption.AllDirectories);
+                    foreach (var file in files)
+                    {
+                        try
+                        {
+                            System.IO.File.Delete(file);
+                            await PaneWriteLineAsync($@"Deleted file: {file}.");
+                        }
+                        catch (Exception)
+                        {
+                            await PaneWriteLineAsync($@"Could not delete file: {file}.");
+                        }
+                    }
+
+                    try
+                    {
+                        System.IO.Directory.Delete(objfolder.FullName, true);
+                        await PaneWriteLineAsync($@"Deleted directory: {objfolder.FullName}.");
+                    }
+                    catch (Exception)
+                    {
+                        await PaneWriteLineAsync($@"Could not delete directory: {objfolder.FullName}.");
+                    }
+                }
+            }
+
             string slnfile = await GetSolutionFileNameAsync();
             string slndir = System.IO.Path.GetDirectoryName(slnfile);
-
-
-            var path = CoreeVisualStudioDotnetToolbarPackage.Instance.ExtensionDirectory;
-            await ExecuteProcessAsync("cmd", $@"/C powershell -ExecutionPolicy ByPass -file ""{path + System.IO.Path.DirectorySeparatorChar}PowershellScripts\deletebinobj.ps1"" -SolutionDirectory ""{slndir}"" ", String.Empty);
+            
+            await ExecuteProcessAsync("dotnet.exe", $@"--version", $@"{slndir}");
+            await ExecuteProcessAsync("dotnet.exe", $@"restore ""{slnfile}""", $@"{slndir}");
             await PaneWriteLineAsync("Done");
         }
     }

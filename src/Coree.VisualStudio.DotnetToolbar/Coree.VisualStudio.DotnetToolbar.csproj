@@ -60,7 +60,16 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Froms\ReadOnlyListBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ExtensionMethods\ListViewExtensions.cs" />
+    <Compile Include="Froms\ConfirmDelete.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Froms\ConfirmDelete.Designer.cs">
+      <DependentUpon>ConfirmDelete.cs</DependentUpon>
+    </Compile>
     <Compile Include="SemVerPharser.cs" />
     <Compile Include="CommandDeleteBinObj.cs" />
     <Compile Include="CommandSettings.cs" />
@@ -139,13 +148,13 @@
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Resources\CommandBar.png" />
-    <Content Include="PowershellScripts\deletebinobj.ps1">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Froms\CommandSettingsForm.resx">
       <DependentUpon>CommandSettingsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Froms\ConfirmDelete.resx">
+      <DependentUpon>ConfirmDelete.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Froms\NugetPushDialog.resx">
       <DependentUpon>NugetPushDialog.cs</DependentUpon>

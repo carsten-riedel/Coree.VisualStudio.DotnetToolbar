@@ -3,7 +3,12 @@ using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
 using System;
+using System.IO;
+using System.IO.Packaging;
+using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.Linq;
 
 namespace Coree.VisualStudio.DotnetToolbar
@@ -123,6 +128,25 @@ namespace Coree.VisualStudio.DotnetToolbar
                 }
             }
             return;
+        }
+
+        public static async Task<string> GetVsixVersionAsync(this AsyncPackage package)
+        {
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
+            var asm = Assembly.GetExecutingAssembly();
+            var asmDir = Path.GetDirectoryName(asm.Location);
+            var manifestPath = Path.Combine(asmDir, "extension.vsixmanifest");
+            var version = "?";
+            if (File.Exists(manifestPath))
+            {
+                var doc = new XmlDocument();
+                doc.Load(manifestPath);
+                var metaData = doc.DocumentElement.ChildNodes.Cast<XmlElement>().First(x => x.Name == "Metadata");
+                var identity = metaData.ChildNodes.Cast<XmlElement>().First(x => x.Name == "Identity");
+                version = identity.GetAttribute("Version");
+
+            }
+            return version;
         }
     }
 }

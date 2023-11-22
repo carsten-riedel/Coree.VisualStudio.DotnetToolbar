@@ -9,10 +9,11 @@ namespace Coree.VisualStudio.DotnetToolbar
         public CommandSettingsForm()
         {
             InitializeComponent();
-            checkBox1.Checked = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.KillAllDotnetProcessBeforeExectue;
-            checkBox2.Checked = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.BlockNonSdkExecute;
+            checkBoxKillDotNet.Checked = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.KillAllDotnetProcessBeforeExectue;
+            checkBoxBlockNonSdk.Checked = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.BlockNonSdkExecute;
             checkBox3.Checked = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.WriteDotnetGlobalJson;
             checkBox4.Checked = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsNugetPush.HideApiKeyInOutput;
+            checkBoxDisableConfirmDialog.Checked = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsConfirmDialog.DisableConfirmDialog;
 
             var xx = new System.Diagnostics.Process().StartDotNetVersionSync("dotnet.exe", "--list-sdks", string.Empty);
             xx.Reverse();
@@ -37,8 +38,8 @@ namespace Coree.VisualStudio.DotnetToolbar
 
         private void CommandSettingsForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.KillAllDotnetProcessBeforeExectue = checkBox1.Checked;
-            CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.BlockNonSdkExecute = checkBox2.Checked;
+            CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.KillAllDotnetProcessBeforeExectue = checkBoxKillDotNet.Checked;
+            CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.BlockNonSdkExecute = checkBoxBlockNonSdk.Checked;
             CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.WriteDotnetGlobalJson = checkBox3.Checked;
 
             CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsNugetPush.HideApiKeyInOutput = checkBox4.Checked;
@@ -55,6 +56,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPack.AdditionalCommandlineArguments = textBoxAdditionalPackCommandLineArguments.Text;
             CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPublish.AdditionalCommandlineArguments = textBoxAdditionalPublishCommandLineArguments.Text;
             CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsClean.AdditionalCommandlineArguments = textBoxAdditionalCleanCommandLineArguments.Text;
+            CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsConfirmDialog.DisableConfirmDialog = checkBoxDisableConfirmDialog.Checked;
 
             JsonHelper.WriteToFile(CoreeVisualStudioDotnetToolbarPackage.Instance.Settings, CoreeVisualStudioDotnetToolbarPackage.Instance.SettingsFileName);
         }
