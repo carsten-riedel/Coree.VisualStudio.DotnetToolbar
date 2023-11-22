@@ -31,7 +31,7 @@ namespace Coree.VisualStudio.DotnetToolbar
         public string Extension { get; set; }
 
         [Display(Order = 2, Name = "Date modified")]
-        public DateTime LastWriteTimeUtc { get; set; }
+        public DateTime LastWriteTime { get; set; }
     }
 
     public class SemVerPharser
@@ -87,12 +87,12 @@ namespace Coree.VisualStudio.DotnetToolbar
                     PreRelease = match.Groups["prerelease"].Value,
                     BuildMetadata = match.Groups["buildmetadata"].Value,
                     Extension = match.Groups["extension"].Value,
-                    LastWriteTimeUtc = fileInfo.LastWriteTimeUtc,
+                    LastWriteTime = fileInfo.LastWriteTime,
                 });
             }
             catch (Exception)
             {
-                semVerFileInfos.Add(new SemVerFileInfo() { IsValid = false, Location = location, FileName = filename, Directory = directory, LastWriteTimeUtc = fileInfo.LastWriteTimeUtc });
+                semVerFileInfos.Add(new SemVerFileInfo() { IsValid = false, Location = location, FileName = filename, Directory = directory, LastWriteTime = fileInfo.LastWriteTime });
             }
         }
 
@@ -106,7 +106,7 @@ namespace Coree.VisualStudio.DotnetToolbar
 
         internal void OrderMajorMinorPatchLastWriteTimeUtc()
         {
-            semVerFileInfos = semVerFileInfos.OrderByDescending(e => e.Major).ThenByDescending(e => e.Minor).ThenByDescending(e => e.Patch).OrderByDescending(e => e.LastWriteTimeUtc).ToList();
+            semVerFileInfos = semVerFileInfos.OrderByDescending(e => e.Major).ThenByDescending(e => e.Minor).ThenByDescending(e => e.Patch).OrderByDescending(e => e.LastWriteTime).ToList();
         }
     }
 
