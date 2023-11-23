@@ -13,6 +13,10 @@ Additionally, the toolbar supports packaging projects using the 'dotnet pack' co
 
 This Toolbar focuses on optimizing .NET development workflows, ensuring consistency and efficiency throughout (and without) the CI/CD pipeline within Visual Studio.
 
+The project works in conjuction with [Coree.Template.Project](https://github.com/carsten-riedel/Coree.Template.Project) i have created with preset csproj settings. 
+Use the Coree Project Templates with preset csproj settings (edit them) and than quickly pack/push or publish your builds.
+(with this approches in conjunction you will be able to create a single file executable within minutes)
+
 ## Preperation (Prerequirments)
   
 ### Windows Setup
