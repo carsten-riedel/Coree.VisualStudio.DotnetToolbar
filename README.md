@@ -30,7 +30,10 @@ The configuration settings are integrated with the standard configuration manage
 
 ## Educational
 
-For more information and resources for templating:
+For more information and resources for Visual Studio Extensibility:
   - [MS Learn: Visual Studio Extensibility](https://learn.microsoft.com/en-US/visualstudio/extensibility/?view=vs-2022)
-
+  - [MS Learn: Visual Studio Community Toolkit](https://learn.microsoft.com/en-us/visualstudio/extensibility/vsix/visual-studio-community-toolkit?view=vs-2022)
+  - [Github: VSSDK-Extensibility](https://github.com/microsoft/VSExtensibility)
+  - [Github: VSSDK-Extensibility-Samples](https://github.com/Microsoft/VSSDK-Extensibility-Samples)
+  - 
 
