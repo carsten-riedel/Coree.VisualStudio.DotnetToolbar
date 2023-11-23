@@ -21,8 +21,12 @@ https://marketplace.visualstudio.com/items?itemName=Coree-CarstenRiedel.CoreeDot
 ![image](https://user-images.githubusercontent.com/97656046/285142705-52f226a2-1e5d-4093-9e6a-7402e6b43870.png)
 
 # Usage
-![image](https://github.com/carsten-riedel/Coree.VisualStudio.DotnetToolbar/assets/97656046/32269767-d4ba-4eca-89b5-48592c6706ba)
+Directly execute dotnet commands from the toolbar, with the option to customize command-line parameters in the settings menu.
+The configuration settings are integrated with the standard configuration manager.
 
+![image](https://user-images.githubusercontent.com/97656046/285170297-32269767-d4ba-4eca-89b5-48592c6706ba.png)
+
+![image](https://github.com/carsten-riedel/Coree.VisualStudio.DotnetToolbar/assets/97656046/95286bbc-0097-4e02-a0e1-3f51afeaad75)
 
 ## Educational
 
