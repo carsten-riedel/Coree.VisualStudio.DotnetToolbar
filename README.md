@@ -1,5 +1,4 @@
 # DotnetToolbar
-A simple visual studio toolbar invoking dotnet commands.
 
 ![image](https://user-images.githubusercontent.com/97656046/282954887-1d691cb1-b24b-4827-be11-c96cd83d5a12.png)
 
