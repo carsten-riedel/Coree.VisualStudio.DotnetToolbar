@@ -26,7 +26,7 @@ The configuration settings are integrated with the standard configuration manage
 
 ![image](https://user-images.githubusercontent.com/97656046/285170297-32269767-d4ba-4eca-89b5-48592c6706ba.png)
 
-![image](https://github.com/carsten-riedel/Coree.VisualStudio.DotnetToolbar/assets/97656046/95286bbc-0097-4e02-a0e1-3f51afeaad75)
+![image](https://user-images.githubusercontent.com/97656046/285170963-95286bbc-0097-4e02-a0e1-3f51afeaad75.png)
 
 ## Educational
 
@@ -35,5 +35,4 @@ For more information and resources for Visual Studio Extensibility:
   - [MS Learn: Visual Studio Community Toolkit](https://learn.microsoft.com/en-us/visualstudio/extensibility/vsix/visual-studio-community-toolkit?view=vs-2022)
   - [Github: VSSDK-Extensibility](https://github.com/microsoft/VSExtensibility)
   - [Github: VSSDK-Extensibility-Samples](https://github.com/Microsoft/VSSDK-Extensibility-Samples)
-  - 
 
