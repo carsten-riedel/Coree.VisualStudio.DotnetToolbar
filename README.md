@@ -14,8 +14,13 @@ Normal install and download procedure.
 
 # Install DotnetToolbar Visual Studio Extension
 
-## Manual download
-https://marketplace.visualstudio.com/items?itemName=Coree-CarstenRiedel.CoreeDotnetToolbar
+## Manual download from Visual Studio Marketplace
+[Marketplace > Visual Studio > Tools > DotnetToolbar](https://marketplace.visualstudio.com/items?itemName=Coree-CarstenRiedel.CoreeDotnetToolbar)
+
+![image](https://github.com/carsten-riedel/Coree.VisualStudio.DotnetToolbar/assets/97656046/0e21991a-6a0b-4098-92d9-bc9b10d97e0e)
+
+![image](https://github.com/carsten-riedel/Coree.VisualStudio.DotnetToolbar/assets/97656046/99aace5b-00de-4419-bd04-5d2e7f46dff3)
+
 
 ## Visual Studio 2022 IDE Install
 ![image](https://user-images.githubusercontent.com/97656046/285142705-52f226a2-1e5d-4093-9e6a-7402e6b43870.png)
