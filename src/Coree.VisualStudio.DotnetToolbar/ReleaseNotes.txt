@@ -1,4 +1,11 @@
-﻿# DotnetToolbar 0.2.39 Release Notes
+﻿# DotnetToolbar 0.2.50 Release Notes
+Release Date: 2023-11-23
+
+## Bugfix
+- dotnet nuget push, fixed datetime, changed from utc to local
+- dotnet nuget push, fixed version parsing regex and sorting
+
+# DotnetToolbar 0.2.39 Release Notes
 Release Date: 2023-11-23
 
 ## New
