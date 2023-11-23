@@ -18,8 +18,8 @@ Normal install and download procedure.
 ## Manual download
 https://marketplace.visualstudio.com/items?itemName=Coree-CarstenRiedel.CoreeDotnetToolbar
 
-## From IDE
-https://marketplace.visualstudio.com/items?itemName=Coree-CarstenRiedel.CoreeDotnetToolbar
+## Visual Studio 2022 IDE Install
+![image](https://user-images.githubusercontent.com/97656046/285142705-52f226a2-1e5d-4093-9e6a-7402e6b43870.png)
 
 
 ## Educational
