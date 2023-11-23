@@ -1,4 +1,10 @@
-﻿# DotnetToolbar 0.2.50 Release Notes
+﻿# DotnetToolbar 0.2.41 Release Notes
+Release Date: 2023-11-23
+
+## Bugfix
+- del bin/obj restore, added non sdk block
+
+# DotnetToolbar 0.2.40 Release Notes
 Release Date: 2023-11-23
 
 ## Bugfix
