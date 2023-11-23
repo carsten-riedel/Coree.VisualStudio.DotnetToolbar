@@ -4,6 +4,15 @@
 
 Welcome to DotnetToolbar, the ultimate Visual Studio 2022 extension that brings the power of dotnet commands right to your fingertips, revolutionizing the way you manage .NET projects and aligning seamlessly with CI/CD workflows
 
+## Description
+In modern development environments, .NET projects are often built using CI/CD practices. Visual Studio's MSBuild can different results, making it essential to have a toolbar that replicates the CI/CD pipeline within the Visual Studio environment. This toolbar facilitates the direct execution of dotnet commands, simplifying development.
+
+With the release of dotnet 6, publishing has evolved significantly from traditional .NET Framework builds. Specific publish settings are required for the desired output. The toolbar's main purpose is to streamline this process by seamlessly integrating with properly configured project files, enabling swift execution of these dotnet commands.
+
+Additionally, the toolbar supports packaging projects using the 'dotnet pack' command and efficiently pushing NuGet updates with 'dotnet nuget push.' For enhanced security and convenience, it leverages the Windows Credential Manager for secure key storage, eliminating manual key management.
+
+This Toolbar focuses on optimizing .NET development workflows, ensuring consistency and efficiency throughout (and without) the CI/CD pipeline within Visual Studio.
+
 ## Preperation (Prerequirments)
   
 ### Windows Setup
