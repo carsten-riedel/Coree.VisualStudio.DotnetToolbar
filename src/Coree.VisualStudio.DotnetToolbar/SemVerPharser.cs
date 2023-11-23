@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NuGet.Versioning;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -20,18 +21,29 @@ namespace Coree.VisualStudio.DotnetToolbar
         [Display(Order = 1)]
         public string Version
         {
-            get { return $@"{Major}.{Minor}.{Patch}"; }
+            get
+            {
+                if (Revision > -1)
+                {
+                    return $@"{Major}.{Minor}.{Patch}.{Revision}";
+                }
+                else
+                {
+                    return $@"{Major}.{Minor}.{Patch}";
+                }
+            }
         }
 
         public ulong Major { get; set; }
         public ulong Minor { get; set; }
         public ulong Patch { get; set; }
+        public long Revision { get; set; } = -1;
         public string PreRelease { get; set; }
         public string BuildMetadata { get; set; }
         public string Extension { get; set; }
 
         [Display(Order = 2, Name = "Date modified")]
-        public DateTime LastWriteTimeUtc { get; set; }
+        public DateTime LastWriteTime { get; set; }
     }
 
     public class SemVerPharser
@@ -68,13 +80,13 @@ namespace Coree.VisualStudio.DotnetToolbar
             var directory = System.IO.Path.GetDirectoryName(location);
             var fileInfo = new System.IO.FileInfo(location);
 
-            string pattern = @"^(?<packagename>[a-zA-Z0-9.]+)\.(?<major>0|[1-9]\d*)\.(?<minor>0|[1-9]\d*)\.(?<patch>0|[1-9]\d*)(?:-(?<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?(?<extension>.nupkg)$";
+            string pattern = @"^(?<packagename>[a-zA-Z0-9_]+(?:\.[a-zA-Z0-9_]+)*?)\.(?<major>0|[1-9][0-9]{0,4})\.(?<minor>0|[1-9][0-9]{0,4})\.(?<patch>0|[1-9][0-9]{0,4})\.?(?<revision>0|[1-9][0-9]{0,4})?(?:-(?<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?<extension>.nupkg)$";
 
             try
             {
                 Match match = Regex.Match(filename, pattern);
 
-                semVerFileInfos.Add(new SemVerFileInfo()
+                var item = new SemVerFileInfo()
                 {
                     Location = location,
                     FileName = filename,
@@ -87,12 +99,23 @@ namespace Coree.VisualStudio.DotnetToolbar
                     PreRelease = match.Groups["prerelease"].Value,
                     BuildMetadata = match.Groups["buildmetadata"].Value,
                     Extension = match.Groups["extension"].Value,
-                    LastWriteTimeUtc = fileInfo.LastWriteTimeUtc,
-                });
+                    LastWriteTime = fileInfo.LastWriteTime,
+                };
+
+                if (match.Groups["revision"].Value == String.Empty)
+                {
+                    item.Revision = -1;
+                }
+                else
+                {
+                    item.Revision = System.Convert.ToInt64(match.Groups["revision"].Value);
+                }
+
+                semVerFileInfos.Add(item);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                semVerFileInfos.Add(new SemVerFileInfo() { IsValid = false, Location = location, FileName = filename, Directory = directory, LastWriteTimeUtc = fileInfo.LastWriteTimeUtc });
+                semVerFileInfos.Add(new SemVerFileInfo() { IsValid = false, Location = location, FileName = filename, Directory = directory, LastWriteTime = fileInfo.LastWriteTime });
             }
         }
 
@@ -104,9 +127,10 @@ namespace Coree.VisualStudio.DotnetToolbar
             }
         }
 
-        internal void OrderMajorMinorPatchLastWriteTimeUtc()
+        internal void OrderMajorMinorPatchRevisionLastWriteTime()
         {
-            semVerFileInfos = semVerFileInfos.OrderByDescending(e => e.Major).ThenByDescending(e => e.Minor).ThenByDescending(e => e.Patch).OrderByDescending(e => e.LastWriteTimeUtc).ToList();
+            //semVerFileInfos = semVerFileInfos.OrderByDescending(e => e.Major).ThenByDescending(e => e.Minor).ThenByDescending(e => e.Patch).ThenByDescending(e => e.Revision).OrderByDescending(e => e.LastWriteTime).ToList();
+            semVerFileInfos = semVerFileInfos.OrderByDescending(e => e.Major).ThenByDescending(e => e.Minor).ThenByDescending(e => e.Patch).ThenByDescending(e => e.Revision).ThenByDescending(e => e.LastWriteTime).ToList();
         }
     }
 
@@ -115,7 +139,6 @@ namespace Coree.VisualStudio.DotnetToolbar
         none,
         @virtual,
         nugetConfig
-
     }
 
     public enum PackageTypes
@@ -134,7 +157,7 @@ namespace Coree.VisualStudio.DotnetToolbar
         public string Value { get; set; } = string.Empty;
 
         [Display(Order = 3, Name = "Type")]
-        public PackageTypes Type { get; set; } =  PackageTypes.none;
+        public PackageTypes Type { get; set; } = PackageTypes.none;
 
         [Display(Order = 2, Name = "Source")]
         public PackageSource Source { get; set; } = PackageSource.none;

@@ -41,7 +41,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             var nugetFiles = System.IO.Directory.GetFiles(this.SolutionDir, "*.nupkg", System.IO.SearchOption.AllDirectories).ToList();
 
             SemVerPharser semVerPharser = new SemVerPharser(nugetFiles);
-            semVerPharser.OrderMajorMinorPatchLastWriteTimeUtc();
+            semVerPharser.OrderMajorMinorPatchRevisionLastWriteTime();
 
             var config = ReadNugetConfig();
             List<PackageSources> packages = new List<PackageSources>();
