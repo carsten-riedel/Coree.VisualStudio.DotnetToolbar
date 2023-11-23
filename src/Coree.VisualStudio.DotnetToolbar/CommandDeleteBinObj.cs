@@ -75,6 +75,29 @@ namespace Coree.VisualStudio.DotnetToolbar
 
             await PaneClearAsync();
 
+            if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.BlockNonSdkExecute)
+            {
+                var projectInfos = (await GetProjectInfosAsync()).Where(e => e.SolutionDirectoryItemNameLocationExists == true).ToList();
+
+                bool found = false;
+                foreach (var item in projectInfos)
+                {
+                    if (item.IsSdkStyle == false)
+                    {
+                        await PaneWriteLineAsync("-------------------------------------------------------------------------------");
+                        await PaneWriteLineAsync($"Non SDK style project file {item.VSProjectLocation} !");
+                        await PaneWriteLineAsync("-------------------------------------------------------------------------------");
+                        found = true;
+                    }
+                }
+                if (found)
+                {
+                    await PaneWriteLineAsync("Done");
+                    return;
+                }
+            }
+
+
             var VSProjects = (await GetProjectInfosAsync()).Where(e => e.IsVSProjectType == true).ToList();
 
             if (!CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsConfirmDialog.DisableConfirmDialog)
