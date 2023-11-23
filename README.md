@@ -20,6 +20,9 @@ https://marketplace.visualstudio.com/items?itemName=Coree-CarstenRiedel.CoreeDot
 ## Visual Studio 2022 IDE Install
 ![image](https://user-images.githubusercontent.com/97656046/285142705-52f226a2-1e5d-4093-9e6a-7402e6b43870.png)
 
+# Usage
+![image](https://github.com/carsten-riedel/Coree.VisualStudio.DotnetToolbar/assets/97656046/32269767-d4ba-4eca-89b5-48592c6706ba)
+
 
 ## Educational
 
