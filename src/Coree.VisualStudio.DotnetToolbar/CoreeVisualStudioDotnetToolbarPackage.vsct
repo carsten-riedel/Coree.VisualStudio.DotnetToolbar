@@ -95,7 +95,16 @@
         </Strings>
       </Button>
 
-      <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="CommandIdDotnetClean" priority="0x0104" type="Button">
+      <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="CommandIdDotnetTest" priority="0x0104" type="Button">
+        <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuGroup" />
+        <Icon guid="guidImages" id="pngTest" />
+        <CommandFlag>IconAndText</CommandFlag>
+        <Strings>
+          <ButtonText>dotnet test</ButtonText>
+        </Strings>
+      </Button>
+
+      <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="CommandIdDotnetClean" priority="0x0105" type="Button">
         <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuGroup" />
         <Icon guid="guidImages" id="pngClean" />
         <CommandFlag>IconAndText</CommandFlag>
@@ -104,7 +113,7 @@
         </Strings>
       </Button>
 
-      <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="CommandIdDeleteBinObj" priority="0x0105" type="Button">
+      <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="CommandIdDeleteBinObj" priority="0x0106" type="Button">
         <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuGroup" />
         <Icon guid="guidImages" id="pngDelFolder" />
         <CommandFlag>IconAndText</CommandFlag>
@@ -113,7 +122,7 @@
         </Strings>
       </Button>
 
-      <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="CommandIdSettings" priority="0x0106" type="Button">
+      <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="CommandIdSettings" priority="0x0107" type="Button">
         <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuGroup" />
         <Icon guid="guidImages" id="pngSettings" />
         <CommandFlag>IconAndText</CommandFlag>
@@ -150,7 +159,7 @@
             bitmap strip containing the bitmaps and then there are the numeric ids of the elements used
             inside a button definition. An important aspect of this declaration is that the element id
             must be the actual index (1-based) of the bitmap inside the bitmap strip. -->
-      <Bitmap guid="guidImages" href="Resources\CommandBar.png" usedList="pngBuild, pngPack, pngPublish, pngDebug, pngCube, pngUpload, pngUploadFile, pngSettings, pngClean, pngDelFolder" />
+      <Bitmap guid="guidImages" href="Resources\CommandBar.png" usedList="pngBuild, pngPack, pngPublish, pngDebug, pngCube, pngUpload, pngUploadFile, pngSettings, pngClean, pngDelFolder, pngTest" />
     </Bitmaps>
   </Commands>
 
@@ -166,10 +175,11 @@
       <IDSymbol name="CommandIdDotnetPack" value="4130" />
       <IDSymbol name="CommandIdNugetPush" value="4131" />
       <IDSymbol name="CommandIdDotnetPublish" value="4134" />
+      <IDSymbol name="CommandIdDotnetTest" value="4138" />
       <IDSymbol name="CommandIdDotnetClean" value="4136" />
       <IDSymbol name="CommandIdDeleteBinObj" value="4137" />
       <IDSymbol name="CommandIdSettings" value="4135" />
-      
+
       <!-- 
       <IDSymbol name="cmdidMyDropDownCombo" value="5000" />
       <IDSymbol name="cmdidMyDropDownComboGetList" value="5001" />
@@ -188,6 +198,7 @@
       <IDSymbol name="pngSettings" value="8" />
       <IDSymbol name="pngClean" value="9" />
       <IDSymbol name="pngDelFolder" value="10" />
+      <IDSymbol name="pngTest" value="11" />
     </GuidSymbol>
   
     <GuidSymbol value="{6ad48e10-5444-4052-8161-dc35956388f3}" name="guidImages1">

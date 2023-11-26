@@ -38,26 +38,26 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPageGeneral = new System.Windows.Forms.TabPage();
             this.checkBoxDisableConfirmDialog = new System.Windows.Forms.CheckBox();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.comboBoxAvailibleSDKs = new System.Windows.Forms.ComboBox();
             this.checkBox3 = new System.Windows.Forms.CheckBox();
             this.checkBoxBlockNonSdk = new System.Windows.Forms.CheckBox();
-            this.tabPageBuild = new System.Windows.Forms.TabPage();
+            this.tabPageDotnetBuild = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.textBoxAdditionalBuildCommandLineArguments = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.labelDotnetBuildText = new System.Windows.Forms.Label();
             this.linkLabel2 = new System.Windows.Forms.LinkLabel();
-            this.tabPagePack = new System.Windows.Forms.TabPage();
+            this.tabPageDotnetPack = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.linkLabel3 = new System.Windows.Forms.LinkLabel();
             this.textBoxAdditionalPackCommandLineArguments = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
+            this.labelDotnetPackText = new System.Windows.Forms.Label();
             this.linkLabel4 = new System.Windows.Forms.LinkLabel();
-            this.tabPageNugetPush = new System.Windows.Forms.TabPage();
-            this.checkBox4 = new System.Windows.Forms.CheckBox();
-            this.tabPagePublish = new System.Windows.Forms.TabPage();
+            this.tabPageDotnetNugetPush = new System.Windows.Forms.TabPage();
+            this.checkBoxHideApiKeyInOutput = new System.Windows.Forms.CheckBox();
+            this.tabPageDotnetPublish = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
-            this.label3 = new System.Windows.Forms.Label();
+            this.labelDotnetPublishText = new System.Windows.Forms.Label();
             this.textBoxAdditionalPublishCommandLineArguments = new System.Windows.Forms.TextBox();
             this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -66,7 +66,13 @@
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
             this.linkLabel5 = new System.Windows.Forms.LinkLabel();
             this.linkLabel6 = new System.Windows.Forms.LinkLabel();
-            this.tabPageClean = new System.Windows.Forms.TabPage();
+            this.tabPageDotnetTest = new System.Windows.Forms.TabPage();
+            this.tableLayoutPanel7 = new System.Windows.Forms.TableLayoutPanel();
+            this.linkLabel9 = new System.Windows.Forms.LinkLabel();
+            this.textBoxAdditionalTestCommandLineArguments = new System.Windows.Forms.TextBox();
+            this.labelDotnetTestText = new System.Windows.Forms.Label();
+            this.linkLabel10 = new System.Windows.Forms.LinkLabel();
+            this.tabPageDotnetClean = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
             this.linkLabel7 = new System.Windows.Forms.LinkLabel();
             this.textBoxAdditionalCleanCommandLineArguments = new System.Windows.Forms.TextBox();
@@ -76,17 +82,19 @@
             this.panel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPageGeneral.SuspendLayout();
-            this.tabPageBuild.SuspendLayout();
+            this.tabPageDotnetBuild.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
-            this.tabPagePack.SuspendLayout();
+            this.tabPageDotnetPack.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
-            this.tabPageNugetPush.SuspendLayout();
-            this.tabPagePublish.SuspendLayout();
+            this.tabPageDotnetNugetPush.SuspendLayout();
+            this.tabPageDotnetPublish.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
             this.tableLayoutPanel5.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.tableLayoutPanel4.SuspendLayout();
-            this.tabPageClean.SuspendLayout();
+            this.tabPageDotnetTest.SuspendLayout();
+            this.tableLayoutPanel7.SuspendLayout();
+            this.tabPageDotnetClean.SuspendLayout();
             this.tableLayoutPanel6.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -159,11 +167,12 @@
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tabPageGeneral);
-            this.tabControl1.Controls.Add(this.tabPageBuild);
-            this.tabControl1.Controls.Add(this.tabPagePack);
-            this.tabControl1.Controls.Add(this.tabPageNugetPush);
-            this.tabControl1.Controls.Add(this.tabPagePublish);
-            this.tabControl1.Controls.Add(this.tabPageClean);
+            this.tabControl1.Controls.Add(this.tabPageDotnetBuild);
+            this.tabControl1.Controls.Add(this.tabPageDotnetPack);
+            this.tabControl1.Controls.Add(this.tabPageDotnetNugetPush);
+            this.tabControl1.Controls.Add(this.tabPageDotnetPublish);
+            this.tabControl1.Controls.Add(this.tabPageDotnetTest);
+            this.tabControl1.Controls.Add(this.tabPageDotnetClean);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Margin = new System.Windows.Forms.Padding(4);
@@ -175,7 +184,7 @@
             // tabPageGeneral
             // 
             this.tabPageGeneral.Controls.Add(this.checkBoxDisableConfirmDialog);
-            this.tabPageGeneral.Controls.Add(this.comboBox1);
+            this.tabPageGeneral.Controls.Add(this.comboBoxAvailibleSDKs);
             this.tabPageGeneral.Controls.Add(this.checkBox3);
             this.tabPageGeneral.Controls.Add(this.checkBoxBlockNonSdk);
             this.tabPageGeneral.Controls.Add(this.checkBoxKillDotNet);
@@ -199,15 +208,15 @@
             this.checkBoxDisableConfirmDialog.Text = "Disable warning and confirmation prompts for folder deletion";
             this.checkBoxDisableConfirmDialog.UseVisualStyleBackColor = true;
             // 
-            // comboBox1
+            // comboBoxAvailibleSDKs
             // 
-            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox1.Enabled = false;
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(376, 65);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(121, 25);
-            this.comboBox1.TabIndex = 4;
+            this.comboBoxAvailibleSDKs.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxAvailibleSDKs.Enabled = false;
+            this.comboBoxAvailibleSDKs.FormattingEnabled = true;
+            this.comboBoxAvailibleSDKs.Location = new System.Drawing.Point(376, 65);
+            this.comboBoxAvailibleSDKs.Name = "comboBoxAvailibleSDKs";
+            this.comboBoxAvailibleSDKs.Size = new System.Drawing.Size(121, 25);
+            this.comboBoxAvailibleSDKs.TabIndex = 4;
             // 
             // checkBox3
             // 
@@ -232,17 +241,17 @@
             this.checkBoxBlockNonSdk.Text = "Block executing on non SDK style projects.";
             this.checkBoxBlockNonSdk.UseVisualStyleBackColor = true;
             // 
-            // tabPageBuild
+            // tabPageDotnetBuild
             // 
-            this.tabPageBuild.Controls.Add(this.tableLayoutPanel1);
-            this.tabPageBuild.Location = new System.Drawing.Point(4, 26);
-            this.tabPageBuild.Margin = new System.Windows.Forms.Padding(4);
-            this.tabPageBuild.Name = "tabPageBuild";
-            this.tabPageBuild.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPageBuild.Size = new System.Drawing.Size(815, 300);
-            this.tabPageBuild.TabIndex = 3;
-            this.tabPageBuild.Text = "build";
-            this.tabPageBuild.UseVisualStyleBackColor = true;
+            this.tabPageDotnetBuild.Controls.Add(this.tableLayoutPanel1);
+            this.tabPageDotnetBuild.Location = new System.Drawing.Point(4, 26);
+            this.tabPageDotnetBuild.Margin = new System.Windows.Forms.Padding(4);
+            this.tabPageDotnetBuild.Name = "tabPageDotnetBuild";
+            this.tabPageDotnetBuild.Padding = new System.Windows.Forms.Padding(4);
+            this.tabPageDotnetBuild.Size = new System.Drawing.Size(815, 300);
+            this.tabPageDotnetBuild.TabIndex = 3;
+            this.tabPageDotnetBuild.Text = "dotnet build";
+            this.tabPageDotnetBuild.UseVisualStyleBackColor = true;
             // 
             // tableLayoutPanel1
             // 
@@ -250,7 +259,7 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.Controls.Add(this.linkLabel1, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.textBoxAdditionalBuildCommandLineArguments, 0, 3);
-            this.tableLayoutPanel1.Controls.Add(this.label1, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.labelDotnetBuildText, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.linkLabel2, 0, 1);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(4, 4);
@@ -287,16 +296,16 @@
             this.textBoxAdditionalBuildCommandLineArguments.Size = new System.Drawing.Size(799, 185);
             this.textBoxAdditionalBuildCommandLineArguments.TabIndex = 1;
             // 
-            // label1
+            // labelDotnetBuildText
             // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(4, 82);
-            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(252, 17);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Additional build command line arguments";
+            this.labelDotnetBuildText.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.labelDotnetBuildText.AutoSize = true;
+            this.labelDotnetBuildText.Location = new System.Drawing.Point(4, 82);
+            this.labelDotnetBuildText.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.labelDotnetBuildText.Name = "labelDotnetBuildText";
+            this.labelDotnetBuildText.Size = new System.Drawing.Size(252, 17);
+            this.labelDotnetBuildText.TabIndex = 2;
+            this.labelDotnetBuildText.Text = "Additional build command line arguments";
             // 
             // linkLabel2
             // 
@@ -312,17 +321,17 @@
     "ence?view=vs-2022";
             this.linkLabel2.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel2_LinkClicked);
             // 
-            // tabPagePack
+            // tabPageDotnetPack
             // 
-            this.tabPagePack.Controls.Add(this.tableLayoutPanel2);
-            this.tabPagePack.Location = new System.Drawing.Point(4, 26);
-            this.tabPagePack.Margin = new System.Windows.Forms.Padding(4);
-            this.tabPagePack.Name = "tabPagePack";
-            this.tabPagePack.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPagePack.Size = new System.Drawing.Size(815, 300);
-            this.tabPagePack.TabIndex = 4;
-            this.tabPagePack.Text = "pack";
-            this.tabPagePack.UseVisualStyleBackColor = true;
+            this.tabPageDotnetPack.Controls.Add(this.tableLayoutPanel2);
+            this.tabPageDotnetPack.Location = new System.Drawing.Point(4, 26);
+            this.tabPageDotnetPack.Margin = new System.Windows.Forms.Padding(4);
+            this.tabPageDotnetPack.Name = "tabPageDotnetPack";
+            this.tabPageDotnetPack.Padding = new System.Windows.Forms.Padding(4);
+            this.tabPageDotnetPack.Size = new System.Drawing.Size(815, 300);
+            this.tabPageDotnetPack.TabIndex = 4;
+            this.tabPageDotnetPack.Text = "dotnet pack";
+            this.tabPageDotnetPack.UseVisualStyleBackColor = true;
             // 
             // tableLayoutPanel2
             // 
@@ -330,7 +339,7 @@
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel2.Controls.Add(this.linkLabel3, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.textBoxAdditionalPackCommandLineArguments, 0, 3);
-            this.tableLayoutPanel2.Controls.Add(this.label2, 0, 2);
+            this.tableLayoutPanel2.Controls.Add(this.labelDotnetPackText, 0, 2);
             this.tableLayoutPanel2.Controls.Add(this.linkLabel4, 0, 1);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(4, 4);
@@ -367,16 +376,16 @@
             this.textBoxAdditionalPackCommandLineArguments.Size = new System.Drawing.Size(799, 185);
             this.textBoxAdditionalPackCommandLineArguments.TabIndex = 2;
             // 
-            // label2
+            // labelDotnetPackText
             // 
-            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(4, 82);
-            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(250, 17);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Additional pack command line arguments";
+            this.labelDotnetPackText.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.labelDotnetPackText.AutoSize = true;
+            this.labelDotnetPackText.Location = new System.Drawing.Point(4, 82);
+            this.labelDotnetPackText.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.labelDotnetPackText.Name = "labelDotnetPackText";
+            this.labelDotnetPackText.Size = new System.Drawing.Size(250, 17);
+            this.labelDotnetPackText.TabIndex = 3;
+            this.labelDotnetPackText.Text = "Additional pack command line arguments";
             // 
             // linkLabel4
             // 
@@ -392,46 +401,46 @@
     "ence?view=vs-2022";
             this.linkLabel4.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel4_LinkClicked);
             // 
-            // tabPageNugetPush
+            // tabPageDotnetNugetPush
             // 
-            this.tabPageNugetPush.Controls.Add(this.checkBox4);
-            this.tabPageNugetPush.Location = new System.Drawing.Point(4, 26);
-            this.tabPageNugetPush.Margin = new System.Windows.Forms.Padding(4);
-            this.tabPageNugetPush.Name = "tabPageNugetPush";
-            this.tabPageNugetPush.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPageNugetPush.Size = new System.Drawing.Size(815, 300);
-            this.tabPageNugetPush.TabIndex = 2;
-            this.tabPageNugetPush.Text = "nuget push";
-            this.tabPageNugetPush.UseVisualStyleBackColor = true;
+            this.tabPageDotnetNugetPush.Controls.Add(this.checkBoxHideApiKeyInOutput);
+            this.tabPageDotnetNugetPush.Location = new System.Drawing.Point(4, 26);
+            this.tabPageDotnetNugetPush.Margin = new System.Windows.Forms.Padding(4);
+            this.tabPageDotnetNugetPush.Name = "tabPageDotnetNugetPush";
+            this.tabPageDotnetNugetPush.Padding = new System.Windows.Forms.Padding(4);
+            this.tabPageDotnetNugetPush.Size = new System.Drawing.Size(815, 300);
+            this.tabPageDotnetNugetPush.TabIndex = 2;
+            this.tabPageDotnetNugetPush.Text = "dotnet nuget push";
+            this.tabPageDotnetNugetPush.UseVisualStyleBackColor = true;
             // 
-            // checkBox4
+            // checkBoxHideApiKeyInOutput
             // 
-            this.checkBox4.AutoSize = true;
-            this.checkBox4.Location = new System.Drawing.Point(9, 8);
-            this.checkBox4.Margin = new System.Windows.Forms.Padding(4);
-            this.checkBox4.Name = "checkBox4";
-            this.checkBox4.Size = new System.Drawing.Size(159, 21);
-            this.checkBox4.TabIndex = 0;
-            this.checkBox4.Text = "Hide api-key in output.";
-            this.checkBox4.UseVisualStyleBackColor = true;
+            this.checkBoxHideApiKeyInOutput.AutoSize = true;
+            this.checkBoxHideApiKeyInOutput.Location = new System.Drawing.Point(9, 8);
+            this.checkBoxHideApiKeyInOutput.Margin = new System.Windows.Forms.Padding(4);
+            this.checkBoxHideApiKeyInOutput.Name = "checkBoxHideApiKeyInOutput";
+            this.checkBoxHideApiKeyInOutput.Size = new System.Drawing.Size(159, 21);
+            this.checkBoxHideApiKeyInOutput.TabIndex = 0;
+            this.checkBoxHideApiKeyInOutput.Text = "Hide api-key in output.";
+            this.checkBoxHideApiKeyInOutput.UseVisualStyleBackColor = true;
             // 
-            // tabPagePublish
+            // tabPageDotnetPublish
             // 
-            this.tabPagePublish.Controls.Add(this.tableLayoutPanel3);
-            this.tabPagePublish.Location = new System.Drawing.Point(4, 26);
-            this.tabPagePublish.Margin = new System.Windows.Forms.Padding(4);
-            this.tabPagePublish.Name = "tabPagePublish";
-            this.tabPagePublish.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPagePublish.Size = new System.Drawing.Size(815, 300);
-            this.tabPagePublish.TabIndex = 1;
-            this.tabPagePublish.Text = "publish";
-            this.tabPagePublish.UseVisualStyleBackColor = true;
+            this.tabPageDotnetPublish.Controls.Add(this.tableLayoutPanel3);
+            this.tabPageDotnetPublish.Location = new System.Drawing.Point(4, 26);
+            this.tabPageDotnetPublish.Margin = new System.Windows.Forms.Padding(4);
+            this.tabPageDotnetPublish.Name = "tabPageDotnetPublish";
+            this.tabPageDotnetPublish.Padding = new System.Windows.Forms.Padding(4);
+            this.tabPageDotnetPublish.Size = new System.Drawing.Size(815, 300);
+            this.tabPageDotnetPublish.TabIndex = 1;
+            this.tabPageDotnetPublish.Text = "dotnet publish";
+            this.tabPageDotnetPublish.UseVisualStyleBackColor = true;
             // 
             // tableLayoutPanel3
             // 
             this.tableLayoutPanel3.ColumnCount = 1;
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel3.Controls.Add(this.label3, 0, 1);
+            this.tableLayoutPanel3.Controls.Add(this.labelDotnetPublishText, 0, 1);
             this.tableLayoutPanel3.Controls.Add(this.textBoxAdditionalPublishCommandLineArguments, 0, 2);
             this.tableLayoutPanel3.Controls.Add(this.tableLayoutPanel5, 0, 0);
             this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -447,16 +456,16 @@
             this.tableLayoutPanel3.Size = new System.Drawing.Size(807, 292);
             this.tableLayoutPanel3.TabIndex = 7;
             // 
-            // label3
+            // labelDotnetPublishText
             // 
-            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(4, 81);
-            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(265, 17);
-            this.label3.TabIndex = 5;
-            this.label3.Text = "Additional publish command line arguments";
+            this.labelDotnetPublishText.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.labelDotnetPublishText.AutoSize = true;
+            this.labelDotnetPublishText.Location = new System.Drawing.Point(4, 81);
+            this.labelDotnetPublishText.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.labelDotnetPublishText.Name = "labelDotnetPublishText";
+            this.labelDotnetPublishText.Size = new System.Drawing.Size(265, 17);
+            this.labelDotnetPublishText.TabIndex = 5;
+            this.labelDotnetPublishText.Text = "Additional publish command line arguments";
             // 
             // textBoxAdditionalPublishCommandLineArguments
             // 
@@ -564,17 +573,97 @@
     "ence?view=vs-2022";
             this.linkLabel6.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel6_LinkClicked);
             // 
-            // tabPageClean
+            // tabPageDotnetTest
             // 
-            this.tabPageClean.Controls.Add(this.tableLayoutPanel6);
-            this.tabPageClean.Location = new System.Drawing.Point(4, 26);
-            this.tabPageClean.Margin = new System.Windows.Forms.Padding(4);
-            this.tabPageClean.Name = "tabPageClean";
-            this.tabPageClean.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPageClean.Size = new System.Drawing.Size(815, 300);
-            this.tabPageClean.TabIndex = 5;
-            this.tabPageClean.Text = "clean";
-            this.tabPageClean.UseVisualStyleBackColor = true;
+            this.tabPageDotnetTest.Controls.Add(this.tableLayoutPanel7);
+            this.tabPageDotnetTest.Location = new System.Drawing.Point(4, 26);
+            this.tabPageDotnetTest.Margin = new System.Windows.Forms.Padding(4);
+            this.tabPageDotnetTest.Name = "tabPageDotnetTest";
+            this.tabPageDotnetTest.Padding = new System.Windows.Forms.Padding(4);
+            this.tabPageDotnetTest.Size = new System.Drawing.Size(815, 300);
+            this.tabPageDotnetTest.TabIndex = 6;
+            this.tabPageDotnetTest.Text = "dotnet test";
+            this.tabPageDotnetTest.UseVisualStyleBackColor = true;
+            // 
+            // tableLayoutPanel7
+            // 
+            this.tableLayoutPanel7.ColumnCount = 1;
+            this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel7.Controls.Add(this.linkLabel9, 0, 0);
+            this.tableLayoutPanel7.Controls.Add(this.textBoxAdditionalTestCommandLineArguments, 0, 3);
+            this.tableLayoutPanel7.Controls.Add(this.labelDotnetTestText, 0, 2);
+            this.tableLayoutPanel7.Controls.Add(this.linkLabel10, 0, 1);
+            this.tableLayoutPanel7.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel7.Location = new System.Drawing.Point(4, 4);
+            this.tableLayoutPanel7.Margin = new System.Windows.Forms.Padding(4);
+            this.tableLayoutPanel7.Name = "tableLayoutPanel7";
+            this.tableLayoutPanel7.RowCount = 4;
+            this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 33F));
+            this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 33F));
+            this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 33F));
+            this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel7.Size = new System.Drawing.Size(807, 292);
+            this.tableLayoutPanel7.TabIndex = 5;
+            // 
+            // linkLabel9
+            // 
+            this.linkLabel9.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.linkLabel9.AutoSize = true;
+            this.linkLabel9.Location = new System.Drawing.Point(4, 8);
+            this.linkLabel9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.linkLabel9.Name = "linkLabel9";
+            this.linkLabel9.Size = new System.Drawing.Size(379, 17);
+            this.linkLabel9.TabIndex = 0;
+            this.linkLabel9.TabStop = true;
+            this.linkLabel9.Text = "https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-test";
+            this.linkLabel9.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel9_LinkClicked);
+            // 
+            // textBoxAdditionalTestCommandLineArguments
+            // 
+            this.textBoxAdditionalTestCommandLineArguments.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textBoxAdditionalTestCommandLineArguments.Location = new System.Drawing.Point(4, 103);
+            this.textBoxAdditionalTestCommandLineArguments.Margin = new System.Windows.Forms.Padding(4);
+            this.textBoxAdditionalTestCommandLineArguments.Multiline = true;
+            this.textBoxAdditionalTestCommandLineArguments.Name = "textBoxAdditionalTestCommandLineArguments";
+            this.textBoxAdditionalTestCommandLineArguments.Size = new System.Drawing.Size(799, 185);
+            this.textBoxAdditionalTestCommandLineArguments.TabIndex = 2;
+            // 
+            // labelDotnetTestText
+            // 
+            this.labelDotnetTestText.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.labelDotnetTestText.AutoSize = true;
+            this.labelDotnetTestText.Location = new System.Drawing.Point(4, 82);
+            this.labelDotnetTestText.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.labelDotnetTestText.Name = "labelDotnetTestText";
+            this.labelDotnetTestText.Size = new System.Drawing.Size(244, 17);
+            this.labelDotnetTestText.TabIndex = 3;
+            this.labelDotnetTestText.Text = "Additional test command line arguments";
+            // 
+            // linkLabel10
+            // 
+            this.linkLabel10.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.linkLabel10.AutoSize = true;
+            this.linkLabel10.Location = new System.Drawing.Point(4, 41);
+            this.linkLabel10.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.linkLabel10.Name = "linkLabel10";
+            this.linkLabel10.Size = new System.Drawing.Size(610, 17);
+            this.linkLabel10.TabIndex = 1;
+            this.linkLabel10.TabStop = true;
+            this.linkLabel10.Text = "https://learn.microsoft.com/en-us/visualstudio/msbuild/msbuild-command-line-refer" +
+    "ence?view=vs-2022";
+            this.linkLabel10.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel10_LinkClicked);
+            // 
+            // tabPageDotnetClean
+            // 
+            this.tabPageDotnetClean.Controls.Add(this.tableLayoutPanel6);
+            this.tabPageDotnetClean.Location = new System.Drawing.Point(4, 26);
+            this.tabPageDotnetClean.Margin = new System.Windows.Forms.Padding(4);
+            this.tabPageDotnetClean.Name = "tabPageDotnetClean";
+            this.tabPageDotnetClean.Padding = new System.Windows.Forms.Padding(4);
+            this.tabPageDotnetClean.Size = new System.Drawing.Size(815, 300);
+            this.tabPageDotnetClean.TabIndex = 5;
+            this.tabPageDotnetClean.Text = "dotnet clean";
+            this.tabPageDotnetClean.UseVisualStyleBackColor = true;
             // 
             // tableLayoutPanel6
             // 
@@ -669,15 +758,15 @@
             this.tabControl1.ResumeLayout(false);
             this.tabPageGeneral.ResumeLayout(false);
             this.tabPageGeneral.PerformLayout();
-            this.tabPageBuild.ResumeLayout(false);
+            this.tabPageDotnetBuild.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
-            this.tabPagePack.ResumeLayout(false);
+            this.tabPageDotnetPack.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
-            this.tabPageNugetPush.ResumeLayout(false);
-            this.tabPageNugetPush.PerformLayout();
-            this.tabPagePublish.ResumeLayout(false);
+            this.tabPageDotnetNugetPush.ResumeLayout(false);
+            this.tabPageDotnetNugetPush.PerformLayout();
+            this.tabPageDotnetPublish.ResumeLayout(false);
             this.tableLayoutPanel3.ResumeLayout(false);
             this.tableLayoutPanel3.PerformLayout();
             this.tableLayoutPanel5.ResumeLayout(false);
@@ -685,7 +774,10 @@
             this.groupBox1.PerformLayout();
             this.tableLayoutPanel4.ResumeLayout(false);
             this.tableLayoutPanel4.PerformLayout();
-            this.tabPageClean.ResumeLayout(false);
+            this.tabPageDotnetTest.ResumeLayout(false);
+            this.tableLayoutPanel7.ResumeLayout(false);
+            this.tableLayoutPanel7.PerformLayout();
+            this.tabPageDotnetClean.ResumeLayout(false);
             this.tableLayoutPanel6.ResumeLayout(false);
             this.tableLayoutPanel6.PerformLayout();
             this.ResumeLayout(false);
@@ -702,27 +794,27 @@
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPageGeneral;
         private System.Windows.Forms.CheckBox checkBoxBlockNonSdk;
-        private System.Windows.Forms.TabPage tabPagePublish;
+        private System.Windows.Forms.TabPage tabPageDotnetPublish;
         private System.Windows.Forms.RadioButton radioButton2;
         private System.Windows.Forms.RadioButton radioButton1;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
-        private System.Windows.Forms.TabPage tabPageNugetPush;
-        private System.Windows.Forms.CheckBox checkBox4;
-        private System.Windows.Forms.TabPage tabPageBuild;
+        private System.Windows.Forms.TabPage tabPageDotnetNugetPush;
+        private System.Windows.Forms.CheckBox checkBoxHideApiKeyInOutput;
+        private System.Windows.Forms.TabPage tabPageDotnetBuild;
         private System.Windows.Forms.LinkLabel linkLabel1;
         private System.Windows.Forms.TextBox textBoxAdditionalBuildCommandLineArguments;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TabPage tabPagePack;
-        private System.Windows.Forms.TabPage tabPageClean;
+        private System.Windows.Forms.Label labelDotnetBuildText;
+        private System.Windows.Forms.TabPage tabPageDotnetPack;
+        private System.Windows.Forms.TabPage tabPageDotnetClean;
         private System.Windows.Forms.LinkLabel linkLabel2;
         private System.Windows.Forms.LinkLabel linkLabel4;
         private System.Windows.Forms.LinkLabel linkLabel3;
         private System.Windows.Forms.TextBox textBoxAdditionalPackCommandLineArguments;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label labelDotnetPackText;
+        private System.Windows.Forms.Label labelDotnetPublishText;
         private System.Windows.Forms.LinkLabel linkLabel6;
         private System.Windows.Forms.LinkLabel linkLabel5;
         private System.Windows.Forms.TextBox textBoxAdditionalPublishCommandLineArguments;
@@ -737,7 +829,13 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel5;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel6;
         private System.Windows.Forms.CheckBox checkBox3;
-        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.ComboBox comboBoxAvailibleSDKs;
         private System.Windows.Forms.CheckBox checkBoxDisableConfirmDialog;
+        private System.Windows.Forms.TabPage tabPageDotnetTest;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel7;
+        private System.Windows.Forms.LinkLabel linkLabel9;
+        private System.Windows.Forms.TextBox textBoxAdditionalTestCommandLineArguments;
+        private System.Windows.Forms.Label labelDotnetTestText;
+        private System.Windows.Forms.LinkLabel linkLabel10;
     }
 }

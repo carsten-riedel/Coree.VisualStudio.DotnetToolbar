@@ -12,12 +12,12 @@ namespace Coree.VisualStudio.DotnetToolbar
             checkBoxKillDotNet.Checked = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.KillAllDotnetProcessBeforeExectue;
             checkBoxBlockNonSdk.Checked = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.BlockNonSdkExecute;
             checkBox3.Checked = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.WriteDotnetGlobalJson;
-            checkBox4.Checked = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsNugetPush.HideApiKeyInOutput;
+            checkBoxHideApiKeyInOutput.Checked = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsNugetPush.HideApiKeyInOutput;
             checkBoxDisableConfirmDialog.Checked = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsConfirmDialog.DisableConfirmDialog;
 
-            var xx = new System.Diagnostics.Process().StartDotNetVersionSync("dotnet.exe", "--list-sdks", string.Empty);
-            xx.Reverse();
-            comboBox1.Items.AddRange(xx.ToArray());
+            var availibleSDKs = new System.Diagnostics.Process().StartDotNetVersionSync("dotnet.exe", "--list-sdks", string.Empty);
+            availibleSDKs.Reverse();
+            comboBoxAvailibleSDKs.Items.AddRange(availibleSDKs.ToArray());
 
             if (CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPublish.PublishSolutionProject)
             {
@@ -33,6 +33,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             textBoxAdditionalBuildCommandLineArguments.Text = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsBuild.AdditionalCommandlineArguments;
             textBoxAdditionalPackCommandLineArguments.Text = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPack.AdditionalCommandlineArguments;
             textBoxAdditionalPublishCommandLineArguments.Text = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPublish.AdditionalCommandlineArguments;
+            textBoxAdditionalTestCommandLineArguments.Text = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsTest.AdditionalCommandlineArguments;
             textBoxAdditionalCleanCommandLineArguments.Text = CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsClean.AdditionalCommandlineArguments;
         }
 
@@ -42,7 +43,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.BlockNonSdkExecute = checkBoxBlockNonSdk.Checked;
             CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsGeneral.WriteDotnetGlobalJson = checkBox3.Checked;
 
-            CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsNugetPush.HideApiKeyInOutput = checkBox4.Checked;
+            CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsNugetPush.HideApiKeyInOutput = checkBoxHideApiKeyInOutput.Checked;
             if (radioButton1.Checked)
             {
                 CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPublish.PublishSolutionProject = radioButton1.Checked;
@@ -55,6 +56,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsBuild.AdditionalCommandlineArguments = textBoxAdditionalBuildCommandLineArguments.Text;
             CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPack.AdditionalCommandlineArguments = textBoxAdditionalPackCommandLineArguments.Text;
             CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPublish.AdditionalCommandlineArguments = textBoxAdditionalPublishCommandLineArguments.Text;
+            CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsTest.AdditionalCommandlineArguments = textBoxAdditionalTestCommandLineArguments.Text;
             CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsClean.AdditionalCommandlineArguments = textBoxAdditionalCleanCommandLineArguments.Text;
             CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsConfirmDialog.DisableConfirmDialog = checkBoxDisableConfirmDialog.Checked;
 
@@ -99,6 +101,16 @@ namespace Coree.VisualStudio.DotnetToolbar
         private void linkLabel8_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             System.Diagnostics.Process.Start(linkLabel8.Text);
+        }
+
+        private void linkLabel9_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(linkLabel9.Text);
+        }
+
+        private void linkLabel10_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(linkLabel10.Text);
         }
     }
 }

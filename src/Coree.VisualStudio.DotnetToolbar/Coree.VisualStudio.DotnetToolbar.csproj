@@ -60,6 +60,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="CommandDotnetTest.cs" />
     <Compile Include="Froms\ReadOnlyListBox.cs">
       <SubType>Component</SubType>
     </Compile>

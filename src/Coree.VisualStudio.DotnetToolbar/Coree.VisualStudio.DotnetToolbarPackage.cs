@@ -76,6 +76,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             await CommandDotnetBuild.InitializeAsync(this);
             await CommandDotnetPack.InitializeAsync(this);
             await CommandDotnetNugetPush.InitializeAsync(this);
+            await CommandDotnetTest.InitializeAsync(this);
             await CommandDotnetPublish.InitializeAsync(this);
             await CommandDotnetClean.InitializeAsync(this);
             await CommandDeleteBinObj.InitializeAsync(this);
@@ -122,6 +123,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             CommandDotnetNugetPush.Instance.MenuItem.Enabled = false;
             CommandDotnetClean.Instance.MenuItem.Enabled = false;
             CommandDeleteBinObj.Instance.MenuItem.Enabled = false;
+            CommandDotnetTest.Instance.MenuItem.Enabled = false;
         }
 
         private async Task SolutionEvents_OnAfterOpenSolutionAsync(object sender = null, OpenSolutionEventArgs e = null)
@@ -184,6 +186,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             EnableMenuItemIfInstanceNotNull(CommandDotnetNugetPush.Instance);
             EnableMenuItemIfInstanceNotNull(CommandDotnetClean.Instance);
             EnableMenuItemIfInstanceNotNull(CommandDeleteBinObj.Instance);
+            EnableMenuItemIfInstanceNotNull(CommandDotnetTest.Instance);
         }
 
         private static string GetSolutionGuid(string filePath)

@@ -1,4 +1,16 @@
-﻿# DotnetToolbar 0.2.41 Release Notes
+﻿# DotnetToolbar 0.2.45 Release Notes
+Release Date: 2023-11-26
+
+## New
+- Added dotnet test
+
+# DotnetToolbar 0.2.42 + 0.2.43 + 0.2.44 Release Notes
+Release Date: 2023-11-23
+
+## Enhancements
+- Version update, to reupload description in marketplace.
+
+# DotnetToolbar 0.2.41 Release Notes
 Release Date: 2023-11-23
 
 ## Bugfix

@@ -136,6 +136,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             CommandDotnetClean.Instance.MenuItem.Enabled = false;
             CommandSettings.Instance.MenuItem.Enabled = false;
             CommandDeleteBinObj.Instance.MenuItem.Enabled = false;
+            CommandDotnetTest.Instance.MenuItem.Enabled = false;
 
             await StartDotNetProcessAsync();
 
@@ -146,8 +147,8 @@ namespace Coree.VisualStudio.DotnetToolbar
             CommandDotnetClean.Instance.MenuItem.Enabled = true;
             CommandSettings.Instance.MenuItem.Enabled = true;
             CommandDeleteBinObj.Instance.MenuItem.Enabled = true;
+            CommandDotnetTest.Instance.MenuItem.Enabled = true;
 
-            
         }
 
         internal virtual async Task StartDotNetProcessAsync()

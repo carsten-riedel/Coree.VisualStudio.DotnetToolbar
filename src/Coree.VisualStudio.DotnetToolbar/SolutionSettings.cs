@@ -6,6 +6,7 @@
         public SolutionSettingsBuild SolutionSettingsBuild { get; set; } = new SolutionSettingsBuild();
         public SolutionSettingsPack SolutionSettingsPack { get; set; } = new SolutionSettingsPack();
         public SolutionSettingsNugetPush SolutionSettingsNugetPush { get; set; } = new SolutionSettingsNugetPush();
+        public SolutionSettingsTest SolutionSettingsTest { get; set; } = new SolutionSettingsTest();
         public SolutionSettingsPublish SolutionSettingsPublish { get; set; } = new SolutionSettingsPublish();
         public SolutionSettingsClean SolutionSettingsClean { get; set; } = new SolutionSettingsClean();
         public SolutionSettingsConfirmDialog SolutionSettingsConfirmDialog { get; set; } = new SolutionSettingsConfirmDialog();
@@ -28,13 +29,18 @@
         public string AdditionalCommandlineArguments { get; set; } = "--nologo --verbosity:n";
     }
 
-
     public class SolutionSettingsNugetPush
     {
         public bool HideApiKeyInOutput { get; set; } = true;
 
         public int LastPackageSourceIndex { get; set; } = -1;
     }
+
+    public class SolutionSettingsTest
+    {
+        public string AdditionalCommandlineArguments { get; set; } = "--nologo --verbosity:n";
+    }
+
 
     public class SolutionSettingsPublish
     {
@@ -47,6 +53,7 @@
     {
         public string AdditionalCommandlineArguments { get; set; } = "--nologo --verbosity:n";
     }
+
 
     public class SolutionSettingsConfirmDialog
     {
