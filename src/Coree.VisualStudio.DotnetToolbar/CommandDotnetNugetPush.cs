@@ -1,12 +1,10 @@
-﻿using EnvDTE;
+﻿using Coree.VisualStudio.DotnetToolbar.ExtensionMethods;
+using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Threading;
 using System;
 using System.ComponentModel.Design;
-using System.IO;
-using System.Windows.Controls;
-using Coree.VisualStudio.DotnetToolbar.ExtensionMethods;
 using System.Linq;
 
 namespace Coree.VisualStudio.DotnetToolbar
@@ -111,7 +109,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             var solutionProperties = await GetSolutionPropertiesAsync();
 
             await PaneClearAsync();
-            
+
             NugetPushDialog nugetPushDialog = new NugetPushDialog(Package.UserLocalDataPath, solinfo.FullName, solutionProperties["Name"], CoreeVisualStudioDotnetToolbarPackage.Instance.SolutionGuid);
             nugetPushDialog.ShowDialog();
 
@@ -159,7 +157,6 @@ namespace Coree.VisualStudio.DotnetToolbar
                     return;
                 }
             }
-
 
             if (nugetPushDialog.ApiKey != String.Empty)
             {

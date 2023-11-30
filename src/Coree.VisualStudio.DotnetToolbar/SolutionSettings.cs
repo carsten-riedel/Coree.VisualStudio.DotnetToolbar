@@ -41,7 +41,6 @@
         public string AdditionalCommandlineArguments { get; set; } = "--nologo --verbosity:n";
     }
 
-
     public class SolutionSettingsPublish
     {
         public bool PublishSolutionProject { get; set; } = true;
@@ -53,7 +52,6 @@
     {
         public string AdditionalCommandlineArguments { get; set; } = "--nologo --verbosity:n";
     }
-
 
     public class SolutionSettingsConfirmDialog
     {

@@ -1,11 +1,11 @@
-﻿using EnvDTE;
+﻿using Coree.VisualStudio.DotnetToolbar.ExtensionMethods;
+using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
 using System;
 using System.ComponentModel.Design;
-using Task = System.Threading.Tasks.Task;
-using Coree.VisualStudio.DotnetToolbar.ExtensionMethods;
 using System.Linq;
+using Task = System.Threading.Tasks.Task;
 
 namespace Coree.VisualStudio.DotnetToolbar
 {
@@ -141,7 +141,6 @@ namespace Coree.VisualStudio.DotnetToolbar
                     return;
                 }
             }
-
 
             await ExecuteProcessAsync("dotnet.exe", $@"--version", $@"{slndir}");
             await ExecuteProcessAsync("dotnet.exe", $@"pack ""{slnfile}"" --configuration {activeConfiguration.Configuration} {CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsPack.AdditionalCommandlineArguments}", $@"{slndir}");

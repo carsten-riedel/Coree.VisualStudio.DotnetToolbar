@@ -1,5 +1,4 @@
-﻿using NuGet.Versioning;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -134,18 +133,19 @@ namespace Coree.VisualStudio.DotnetToolbar
         }
     }
 
-    public enum PackageSource
+    public enum PackageSourceTypes
     {
         none,
         @virtual,
         nugetConfig
     }
 
-    public enum PackageTypes
+    public enum PackageCategoryTypes
     {
         none,
         remote,
         local,
+        localMissing,
     }
 
     public class PackageSources
@@ -156,10 +156,11 @@ namespace Coree.VisualStudio.DotnetToolbar
         [Display(Order = 1, Name = "Value")]
         public string Value { get; set; } = string.Empty;
 
-        [Display(Order = 3, Name = "Type")]
-        public PackageTypes Type { get; set; } = PackageTypes.none;
-
         [Display(Order = 2, Name = "Source")]
-        public PackageSource Source { get; set; } = PackageSource.none;
+        public PackageSourceTypes SourceType { get; set; } = PackageSourceTypes.none;
+
+        [Display(Order = 3, Name = "Type")]
+        public PackageCategoryTypes Type { get; set; } = PackageCategoryTypes.none;
+
     }
 }

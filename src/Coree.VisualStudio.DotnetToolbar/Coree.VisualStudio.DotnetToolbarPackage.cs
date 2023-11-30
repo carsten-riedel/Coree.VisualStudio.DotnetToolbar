@@ -146,13 +146,13 @@ namespace Coree.VisualStudio.DotnetToolbar
             {
                 SolutionGuid = $"{(string)solinfo.Globals["SolutionGuid"]}";
             }
-  
+
             var obsoleteAssemblyLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
             var obsoleteExtensionDirectory = System.IO.Path.GetDirectoryName(obsoleteAssemblyLocation);
             var obsoleteExtensionsRootDirectory = System.IO.Path.GetDirectoryName(obsoleteExtensionDirectory);
 
             var thisName = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
-            var ExtensionDirectory = System.IO.Path.Combine(this.UserLocalDataPath, "VSIXSettings" , thisName);
+            var ExtensionDirectory = System.IO.Path.Combine(this.UserLocalDataPath, "VSIXSettings", thisName);
             if (!System.IO.Directory.Exists(ExtensionDirectory))
             {
                 System.IO.Directory.CreateDirectory(ExtensionDirectory);
@@ -163,7 +163,6 @@ namespace Coree.VisualStudio.DotnetToolbar
             await this.PaneWriteLineAsync($@"", "DotnetToolbar");
             await this.PaneWriteLineAsync($@"Migration Notice: Your previous settings are backed up in the *.json and *.json.backup files located in the ""{obsoleteExtensionsRootDirectory}"" directory. Please review them if necessary.", "DotnetToolbar");
             await this.PaneWriteLineAsync($@"All current settings are now stored in the *.json and *.json.backup files within the ""{ExtensionDirectory}"" directory. Refer to these for your latest configurations.", "DotnetToolbar");
-
 
             bool Created = JsonHelper.CreateDefault<SolutionSettings>(SettingsFileName);
             /*

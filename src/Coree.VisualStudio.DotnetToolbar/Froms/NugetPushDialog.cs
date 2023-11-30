@@ -19,11 +19,9 @@ namespace Coree.VisualStudio.DotnetToolbar
         }
 
         public NugetPushDialogResult nugetPushDialogResult { get; set; } = NugetPushDialogResult.Close;
-
         public PackageSources SelectedPackageSource { get; set; }
         public SemVerFileInfo SelectedPackageLocation { get; set; }
         public string ApiKey { get; set; }
-
         private string UserDataPath { get; set; }
         private string SolutionLocation { get; set; }
         public string SolutionDir { get; set; }
@@ -37,49 +35,20 @@ namespace Coree.VisualStudio.DotnetToolbar
             this.SolutionName = SolutionName;
             this.SolutionGuid = SolutionGuid;
             this.SolutionDir = System.IO.Path.GetDirectoryName(SolutionLocation);
+            InitializeComponent();
+            InitializeComponentData();
+        }
+
+        private void InitializeComponentData()
+        {
+            List<PackageSources> packages = GetNugetConfig();
 
             var nugetFiles = System.IO.Directory.GetFiles(this.SolutionDir, "*.nupkg", System.IO.SearchOption.AllDirectories).ToList();
-
             SemVerPharser semVerPharser = new SemVerPharser(nugetFiles);
             semVerPharser.OrderMajorMinorPatchRevisionLastWriteTime();
 
-            var config = ReadNugetConfig();
-            List<PackageSources> packages = new List<PackageSources>();
-            foreach (var item in config)
-            {
-                try
-                {
-                    Uri outUri;
-
-                    if (Uri.TryCreate(item.Value, UriKind.Absolute, out outUri) && (outUri.Scheme == Uri.UriSchemeHttp || outUri.Scheme == Uri.UriSchemeHttps))
-                    {
-                        packages.Add(new PackageSources() { Key = item.Key, Value = item.Value, Source = PackageSource.nugetConfig, Type = PackageTypes.remote });
-                    }
-                    else if (System.IO.Directory.Exists(item.Value))
-                    {
-                        packages.Add(new PackageSources() { Key = item.Key, Value = item.Value, Source = PackageSource.nugetConfig, Type = PackageTypes.local });
-                    }
-                    else
-                    {
-                        packages.Add(new PackageSources() { Key = item.Key, Value = item.Value, Source = PackageSource.nugetConfig, Type = PackageTypes.none });
-                    }
-                }
-                catch (Exception)
-                {
-                }
-            }
-
-            if (!packages.Any(e => e.Value == @"https://api.nuget.org/v3/index.json"))
-            {
-                packages.Add(new PackageSources() { Key = "Undefined", Value = @"https://api.nuget.org/v3/index.json", Source = PackageSource.@virtual, Type = PackageTypes.remote });
-            }
-
-            if (!packages.Any(e => e.Value == @"https://apiint.nugettest.org/v3/index.json"))
-            {
-                packages.Add(new PackageSources() { Key = "Undefined", Value = @"https://apiint.nugettest.org/v3/index.json", Source = PackageSource.@virtual, Type = PackageTypes.remote });
-            }
-
-            InitializeComponent();
+            listViewPackageSources.Clear();
+            listViewNugetPackages.Clear();
             listViewPackageSources.AddClass(packages);
             listViewNugetPackages.AddClass<SemVerFileInfo>(semVerPharser.semVerFileInfos);
 
@@ -114,9 +83,53 @@ namespace Coree.VisualStudio.DotnetToolbar
                 SelectedPackageLocation = ((SemVerFileInfo)listViewNugetPackages.Items[listViewNugetPackages.GetSelectedIndex()].Tag);
             }
 
+            this.listViewPackageSources.SelectedIndexChanged -= this.listViewPackageSources_SelectedIndexChanged;
+            this.listViewNugetPackages.SelectedIndexChanged -= this.listView1_SelectedIndexChanged;
+
             this.listViewPackageSources.SelectedIndexChanged += new System.EventHandler(this.listViewPackageSources_SelectedIndexChanged);
             this.listViewNugetPackages.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
             LoadDotnetToolbarCredential();
+        }
+
+        private List<PackageSources> GetNugetConfig()
+        {
+            var config = ReadNugetConfig();
+            List<PackageSources> packages = new List<PackageSources>();
+            foreach (var item in config)
+            {
+                try
+                {
+                    Uri outUri;
+
+                    if (Uri.TryCreate(item.Value, UriKind.Absolute, out outUri) && (outUri.Scheme == Uri.UriSchemeHttp || outUri.Scheme == Uri.UriSchemeHttps))
+                    {
+                        packages.Add(new PackageSources() { Key = item.Key, Value = item.Value, SourceType = PackageSourceTypes.nugetConfig, Type = PackageCategoryTypes.remote });
+                    }
+                    else if (System.IO.Directory.Exists(item.Value))
+                    {
+                        packages.Add(new PackageSources() { Key = item.Key, Value = item.Value, SourceType = PackageSourceTypes.nugetConfig, Type = PackageCategoryTypes.local });
+                    }
+                    else
+                    {
+                        packages.Add(new PackageSources() { Key = item.Key, Value = item.Value, SourceType = PackageSourceTypes.nugetConfig, Type = PackageCategoryTypes.localMissing });
+                    }
+                }
+                catch (Exception)
+                {
+                }
+            }
+
+            if (!packages.Any(e => e.Value == @"https://api.nuget.org/v3/index.json"))
+            {
+                packages.Add(new PackageSources() { Key = "Undefined", Value = @"https://api.nuget.org/v3/index.json", SourceType = PackageSourceTypes.@virtual, Type = PackageCategoryTypes.remote });
+            }
+
+            if (!packages.Any(e => e.Value == @"https://apiint.nugettest.org/v3/index.json"))
+            {
+                packages.Add(new PackageSources() { Key = "Undefined", Value = @"https://apiint.nugettest.org/v3/index.json", SourceType = PackageSourceTypes.@virtual, Type = PackageCategoryTypes.remote });
+            }
+
+            return packages;
         }
 
         private Dictionary<string, string> ReadNugetConfig()
@@ -232,6 +245,48 @@ namespace Coree.VisualStudio.DotnetToolbar
                 Clipboard.SetText(textBoxApiKey.SelectedText);
                 e.SuppressKeyPress = true;
             }
+        }
+
+        private void buttonAddLocalPackageSource_Click(object sender, EventArgs e)
+        {
+            var targetDirectory = Environment.ExpandEnvironmentVariables(@"%userprofile%\source\packages");
+            var keyName = "SourcePackages";
+
+            List<PackageSources> packageSources = GetNugetConfig();
+            var packageEntry = packageSources.FirstOrDefault(ex => ex.Key == keyName);
+
+            if (packageEntry != null)
+            {
+                var command = Environment.ExpandEnvironmentVariables($@"nuget remove source ""{packageEntry.Key}""");
+                var result = new System.Diagnostics.Process().StartDotNetVersionSync("dotnet.exe", command, string.Empty);
+            }
+
+            packageSources = GetNugetConfig();
+            packageEntry = packageSources.FirstOrDefault(ex => ex.Value == targetDirectory);
+
+            if (packageEntry != null)
+            {
+                var command = Environment.ExpandEnvironmentVariables($@"nuget remove source ""{packageEntry.Key}""");
+                var result = new System.Diagnostics.Process().StartDotNetVersionSync("dotnet.exe", command, string.Empty);
+            }
+
+            packageSources = GetNugetConfig();
+            var hasValue = packageSources.Any(ex => ex.Value == targetDirectory);
+            var hasKey = packageSources.Any(ex => ex.Key == keyName);
+            var isPresent = hasKey || hasValue;
+
+            if (!isPresent)
+            {
+                if (!System.IO.Directory.Exists(targetDirectory))
+                {
+                    System.IO.Directory.CreateDirectory(Environment.ExpandEnvironmentVariables(targetDirectory));
+                }
+
+                var command = Environment.ExpandEnvironmentVariables($@"nuget add source ""{targetDirectory}"" --name {keyName}");
+                var result = new System.Diagnostics.Process().StartDotNetVersionSync("dotnet.exe", command, string.Empty);
+            }
+
+            InitializeComponentData();
         }
     }
 }

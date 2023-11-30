@@ -1,11 +1,9 @@
 ﻿using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Text.Differencing;
 using Microsoft.VisualStudio.Threading;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -91,7 +89,7 @@ namespace Coree.VisualStudio.DotnetToolbar.ExtensionMethods
 
         internal static List<string> StartDotNetVersionSync(this System.Diagnostics.Process process, string fileName, string arguments, string workingDirectory)
         {
-            var output = String.Join(Environment.NewLine,process.StartSync(fileName,arguments, workingDirectory));
+            var output = String.Join(Environment.NewLine, process.StartSync(fileName, arguments, workingDirectory));
             Regex regex = new Regex(@"(\d+\.\d+)\.\d+");
             var matches = regex.Matches(output);
 
@@ -99,16 +97,12 @@ namespace Coree.VisualStudio.DotnetToolbar.ExtensionMethods
             foreach (System.Text.RegularExpressions.Match match in matches)
             {
                 retval.Add(match.Groups[1].Value);
-                
             }
 
             // Use Distinct to remove duplicates
             retval = retval.Distinct().ToList();
 
-            return retval;  
+            return retval;
         }
-
-            
-
-        }
+    }
 }

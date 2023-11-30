@@ -4,8 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Controls;
 
 namespace Coree.VisualStudio.DotnetToolbar
 {
@@ -97,7 +95,6 @@ namespace Coree.VisualStudio.DotnetToolbar
                 }
             }
 
-
             var VSProjects = (await GetProjectInfosAsync()).Where(e => e.IsVSProjectType == true).ToList();
 
             if (!CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsConfirmDialog.DisableConfirmDialog)
@@ -184,7 +181,7 @@ namespace Coree.VisualStudio.DotnetToolbar
 
             string slnfile = await GetSolutionFileNameAsync();
             string slndir = System.IO.Path.GetDirectoryName(slnfile);
-            
+
             await ExecuteProcessAsync("dotnet.exe", $@"--version", $@"{slndir}");
             await ExecuteProcessAsync("dotnet.exe", $@"restore ""{slnfile}""", $@"{slndir}");
             await PaneWriteLineAsync("Done");

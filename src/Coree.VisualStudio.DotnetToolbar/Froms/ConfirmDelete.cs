@@ -1,20 +1,12 @@
 ﻿using Coree.VisualStudio.DotnetToolbar.ExtensionMethods;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using static Coree.VisualStudio.DotnetToolbar.NugetPushDialog;
 
 namespace Coree.VisualStudio.DotnetToolbar.Froms
 {
     public partial class ConfirmDelete : Form
     {
-
         public enum DialogResultEnum
         {
             Close,

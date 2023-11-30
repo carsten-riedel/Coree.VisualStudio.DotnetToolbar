@@ -105,7 +105,6 @@ namespace Coree.VisualStudio.DotnetToolbar
             }
         }
 
-
         public static async Task<List<ProjectInfo>> GetProjectInfosNewAsync(this AsyncPackage asyncPackage)
         {
             List<ProjectInfo> projectInfos = new List<ProjectInfo>();
@@ -116,13 +115,13 @@ namespace Coree.VisualStudio.DotnetToolbar
             {
                 _Solution test = (_Solution)dte2.Solution;
                 var solutionDirectory = System.IO.Path.GetDirectoryName(test.FullName);
-                return await asyncPackage.GenerateProjectInfo(solutionDirectory,dte2.Solution.Projects);
+                return await asyncPackage.GenerateProjectInfo(solutionDirectory, dte2.Solution.Projects);
             }
 
             return projectInfos;
         }
 
-        public static async Task<List<ProjectInfo>> GenerateProjectInfo(this AsyncPackage asyncPackage,string solutionDirectory, Projects solProjects)
+        public static async Task<List<ProjectInfo>> GenerateProjectInfo(this AsyncPackage asyncPackage, string solutionDirectory, Projects solProjects)
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(asyncPackage.DisposalToken);
             List<ProjectInfo> projectInfos = new List<ProjectInfo>();
@@ -130,16 +129,16 @@ namespace Coree.VisualStudio.DotnetToolbar
             foreach (Project item in solProjects)
             {
                 var projectInfoItem = new ProjectInfo();
-                projectInfoItem.SolutionDirectory = solutionDirectory;  
+                projectInfoItem.SolutionDirectory = solutionDirectory;
                 var SolutionDirectoryItemNameLocation = $@"{solutionDirectory}\{item.UniqueName}";
-                
+
                 if (System.IO.File.Exists(SolutionDirectoryItemNameLocation))
                 {
                     projectInfoItem.SolutionDirectoryItemNameLocationExists = true;
                     projectInfoItem.SolutionDirectoryItemNameLocation = SolutionDirectoryItemNameLocation;
                     projectInfoItem.SolutionDirectoryItemNameDirectory = System.IO.Path.GetDirectoryName(SolutionDirectoryItemNameLocation);
                 }
-                
+
                 var IsVSProjectType = (item.Object is VSProject);
 
                 projectInfoItem.IsVSProjectType = IsVSProjectType;
