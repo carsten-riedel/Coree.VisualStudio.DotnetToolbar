@@ -7,6 +7,7 @@
         <MoreInfo>https://github.com/carsten-riedel/Coree.VisualStudio.DotnetToolbar</MoreInfo>
         <License>License.txt</License>
         <ReleaseNotes>ReleaseNotes.txt</ReleaseNotes>
+        <Icon>logo_small.png</Icon>
         <Tags>dotnet;build;pack;publish;nuget push;Toolbar</Tags>
     </Metadata>
     <Installation>
