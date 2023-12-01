@@ -1,4 +1,10 @@
-﻿# DotnetToolbar 0.2.45 Release Notes
+﻿# DotnetToolbar 0.2.46 Release Notes
+Release Date: 2023-11-26
+
+## New
+- Added a button "Add local package source" to the nuget push dialog. Creates a nuget file repo in %userprofile%\source\packages.
+
+# DotnetToolbar 0.2.45 Release Notes
 Release Date: 2023-11-26
 
 ## New
