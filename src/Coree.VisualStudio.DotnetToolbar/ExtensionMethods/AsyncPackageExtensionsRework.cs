@@ -1,15 +1,12 @@
-﻿using Coree.VisualStudio.DotnetToolbar.ExtensionMethods;
-using EnvDTE;
+﻿using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
 using System;
 using System.IO;
-using System.IO.Packaging;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Xml;
-using System.Xml.Linq;
 
 namespace Coree.VisualStudio.DotnetToolbar
 {
@@ -144,7 +141,6 @@ namespace Coree.VisualStudio.DotnetToolbar
                 var metaData = doc.DocumentElement.ChildNodes.Cast<XmlElement>().First(x => x.Name == "Metadata");
                 var identity = metaData.ChildNodes.Cast<XmlElement>().First(x => x.Name == "Identity");
                 version = identity.GetAttribute("Version");
-
             }
             return version;
         }

@@ -1,11 +1,9 @@
-﻿using EnvDTE;
+﻿using Coree.VisualStudio.DotnetToolbar.ExtensionMethods;
+using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Threading;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.Design;
-using Coree.VisualStudio.DotnetToolbar.ExtensionMethods;
 using System.Linq;
 
 namespace Coree.VisualStudio.DotnetToolbar
@@ -112,7 +110,6 @@ namespace Coree.VisualStudio.DotnetToolbar
                 return;
             }
 
-
             string slnfile = await GetSolutionFileNameAsync();
             string slndir = System.IO.Path.GetDirectoryName(slnfile);
 
@@ -144,8 +141,6 @@ namespace Coree.VisualStudio.DotnetToolbar
                     return;
                 }
             }
-
-
 
             bool done = false;
 

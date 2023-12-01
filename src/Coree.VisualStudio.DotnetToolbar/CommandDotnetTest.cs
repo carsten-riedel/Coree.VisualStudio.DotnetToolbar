@@ -1,9 +1,9 @@
-﻿using EnvDTE;
+﻿using Coree.VisualStudio.DotnetToolbar.ExtensionMethods;
+using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
 using System;
 using System.ComponentModel.Design;
-using Coree.VisualStudio.DotnetToolbar.ExtensionMethods;
 using System.Linq;
 
 namespace Coree.VisualStudio.DotnetToolbar
@@ -99,10 +99,9 @@ namespace Coree.VisualStudio.DotnetToolbar
 
         internal override async System.Threading.Tasks.Task StartDotNetProcessAsync()
         {
-            
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(Package.DisposalToken);
             DTE2 dte2 = (DTE2)await ServiceProvider.GetServiceAsync(typeof(DTE)).ConfigureAwait(false);
-            
+
             await WindowActivateAsync(EnvDTE.Constants.vsWindowKindOutput);
 
             var activeConfiguration = await GetActiveSolutionConfigurationAsync();
@@ -148,7 +147,6 @@ namespace Coree.VisualStudio.DotnetToolbar
             await ExecuteProcessAsync("dotnet.exe", $@"test ""{slnfile}"" --configuration {activeConfiguration.Configuration} {CoreeVisualStudioDotnetToolbarPackage.Instance.Settings.SolutionSettingsTest.AdditionalCommandlineArguments}", $@"{slndir}");
 
             await PaneWriteLineAsync("Done");
-            
         }
     }
 }

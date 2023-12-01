@@ -1,10 +1,10 @@
-﻿using EnvDTE;
+﻿using Coree.VisualStudio.DotnetToolbar.ExtensionMethods;
+using EnvDTE;
 using Microsoft.VisualStudio.Shell;
 using System;
 using System.ComponentModel.Design;
-using Task = System.Threading.Tasks.Task;
-using Coree.VisualStudio.DotnetToolbar.ExtensionMethods;
 using System.Linq;
+using Task = System.Threading.Tasks.Task;
 
 namespace Coree.VisualStudio.DotnetToolbar
 {

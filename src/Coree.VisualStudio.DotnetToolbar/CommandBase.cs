@@ -1,4 +1,5 @@
-﻿using EnvDTE;
+﻿using Coree.VisualStudio.DotnetToolbar.ExtensionMethods;
+using EnvDTE;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.TaskStatusCenter;
 using Microsoft.VisualStudio.Threading;
@@ -8,7 +9,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using static Coree.VisualStudio.DotnetToolbar.AsyncPackageExtensions;
-using Coree.VisualStudio.DotnetToolbar.ExtensionMethods;
 
 namespace Coree.VisualStudio.DotnetToolbar
 {
@@ -148,14 +148,11 @@ namespace Coree.VisualStudio.DotnetToolbar
             CommandSettings.Instance.MenuItem.Enabled = true;
             CommandDeleteBinObj.Instance.MenuItem.Enabled = true;
             CommandDotnetTest.Instance.MenuItem.Enabled = true;
-
         }
 
         internal virtual async Task StartDotNetProcessAsync()
         {
             await Task.CompletedTask;
         }
-
-
     }
 }

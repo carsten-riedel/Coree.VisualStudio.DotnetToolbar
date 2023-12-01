@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
 namespace Coree.VisualStudio.DotnetToolbar.Forms
 {
     public class ReadOnlyListBox : ListBox
     {
         private bool _readOnly = false;
+
         public bool ReadOnly
         {
             get { return _readOnly; }
