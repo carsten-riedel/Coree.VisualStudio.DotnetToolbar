@@ -60,6 +60,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="CommandDotnetGlobalJson7.cs" />
+    <Compile Include="CommandDotnetGlobalJson8.cs" />
+    <Compile Include="CommandDotnetExperimentalTest.cs" />
+    <Compile Include="CommandDotnetGlobalJson6.cs" />
     <Compile Include="CommandDotnetTest.cs" />
     <Compile Include="Froms\ReadOnlyListBox.cs">
       <SubType>Component</SubType>

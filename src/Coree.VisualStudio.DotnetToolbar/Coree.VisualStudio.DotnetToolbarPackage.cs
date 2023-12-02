@@ -8,6 +8,8 @@ using Microsoft.VisualStudio.Shell.Interop;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -72,6 +74,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             //this.cancellationToken = cancellationToken;
             // When initialized asynchronously, the current thread may be a background thread at this point.
             // Do any initialization that requires the UI thread after switching to the UI thread.
+            
             await this.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
             await CommandDotnetBuild.InitializeAsync(this);
             await CommandDotnetPack.InitializeAsync(this);
@@ -81,6 +84,16 @@ namespace Coree.VisualStudio.DotnetToolbar
             await CommandDotnetClean.InitializeAsync(this);
             await CommandDeleteBinObj.InitializeAsync(this);
             await CommandSettings.InitializeAsync(this);
+            await CommandDotnetGlobalJson6.InitializeAsync(this);
+            await CommandDotnetGlobalJson7.InitializeAsync(this);
+            await CommandDotnetGlobalJson8.InitializeAsync(this);
+            await CommandDotnetExperimentalTest.InitializeAsync(this);
+
+
+
+
+            //var sssd = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.IsClass && typeof(CommandBase).IsAssignableFrom(t) && t != typeof(CommandBase)).ToArray();
+
             //await CommandDropDown.InitializeAsync(this);
 
             bool isSolutionLoaded = await IsSolutionLoadedAsync();
@@ -124,6 +137,10 @@ namespace Coree.VisualStudio.DotnetToolbar
             CommandDotnetClean.Instance.MenuItem.Enabled = false;
             CommandDeleteBinObj.Instance.MenuItem.Enabled = false;
             CommandDotnetTest.Instance.MenuItem.Enabled = false;
+            CommandDotnetGlobalJson6.Instance.MenuItem.Enabled = false;
+            CommandDotnetGlobalJson7.Instance.MenuItem.Enabled = false;
+            CommandDotnetGlobalJson8.Instance.MenuItem.Enabled = false;
+            CommandDotnetExperimentalTest.Instance.MenuItem.Enabled = false;
         }
 
         private async Task SolutionEvents_OnAfterOpenSolutionAsync(object sender = null, OpenSolutionEventArgs e = null)
@@ -185,7 +202,11 @@ namespace Coree.VisualStudio.DotnetToolbar
             EnableMenuItemIfInstanceNotNull(CommandDotnetNugetPush.Instance);
             EnableMenuItemIfInstanceNotNull(CommandDotnetClean.Instance);
             EnableMenuItemIfInstanceNotNull(CommandDeleteBinObj.Instance);
-            EnableMenuItemIfInstanceNotNull(CommandDotnetTest.Instance);
+            EnableMenuItemIfInstanceNotNull(CommandDotnetTest.Instance); 
+            EnableMenuItemIfInstanceNotNull(CommandDotnetGlobalJson6.Instance);
+            EnableMenuItemIfInstanceNotNull(CommandDotnetGlobalJson7.Instance);
+            EnableMenuItemIfInstanceNotNull(CommandDotnetGlobalJson8.Instance);
+            EnableMenuItemIfInstanceNotNull(CommandDotnetExperimentalTest.Instance);
         }
 
         private static string GetSolutionGuid(string filePath)
