@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="DotnetToolbar.B1B286CE-6848-4FA2-BE1C-2FFAE4F03685" Version="0.2.46" Language="en-US" Publisher="Carsten Riedel" />
+        <Identity Id="DotnetToolbar.B1B286CE-6848-4FA2-BE1C-2FFAE4F03685" Version="0.2.47" Language="en-US" Publisher="Carsten Riedel" />
         <DisplayName>DotnetToolbar</DisplayName>
         <Description xml:space="preserve">Upgrade your VS 2022 UX with DotnetToolbar,1-click -&gt; dotnet build, dotnet pack, dotnet nuget push, dotnet publish, dotnet clean</Description>
         <MoreInfo>https://github.com/carsten-riedel/Coree.VisualStudio.DotnetToolbar</MoreInfo>
         <License>License.txt</License>
         <ReleaseNotes>ReleaseNotes.txt</ReleaseNotes>
         <Icon>logo_small.png</Icon>
-        <Tags>dotnet;build;pack;publish;nuget push;Toolbar</Tags>
+        <Tags>Toolbar;dotnet;build;pack;nuget push;publish;test;clean</Tags>
     </Metadata>
     <Installation>
         <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[17.0,18.0)">

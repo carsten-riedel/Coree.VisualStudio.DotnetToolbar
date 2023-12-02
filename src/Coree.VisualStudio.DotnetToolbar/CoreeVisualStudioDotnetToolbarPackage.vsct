@@ -31,22 +31,58 @@
     group; your package should define its own command set in order to avoid collisions
     with command ids defined by other packages. -->
     <Menus>
-      <Menu guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuToolBar" type="Toolbar">
+      <Menu guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MAINTOOLBAR_MENU" priority="0x0700" type="Toolbar">
         <CommandFlag>DefaultDocked</CommandFlag>
         <Strings>
           <ButtonText>DotnetToolbar</ButtonText>
           <CommandName>DotnetToolbar</CommandName>
         </Strings>
       </Menu>
+
+      <!-- # dotnet submenu on main group -->
+      <Menu guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="DOTNET_SUBMENU"  priority="0x0701" type="Menu">
+        <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MAINTOOLBAR_GROUP" />
+        <Strings>
+          <ButtonText>   dotnet menu   </ButtonText>
+        </Strings>
+      </Menu>
+
+      <Menu guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MENU_DOTNET_GLOBALJSON"  priority="0x0702" type="Menu">
+        <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="DOTNET_SUBMENU_GROUP" />
+        <Strings>
+          <ButtonText>new global.json (sln)</ButtonText>
+        </Strings>
+      </Menu>
+
+      <Menu guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MENU_EXPERIMENTAL"  priority="0x0703" type="Menu">
+        <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="DOTNET_SUBMENU_GROUP" />
+        <Strings>
+          <ButtonText>Experimental</ButtonText>
+        </Strings>
+      </Menu>
+      
     </Menus>
     <!-- In this section you can define new menu groups. A menu group is a container for
          other menus or buttons (commands); from a visual point of view you can see the
          group as the part of a menu contained between two lines. The parent of a group
          must be a menu. -->
     <Groups>
-      <Group guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuGroup" priority="0x0600">
-        <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuToolBar" />
+      <Group guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MAINTOOLBAR_GROUP" priority="0x0600">
+        <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MAINTOOLBAR_MENU" />
       </Group>
+
+      <Group guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="DOTNET_SUBMENU_GROUP" priority="0x0601">
+        <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="DOTNET_SUBMENU"/>
+      </Group>
+
+      <Group guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="GROUP_DOTNET_GLOBALJSON" priority="0x0602">
+        <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MENU_DOTNET_GLOBALJSON"/>
+      </Group>
+
+      <Group guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="GROUP_EXPERIMENTAL" priority="0x0603">
+        <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MENU_EXPERIMENTAL"/>
+      </Group>
+      
     </Groups>
 
     <!--Buttons section. -->
@@ -61,15 +97,16 @@
               <CommandFlag>DynamicVisibility</CommandFlag>
           If you do not want an image next to your command, remove the Icon node /> -->
       <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="CommandIdDotnetBuild" priority="0x0100" type="Button">
-        <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuGroup" />
+        <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MAINTOOLBAR_GROUP" />
         <Icon guid="guidImages" id="pngBuild" />
         <CommandFlag>IconAndText</CommandFlag>
         <Strings>
           <ButtonText>dotnet build</ButtonText>
         </Strings>
       </Button>
+      
       <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="CommandIdDotnetPack" priority="0x0101" type="Button">
-        <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuGroup" />
+        <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MAINTOOLBAR_GROUP" />
         <Icon guid="guidImages" id="pngPack" />
         <CommandFlag>IconAndText</CommandFlag>
         <Strings>
@@ -78,7 +115,7 @@
       </Button>
 
       <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="CommandIdDotnetPublish" priority="0x0102" type="Button">
-        <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuGroup" />
+        <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MAINTOOLBAR_GROUP" />
         <Icon guid="guidImages" id="pngUpload" />
         <CommandFlag>IconAndText</CommandFlag>
         <Strings>
@@ -87,7 +124,7 @@
       </Button>
 
       <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="CommandIdNugetPush" priority="0x0103" type="Button">
-        <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuGroup" />
+        <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MAINTOOLBAR_GROUP" />
         <Icon guid="guidImages" id="pngUploadFile" />
         <CommandFlag>IconAndText</CommandFlag>
         <Strings>
@@ -96,7 +133,7 @@
       </Button>
 
       <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="CommandIdDotnetTest" priority="0x0104" type="Button">
-        <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuGroup" />
+        <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MAINTOOLBAR_GROUP" />
         <Icon guid="guidImages" id="pngTest" />
         <CommandFlag>IconAndText</CommandFlag>
         <Strings>
@@ -105,7 +142,7 @@
       </Button>
 
       <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="CommandIdDotnetClean" priority="0x0105" type="Button">
-        <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuGroup" />
+        <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MAINTOOLBAR_GROUP" />
         <Icon guid="guidImages" id="pngClean" />
         <CommandFlag>IconAndText</CommandFlag>
         <Strings>
@@ -114,16 +151,57 @@
       </Button>
 
       <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="CommandIdDeleteBinObj" priority="0x0106" type="Button">
-        <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuGroup" />
+        <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MAINTOOLBAR_GROUP" />
         <Icon guid="guidImages" id="pngDelFolder" />
         <CommandFlag>IconAndText</CommandFlag>
         <Strings>
           <ButtonText>del bin/obj restore</ButtonText>
         </Strings>
       </Button>
+      
+      <!-- sdsdsd -->
 
-      <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="CommandIdSettings" priority="0x0107" type="Button">
-        <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuGroup" />
+  
+      <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="CommandIdDotnetMenuGlobalJsonNet6" priority="0x0108" type="Button">
+        <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="GROUP_DOTNET_GLOBALJSON" />
+        <Icon guid="guidImages" id="pngSdk" />
+        <CommandFlag>IconAndText</CommandFlag>
+        <Strings>
+          <ButtonText>--sdk-version 6.0.0 --roll-forward=latestFeature</ButtonText>
+        </Strings>
+      </Button>
+
+      <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="CommandIdDotnetMenuGlobalJsonNet7" priority="0x0109" type="Button">
+        <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="GROUP_DOTNET_GLOBALJSON" />
+        <Icon guid="guidImages" id="pngSdk" />
+        <CommandFlag>IconAndText</CommandFlag>
+        <Strings>
+          <ButtonText>--sdk-version 7.0.0 --roll-forward=latestFeature</ButtonText>
+        </Strings>
+      </Button>
+
+      <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="CommandIdDotnetMenuGlobalJsonNet8" priority="0x0110" type="Button">
+        <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="GROUP_DOTNET_GLOBALJSON" />
+        <Icon guid="guidImages" id="pngSdk" />
+        <CommandFlag>IconAndText</CommandFlag>
+        <Strings>
+          <ButtonText>--sdk-version 8.0.0 --roll-forward=latestFeature</ButtonText>
+        </Strings>
+      </Button>
+
+      <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="CommandIdDotnetMenuExperimentalTest" priority="0x0107" type="Button">
+        <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="GROUP_EXPERIMENTAL" />
+        <Icon guid="guidImages" id="pngSdk" />
+        <CommandFlag>IconAndText</CommandFlag>
+        <Strings>
+          <ButtonText>Version</ButtonText>
+        </Strings>
+      </Button>
+
+      <!-- sdsdsd -->
+      
+      <Button guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="CommandIdSettings" priority="0x0108" type="Button">
+        <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MAINTOOLBAR_GROUP" />
         <Icon guid="guidImages" id="pngSettings" />
         <CommandFlag>IconAndText</CommandFlag>
         <Strings>
@@ -143,7 +221,7 @@
     <!--
     <Combos>
       <Combo guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="cmdidMyDropDownCombo" priority="0x0107" type="DropDownCombo" defaultWidth="200" idCommandList="cmdidMyDropDownComboGetList">
-        <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MyMenuGroup" />
+        <Parent guid="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" id="MAINTOOLBAR_GROUP" />
         <CommandFlag>IconAndText</CommandFlag>
         <Strings>
           <ButtonText>Dotnet:</ButtonText>
@@ -159,7 +237,7 @@
             bitmap strip containing the bitmaps and then there are the numeric ids of the elements used
             inside a button definition. An important aspect of this declaration is that the element id
             must be the actual index (1-based) of the bitmap inside the bitmap strip. -->
-      <Bitmap guid="guidImages" href="Resources\CommandBar.png" usedList="pngBuild, pngPack, pngPublish, pngDebug, pngCube, pngUpload, pngUploadFile, pngSettings, pngClean, pngDelFolder, pngTest" />
+      <Bitmap guid="guidImages" href="Resources\CommandBar.png" usedList="pngBuild, pngPack, pngPublish, pngDebug, pngCube, pngUpload, pngUploadFile, pngSettings, pngClean, pngDelFolder, pngTest, pngSdk" />
     </Bitmaps>
   </Commands>
 
@@ -169,8 +247,10 @@
 
     <!-- This is the guid used to group the menu commands together -->
     <GuidSymbol name="guidCoreeVisualStudioDotnetToolbarPackageCmdSet" value="{7303216a-a2cb-4519-b645-a34ae1380a78}">
-      <IDSymbol name="MyMenuToolBar" value="0x1000" />
-      <IDSymbol name="MyMenuGroup" value="0x1020" />
+
+      <IDSymbol name="MAINTOOLBAR_MENU" value="0x1000" />
+      <IDSymbol name="MAINTOOLBAR_GROUP" value="0x1020" />
+
       <IDSymbol name="CommandIdDotnetBuild" value="4129" />
       <IDSymbol name="CommandIdDotnetPack" value="4130" />
       <IDSymbol name="CommandIdNugetPush" value="4131" />
@@ -179,6 +259,22 @@
       <IDSymbol name="CommandIdDotnetClean" value="4136" />
       <IDSymbol name="CommandIdDeleteBinObj" value="4137" />
       <IDSymbol name="CommandIdSettings" value="4135" />
+      
+
+      <IDSymbol name="DOTNET_SUBMENU" value="0x2021" />
+      <IDSymbol name="DOTNET_SUBMENU_GROUP" value="0x2022" />
+
+      <IDSymbol name="MENU_DOTNET_GLOBALJSON" value="0x2121" />
+      <IDSymbol name="GROUP_DOTNET_GLOBALJSON" value="0x2122" />
+      
+      <IDSymbol name="MENU_EXPERIMENTAL" value="0x2221" />
+      <IDSymbol name="GROUP_EXPERIMENTAL" value="0x2222" />
+  
+      <IDSymbol name="CommandIdDotnetMenuGlobalJsonNet6" value="5149" />
+      <IDSymbol name="CommandIdDotnetMenuGlobalJsonNet7" value="5150" />
+      <IDSymbol name="CommandIdDotnetMenuGlobalJsonNet8" value="5151" />
+      <IDSymbol name="CommandIdDotnetMenuExperimentalTest" value="5152" />
+
 
       <!-- 
       <IDSymbol name="cmdidMyDropDownCombo" value="5000" />
@@ -199,6 +295,7 @@
       <IDSymbol name="pngClean" value="9" />
       <IDSymbol name="pngDelFolder" value="10" />
       <IDSymbol name="pngTest" value="11" />
+      <IDSymbol name="pngSdk" value="12" />
     </GuidSymbol>
   
     <GuidSymbol value="{6ad48e10-5444-4052-8161-dc35956388f3}" name="guidImages1">

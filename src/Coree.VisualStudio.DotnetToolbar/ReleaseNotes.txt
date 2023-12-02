@@ -1,4 +1,10 @@
-﻿# DotnetToolbar 0.2.46 Release Notes
+﻿# DotnetToolbar 0.2.47 Release Notes
+Release Date: 2023-12-02
+
+## New
+- Added a "dotnet menu" submenu to facilitate the creation of a global.json file at the solution level. This explicitly sets the dotnet SDK version used by the solution.
+
+# DotnetToolbar 0.2.46 Release Notes
 Release Date: 2023-11-26
 
 ## New

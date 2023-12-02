@@ -137,9 +137,13 @@ namespace Coree.VisualStudio.DotnetToolbar
             CommandSettings.Instance.MenuItem.Enabled = false;
             CommandDeleteBinObj.Instance.MenuItem.Enabled = false;
             CommandDotnetTest.Instance.MenuItem.Enabled = false;
+            CommandDotnetGlobalJson6.Instance.MenuItem.Enabled = false;
+            CommandDotnetGlobalJson7.Instance.MenuItem.Enabled = false;
+            CommandDotnetGlobalJson8.Instance.MenuItem.Enabled = false;
+            CommandDotnetExperimentalTest.Instance.MenuItem.Enabled = false;
 
             await StartDotNetProcessAsync();
-
+            
             CommandDotnetBuild.Instance.MenuItem.Enabled = true;
             CommandDotnetPack.Instance.MenuItem.Enabled = true;
             CommandDotnetPublish.Instance.MenuItem.Enabled = true;
@@ -148,6 +152,10 @@ namespace Coree.VisualStudio.DotnetToolbar
             CommandSettings.Instance.MenuItem.Enabled = true;
             CommandDeleteBinObj.Instance.MenuItem.Enabled = true;
             CommandDotnetTest.Instance.MenuItem.Enabled = true;
+            CommandDotnetGlobalJson6.Instance.MenuItem.Enabled = true;
+            CommandDotnetGlobalJson7.Instance.MenuItem.Enabled = true;
+            CommandDotnetGlobalJson8.Instance.MenuItem.Enabled = true;
+            CommandDotnetExperimentalTest.Instance.MenuItem.Enabled = true;
         }
 
         internal virtual async Task StartDotNetProcessAsync()
