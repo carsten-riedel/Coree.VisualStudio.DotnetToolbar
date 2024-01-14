@@ -1,4 +1,10 @@
-﻿# DotnetToolbar 0.2.47 Release Notes
+﻿# DotnetToolbar 0.2.48 Release Notes
+Release Date: 2024-01-14
+
+## New
+- Added a try catch in solution after open event to observe behavior noticed with dotnet templates.
+
+# DotnetToolbar 0.2.47 Release Notes
 Release Date: 2023-12-02
 
 ## New
