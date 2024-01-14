@@ -145,6 +145,22 @@ namespace Coree.VisualStudio.DotnetToolbar
 
         private async Task SolutionEvents_OnAfterOpenSolutionAsync(object sender = null, OpenSolutionEventArgs e = null)
         {
+            try
+            {
+                await TrySolutionEvents_OnAfterOpenSolutionAsync(sender, e);
+            }
+            catch (Exception ex)
+            {
+                await this.PaneClearAsync($@"DotnetToolbar");
+                await this.PaneWriteLineAsync($@"DotnetToolbar OnAfterOpenSolutionAsync exception:", "DotnetToolbar");
+                await this.PaneWriteLineAsync($@"DotnetToolbar exception Message: {ex.Message}", "DotnetToolbar");
+                await this.PaneWriteLineAsync($@"DotnetToolbar exception StackTrace: {ex.StackTrace}", "DotnetToolbar");
+                await this.PaneWriteLineAsync($@"DotnetToolbar exception Source: {ex.Source}", "DotnetToolbar");
+            }
+        }
+
+        private async Task TrySolutionEvents_OnAfterOpenSolutionAsync(object sender = null, OpenSolutionEventArgs e = null)
+        {
             await this.JoinableTaskFactory.SwitchToMainThreadAsync();
 
             await this.PaneClearAsync($@"DotnetToolbar");
@@ -202,7 +218,7 @@ namespace Coree.VisualStudio.DotnetToolbar
             EnableMenuItemIfInstanceNotNull(CommandDotnetNugetPush.Instance);
             EnableMenuItemIfInstanceNotNull(CommandDotnetClean.Instance);
             EnableMenuItemIfInstanceNotNull(CommandDeleteBinObj.Instance);
-            EnableMenuItemIfInstanceNotNull(CommandDotnetTest.Instance); 
+            EnableMenuItemIfInstanceNotNull(CommandDotnetTest.Instance);
             EnableMenuItemIfInstanceNotNull(CommandDotnetGlobalJson6.Instance);
             EnableMenuItemIfInstanceNotNull(CommandDotnetGlobalJson7.Instance);
             EnableMenuItemIfInstanceNotNull(CommandDotnetGlobalJson8.Instance);
