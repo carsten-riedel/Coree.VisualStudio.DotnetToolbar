@@ -1,4 +1,10 @@
-﻿# DotnetToolbar 0.2.48 Release Notes
+﻿# DotnetToolbar 0.2.49 Release Notes
+Release Date: 2024-01-14
+
+## Update
+- Changed the detection behaviour of block non sdk style projects to allow import SDK statment.
+
+# DotnetToolbar 0.2.48 Release Notes
 Release Date: 2024-01-14
 
 ## New

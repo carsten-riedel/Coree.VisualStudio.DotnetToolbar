@@ -177,15 +177,19 @@ namespace Coree.VisualStudio.DotnetToolbar
                     {
                         string fileContents = File.ReadAllText(projectInfoItem.VSProjectLocation);
                         XDocument doc = XDocument.Parse(fileContents);
-                        if (doc.Root.Attribute("Sdk") != null)
+
+                        // Check if the root element has an 'Sdk' attribute.
+                        bool isSdkStyle = doc.Root.Attribute("Sdk") != null;
+
+                        // If not already identified as SDK style, check for <Import> elements with 'Sdk' attribute.
+                        if (!isSdkStyle)
                         {
-                            projectInfoItem.IsSdkStyle = true;
+                            isSdkStyle = doc.Descendants("Import").Any(import => import.Attribute("Sdk") != null);
                         }
-                        else
-                        {
-                            projectInfoItem.IsSdkStyle = false;
-                        }
+
+                        projectInfoItem.IsSdkStyle = isSdkStyle;
                     }
+
 
                     if (projectInfoItem.VSProjectPropertyTargetFrameworks != String.Empty)
                     {
