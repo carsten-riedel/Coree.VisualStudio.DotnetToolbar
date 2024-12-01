@@ -1,5 +1,6 @@
 ﻿using Coree.VisualStudio.DotnetToolbar.ExtensionMethods;
 using EnvDTE;
+using EnvDTE80;
 using Microsoft.CSharp.RuntimeBinder;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
@@ -62,6 +63,9 @@ namespace Coree.VisualStudio.DotnetToolbar
 
         public string SolutionGuid { get; set; }
 
+
+        DocumentEvents documentEvents;
+
         /// <summary>
         /// Initialization of the package; this method is called right after the package is sited, so this is the place
         /// where you can put all the initialization code that rely on services provided by VisualStudio.
@@ -105,7 +109,16 @@ namespace Coree.VisualStudio.DotnetToolbar
 
             Microsoft.VisualStudio.Shell.Events.SolutionEvents.OnAfterOpenSolution += (sender, e) => { _ = Task.Run(() => SolutionEvents_OnAfterOpenSolutionAsync(sender, e)); };
 
+
+
+
             Instance = this;
+        }
+
+        private void DocumentEvents_DocumentOpened(Document Document)
+        {
+            Document.
+            throw new NotImplementedException();
         }
 
         public CoreeVisualStudioDotnetToolbarPackage()
@@ -145,6 +158,12 @@ namespace Coree.VisualStudio.DotnetToolbar
 
         private async Task SolutionEvents_OnAfterOpenSolutionAsync(object sender = null, OpenSolutionEventArgs e = null)
         {
+            var dte = await GetServiceAsync(typeof(DTE)) as DTE;
+
+            // Listen to document opening events
+            documentEvents = dte.Events.DocumentEvents;
+            documentEvents.DocumentOpened += DocumentEvents_DocumentOpened;
+
             try
             {
                 await TrySolutionEvents_OnAfterOpenSolutionAsync(sender, e);
